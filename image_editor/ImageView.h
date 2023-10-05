@@ -2,6 +2,7 @@
 #define IMAGEVIEW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 
 #include <QDebug>
 
@@ -15,5 +16,21 @@ class ImageView : public QMainWindow
 public:
     ImageView(QWidget *parent = nullptr);
     ~ImageView();
+
+private:
+
+    // Menu
+    QMenuBar* _menuBar;
+
+    // File
+    QMenu* _fileMenu;
+    QAction* _actionLoad;
+    QAction* _actionSave;
+    QAction* _actionExit;
+
+private slots:
+    void onLoadAction();
+    void onSaveAction();
+    void onExitAction();
 };
 #endif // IMAGEVIEW_H

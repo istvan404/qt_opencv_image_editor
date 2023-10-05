@@ -2,6 +2,7 @@
 #define IMAGEMODEL_H
 
 #include <QObject>
+#include "ImagePersistence.h"
 
 class ImageModel : public QObject
 {
