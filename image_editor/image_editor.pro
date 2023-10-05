@@ -10,11 +10,14 @@ CONFIG += c++17
 
 SOURCES += \
     ImageModel.cpp \
+    ImagePersistence.cpp \
     main.cpp \
     ImageView.cpp
 
 HEADERS += \
     ImageModel.h \
+    ImagePersistence.h \
+    ImageSave.h \
     ImageView.h
 
 # Default rules for deployment.
