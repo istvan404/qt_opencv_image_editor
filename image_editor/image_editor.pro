@@ -19,3 +19,12 @@ HEADERS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+INCLUDEPATH += C:\dev_libs\opencv\build\include
+
+LIBS += C:\dev_libs\opencv-build\bin\libopencv_core481.dll
+LIBS += C:\dev_libs\opencv-build\bin\libopencv_highgui481.dll
+LIBS += C:\dev_libs\opencv-build\bin\libopencv_imgcodecs481.dll
+LIBS += C:\dev_libs\opencv-build\bin\libopencv_imgproc481.dll
+LIBS += C:\dev_libs\opencv-build\bin\libopencv_features2d481.dll
+LIBS += C:\dev_libs\opencv-build\bin\libopencv_calib3d481.dll
