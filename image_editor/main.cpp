@@ -1,11 +1,11 @@
-#include "imagewindow.h"
+#include "ImageView.h"
 
 #include <QApplication>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    ImageWindow w;
+    ImageView w;
     w.show();
     return a.exec();
 }
