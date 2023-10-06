@@ -1,11 +1,15 @@
 #include "ImageView.h"
 
-#include <QMenuBar>
 
 ImageView::ImageView(QWidget *parent)
     : QMainWindow(parent)
 {
     setWindowTitle("Image Editor w/ OpenCV 4.8.1");
+    /*_windowWidth = new int(1280);
+    _windowHeight = new int(720);
+    resize(*_windowWidth,*_windowHeight);
+    setMinimumSize(1280,720);
+    setMaximumSize(1920,1080);*/
     setFixedSize(1280, 720);
     qDebug() << "OpenCV current version: " << CV_VERSION;
 
@@ -15,12 +19,22 @@ ImageView::ImageView(QWidget *parent)
     _centralWidget = new QWidget();
     setCentralWidget(_centralWidget);
 
-    _mainLayout = new QVBoxLayout();
+    _mainLayout = new QHBoxLayout();
+    _mainLayout->setContentsMargins(0,0,0,0);
+    _mainLayout->setSpacing(10);
     _centralWidget->setLayout(_mainLayout);
 
-    _label = new QLabel();
-    _mainLayout->addWidget(_label);
-    //_label->setPixmap( QPixmap("../demo.jpg") );
+    _imageLabel = new QLabel();
+    _imageLabel->setAlignment(Qt::AlignCenter);
+    _mainLayout->addWidget(_imageLabel,66);
+    qDebug() << _imageLabel->size().width();
+
+
+    _editLayout = new QVBoxLayout();
+    _mainLayout->addLayout(_editLayout,33);
+
+    _editLayout->addWidget( new QPushButton("Flip") );
+    _editLayout->addWidget( new QPushButton("Rotate") );
 
     _menuBar = new QMenuBar(this);
     _fileMenu = new QMenu("File", this);
@@ -57,7 +71,9 @@ void ImageView::onImageLoaded()
 {
     qDebug() << "ImageView received the ImageModel's imageLoaded signal!";
 
-    _label->setPixmap( _model->getQPixmap() );
+    _imageLabel->setPixmap( _model->getQPixmap( _imageLabel->size() ) );
+
+    //resize(*_windowWidth,*_windowHeight);
 }
 
 void ImageView::onLoadAction()

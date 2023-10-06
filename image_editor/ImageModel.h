@@ -6,8 +6,11 @@
 #include <QImage>
 #include "ImagePersistence.h"
 
+#include <QDebug>
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 class ImageModel : public QObject
 {
@@ -16,7 +19,7 @@ public:
     explicit ImageModel(ImagePersistenceInterface* persistence, QObject *parent = nullptr);
 
     bool loadImage(QString path);
-    QPixmap getQPixmap();
+    QPixmap getQPixmap(QSize imageLabelSize);
 
 private:
     ImagePersistenceInterface* _persistence;

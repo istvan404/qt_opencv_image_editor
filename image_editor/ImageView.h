@@ -3,9 +3,11 @@
 
 #include "ImageModel.h"
 #include <QMainWindow>
+#include <QMenuBar>
 #include <QFileDialog>
-#include <QVBoxLayout>
+#include <QBoxLayout>
 #include <QLabel>
+#include <QPushButton>
 
 #include <QDebug>
 
@@ -24,9 +26,17 @@ private:
 
     ImageModel* _model;
 
+    /*int* _windowWidth;
+    int* _windowHeight;*/
+
     QWidget* _centralWidget;
-    QVBoxLayout* _mainLayout;
-    QLabel* _label;
+    QHBoxLayout* _mainLayout;
+    QVBoxLayout* _editLayout;
+
+    // Left side
+    QLabel* _imageLabel;
+
+    // Right side
 
     // Menu
     QMenuBar* _menuBar;
