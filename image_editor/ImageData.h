@@ -1,13 +1,22 @@
-#ifndef IMAGESAVE_H
-#define IMAGESAVE_H
+#ifndef IMAGEDATA_H
+#define IMAGEDATA_H
 
 #include <QString>
 #include <QHash>
 #include <opencv2/core/core.hpp>
 // #include <opencv2/highgui/highgui.hpp>
 
-struct ImageSave
+struct ImageData
 {
+    ImageData() {}
+    ImageData(QString path_, cv::Mat image_)
+    {
+        this->path = path_;
+        this->image = image_;
+    }
+
+
+    QString path;
     QString filename;
     cv::Mat image;
     int width;
@@ -23,4 +32,4 @@ struct ImageSave
     //              Or just a QSet<ImageEffects> and the ImageEffects already has the applied and default values...
 };
 
-#endif // IMAGESAVE_H
+#endif // IMAGEDATA_H

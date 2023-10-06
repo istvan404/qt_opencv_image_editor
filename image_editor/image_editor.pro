@@ -15,9 +15,9 @@ SOURCES += \
     ImageView.cpp
 
 HEADERS += \
+    ImageData.h \
     ImageModel.h \
     ImagePersistence.h \
-    ImageSave.h \
     ImageView.h
 
 # Default rules for deployment.

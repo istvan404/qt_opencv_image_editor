@@ -7,12 +7,14 @@ ImagePersistence::ImagePersistence()
 
 }
 
-void ImagePersistence::save(QString path, ImageSave state)
+void ImagePersistence::save(QString path, ImageData state)
 {
 
 }
 
-ImageSave ImagePersistence::load(QString path)
+ImageData ImagePersistence::load(QString path)
 {
+    cv::Mat image = cv::imread(path.toStdString());
 
+    return ImageData(path, image);
 }

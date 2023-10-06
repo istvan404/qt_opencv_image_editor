@@ -1,8 +1,11 @@
 #ifndef IMAGEVIEW_H
 #define IMAGEVIEW_H
 
+#include "ImageModel.h"
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QVBoxLayout>
+#include <QLabel>
 
 #include <QDebug>
 
@@ -19,6 +22,12 @@ public:
 
 private:
 
+    ImageModel* _model;
+
+    QWidget* _centralWidget;
+    QVBoxLayout* _mainLayout;
+    QLabel* _label;
+
     // Menu
     QMenuBar* _menuBar;
 
@@ -32,5 +41,6 @@ private slots:
     void onLoadAction();
     void onSaveAction();
     void onExitAction();
+    void onImageLoaded();
 };
 #endif // IMAGEVIEW_H
