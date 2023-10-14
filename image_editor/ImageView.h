@@ -31,12 +31,23 @@ private:
 
     QWidget* _centralWidget;
     QHBoxLayout* _mainLayout;
-    QVBoxLayout* _editLayout;
 
     // Left side
     QLabel* _imageLabel;
 
-    // Right side
+    // { #Right side
+    QVBoxLayout* _editLayout;
+
+    // Right-Top Settings
+    QVBoxLayout* _settingsLayout;
+    QPushButton* _buttonFlipHorizontal;
+    QPushButton* _buttonFlipVertical;
+    QPushButton* _buttonRotate90Plus;
+    QPushButton* _buttonRotate90Minus;
+
+    // Right-Bottom Details
+    QVBoxLayout* _detailsLayout;
+    // }
 
     // Menu
     QMenuBar* _menuBar;
@@ -48,9 +59,14 @@ private:
     QAction* _actionExit;
 
 private slots:
+    // MenuBar Actions' slots
     void onLoadAction();
     void onSaveAction();
     void onExitAction();
+    // Model's signal slot
     void onImageLoaded();
+    // Settings button slots
+    //void onButtonFlipHorizontal(); // ?
+    //void onButtonFlipVertical(); // ?
 };
 #endif // IMAGEVIEW_H

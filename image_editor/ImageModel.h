@@ -19,7 +19,18 @@ public:
     explicit ImageModel(ImagePersistenceInterface* persistence, QObject *parent = nullptr);
 
     bool loadImage(QString path);
-    QPixmap getQPixmap(QSize imageLabelSize);
+    QPixmap getEditedImageQPixmap(QSize imageLabelSize);
+
+    // TODO:
+    QPixmap getOriginalImageQPixmap(QSize imageLabelSize); // Save the edited
+    QPixmap getEditedRedHistogram(QSize imageLabelSize);
+    QPixmap getEditedGreenHistogram(QSize imageLabelSize);
+    QPixmap getEditedBlueHistogram(QSize imageLabelSize);
+
+    void editFlipHorizontal();
+    void editFlipVertical();
+    void editRotate90Plus();
+    void editRotate90Minus();
 
 private:
     ImagePersistenceInterface* _persistence;
