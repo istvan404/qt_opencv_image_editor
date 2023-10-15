@@ -111,11 +111,7 @@ void ImageView::onLoadAction()
 {
     QString path = QFileDialog::getOpenFileName(this, "Open image", "", "Images (*.JPG *.jpg *.png *.bmp)");
     if(path != "") {
-        if(!_model->loadImage(path))
-        {
-            qDebug() << "Error in MODEL while loading file from " << path;
-        }
-
+        _model->loadImage(path);
         _checkboxToggleScale->setCheckState(Qt::Checked);
     }
 }
@@ -124,10 +120,7 @@ void ImageView::onSaveAction()
 {
     QString path = QFileDialog::getSaveFileName(this, "Save image", "", "Images (*.JPG *.jpg *.png *.bmp)");
     if(path != "") {
-        if(!_model->saveImage(path))
-        {
-            qDebug() << "Error in MODEL while saving file to " << path;
-        }
+        _model->saveImage(path);
     }
 }
 

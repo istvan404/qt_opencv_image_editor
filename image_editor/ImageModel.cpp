@@ -7,17 +7,16 @@ ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
     _toggleImageFillSpace = true;
 }
 
-bool ImageModel::loadImage(QString path)
+void ImageModel::loadImage(QString path)
 {
     this->_data = _persistence->load(path);
-
     emit imageLoaded();
-    return true;
 }
 
-bool ImageModel::saveImage(QString path)
+void ImageModel::saveImage(QString path)
 {
-    return cv::imwrite(path.toStdString(), this->_data.image);
+    _persistence->save(path, this->_data);
+    //cv::imwrite(path.toStdString(), this->_data.image);
 }
 
 QPixmap ImageModel::getEditedImageQPixmap(QSize imageLabelSize)
