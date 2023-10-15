@@ -4,6 +4,7 @@ ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
     : QObject{parent}
 {
     _persistence = persistence;
+    _toggleImageFillSpace = true;
 }
 
 bool ImageModel::loadImage(QString path)
@@ -33,6 +34,9 @@ QPixmap ImageModel::getEditedImageQPixmap(QSize imageLabelSize)
 
 cv::Mat ImageModel::resizeMatrix(cv::Mat input, QSize availableSize)
 {
+    if(!this->_toggleImageFillSpace)
+        return input;
+
     cv::Mat img = input;
     float inWidth = input.cols;
     float inHeight = input.rows;
@@ -73,13 +77,12 @@ cv::Mat ImageModel::resizeMatrix(cv::Mat input, QSize availableSize)
                (newHeight / inHeight),
                interpolation);
 
+
+
     /* Sharpening */
     /*cv::Mat imgGaussianBlur;
     cv::GaussianBlur(img, imgGaussianBlur, cv::Size(0,0), 3);
     cv::addWeighted(img, 1.5, imgGaussianBlur, -0.5, 0, img);*/
-
-    qDebug() << "w : " << inWidth << " -> " << newWidth;
-    qDebug() << "h : " << inHeight << " -> " << newHeight;
 
     return img;
 }
@@ -139,4 +142,10 @@ void ImageModel::editRotate90Minus()
 {
     cv::rotate(this->_data.image, this->_data.image, cv::ROTATE_90_COUNTERCLOCKWISE);
     emit imageLoaded();
+}
+
+void ImageModel::editToggleImageScale(bool toggle)
+{
+   this->_toggleImageFillSpace = toggle;
+   emit imageLoaded();
 }

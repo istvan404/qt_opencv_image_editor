@@ -19,20 +19,22 @@ ImageView::ImageView(QWidget *parent)
     _centralWidget = new QWidget();
     setCentralWidget(_centralWidget);
 
-    _mainLayout = new QHBoxLayout();
-    _mainLayout->setContentsMargins(0,0,0,0);
-    _mainLayout->setSpacing(10);
-    _centralWidget->setLayout(_mainLayout);
+    _layoutMain = new QHBoxLayout();
+    _layoutMain->setContentsMargins(0,0,0,0);
+    _layoutMain->setSpacing(10);
+    _centralWidget->setLayout(_layoutMain);
 
     // Left side
     _imageLabel = new QLabel();
     _imageLabel->setAlignment(Qt::AlignCenter);
-    _mainLayout->addWidget(_imageLabel,66);
+    _layoutImageContainer = new QVBoxLayout();
+    _layoutMain->addLayout(_layoutImageContainer, 66);
+    _layoutImageContainer->addWidget(_imageLabel);
     //qDebug() << _imageLabel->size().width();
 
     // Right side
     _editLayout = new QVBoxLayout();
-    _mainLayout->addLayout(_editLayout,33);
+    _layoutMain->addLayout(_editLayout,33);
 
     // Right side top settings
     _settingsLayout = new QVBoxLayout();
@@ -42,10 +44,12 @@ ImageView::ImageView(QWidget *parent)
     _buttonFlipVertical = new QPushButton("Flip Vertical");
     _buttonRotate90Plus = new QPushButton("Rotate +90 Degrees");
     _buttonRotate90Minus = new QPushButton("Rotate -90 Degrees");
+    _checkboxToggleScale = new QCheckBox("Image scale to fit space");
     _settingsLayout->addWidget(_buttonFlipHorizontal);
     _settingsLayout->addWidget(_buttonFlipVertical);
     _settingsLayout->addWidget(_buttonRotate90Plus);
     _settingsLayout->addWidget(_buttonRotate90Minus);
+    _settingsLayout->addWidget(_checkboxToggleScale);
 
     // Right side bottom data
     _detailsLayout = new QVBoxLayout();
@@ -82,42 +86,39 @@ ImageView::ImageView(QWidget *parent)
     connect(_buttonFlipVertical, &QPushButton::clicked, this, [this](){ _model->editFlipVertical(); });
     connect(_buttonRotate90Plus, &QPushButton::clicked, this, [this](){ _model->editRotate90Plus(); });
     connect(_buttonRotate90Minus, &QPushButton::clicked, this, [this](){ _model->editRotate90Minus(); });
+    connect(_checkboxToggleScale, &QCheckBox::stateChanged, this, [this](){ _model->editToggleImageScale( _checkboxToggleScale->isChecked() ); });
 
 
     setMenuBar(_menuBar);
+
+
+    qDebug() << "Main layout size: " << _layoutMain->sizeHint();
+    qDebug() << "ImageContainer layout size: " << _layoutImageContainer->sizeHint();
+    qDebug() << "_editLayout size: " << _editLayout->sizeHint();
+    qDebug() << "_imageLabel size: " << _imageLabel->size();
+    //_imageLabel->setFixedSize(_imageLabel->size());
 }
 
 ImageView::~ImageView()
 {
 }
 
-
-
 void ImageView::onImageLoaded()
 {
-    qDebug() << "ImageView received the ImageModel's imageLoaded signal!";
-
+    _imageLabel->setFixedSize(_imageLabel->size());
     _imageLabel->setPixmap( _model->getEditedImageQPixmap( _imageLabel->size() ) );
-
-    //resize(*_windowWidth,*_windowHeight);
 }
 
 void ImageView::onLoadAction()
 {
-    QString path = QFileDialog::getOpenFileName(this, "Open image", "", "Images (*.JPG)");
+    QString path = QFileDialog::getOpenFileName(this, "Open image", "", "Images (*.JPG *.jpg *.png *.bmp)");
     if(path != "") {
-        qDebug() << "Loading file from " << path;
-
         if(!_model->loadImage(path))
         {
             qDebug() << "Error while loading file in ImageModel!";
         }
 
-        /*
-        cv::Mat image = cv::imread(path.toStdString());
-        cv::namedWindow("Image");
-        cv::imshow("Image", image);
-        */
+        _checkboxToggleScale->setCheckState(Qt::Checked);
     }
 }
 

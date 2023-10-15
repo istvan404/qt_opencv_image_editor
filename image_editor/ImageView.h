@@ -8,6 +8,7 @@
 #include <QBoxLayout>
 #include <QLabel>
 #include <QPushButton>
+#include <QCheckBox>
 
 #include <QDebug>
 
@@ -30,9 +31,10 @@ private:
     int* _windowHeight;*/
 
     QWidget* _centralWidget;
-    QHBoxLayout* _mainLayout;
+    QHBoxLayout* _layoutMain;
 
     // Left side
+    QVBoxLayout* _layoutImageContainer;
     QLabel* _imageLabel;
 
     // { #Right side
@@ -44,6 +46,8 @@ private:
     QPushButton* _buttonFlipVertical;
     QPushButton* _buttonRotate90Plus;
     QPushButton* _buttonRotate90Minus;
+    QCheckBox* _checkboxToggleScale;
+
 
     // Right-Bottom Details
     QVBoxLayout* _detailsLayout;

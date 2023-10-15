@@ -31,10 +31,12 @@ public:
     void editFlipVertical();
     void editRotate90Plus();
     void editRotate90Minus();
+    void editToggleImageScale(bool toggle);
 
 private:
     ImagePersistenceInterface* _persistence;
     ImageData _data;
+    bool _toggleImageFillSpace;
 
     cv::Mat resizeMatrix(cv::Mat input, QSize availableSize);
     cv::Mat resizeMatrixBySteps(cv::Mat input, QSize targetSize, cv::InterpolationFlags interpolation, int steps);
