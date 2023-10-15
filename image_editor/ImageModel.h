@@ -19,6 +19,7 @@ public:
     explicit ImageModel(ImagePersistenceInterface* persistence, QObject *parent = nullptr);
 
     bool loadImage(QString path);
+    bool saveImage(QString path);
     QPixmap getEditedImageQPixmap(QSize imageLabelSize);
 
     // TODO:

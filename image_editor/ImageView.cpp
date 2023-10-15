@@ -88,9 +88,7 @@ ImageView::ImageView(QWidget *parent)
     connect(_buttonRotate90Minus, &QPushButton::clicked, this, [this](){ _model->editRotate90Minus(); });
     connect(_checkboxToggleScale, &QCheckBox::stateChanged, this, [this](){ _model->editToggleImageScale( _checkboxToggleScale->isChecked() ); });
 
-
     setMenuBar(_menuBar);
-
 
     qDebug() << "Main layout size: " << _layoutMain->sizeHint();
     qDebug() << "ImageContainer layout size: " << _layoutImageContainer->sizeHint();
@@ -115,7 +113,7 @@ void ImageView::onLoadAction()
     if(path != "") {
         if(!_model->loadImage(path))
         {
-            qDebug() << "Error while loading file in ImageModel!";
+            qDebug() << "Error in MODEL while loading file from " << path;
         }
 
         _checkboxToggleScale->setCheckState(Qt::Checked);
@@ -124,9 +122,12 @@ void ImageView::onLoadAction()
 
 void ImageView::onSaveAction()
 {
-    QString path = QFileDialog::getSaveFileName(this, "Save image", "", "Images (*.JPG)");
+    QString path = QFileDialog::getSaveFileName(this, "Save image", "", "Images (*.JPG *.jpg *.png *.bmp)");
     if(path != "") {
-        qDebug() << "Saving file to " << path;
+        if(!_model->saveImage(path))
+        {
+            qDebug() << "Error in MODEL while saving file to " << path;
+        }
     }
 }
 

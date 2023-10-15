@@ -15,6 +15,11 @@ bool ImageModel::loadImage(QString path)
     return true;
 }
 
+bool ImageModel::saveImage(QString path)
+{
+    return cv::imwrite(path.toStdString(), this->_data.image);
+}
+
 QPixmap ImageModel::getEditedImageQPixmap(QSize imageLabelSize)
 {
     cv::Mat img = this->resizeMatrix(this->_data.image, imageLabelSize);
