@@ -16,47 +16,7 @@ bool ImageModel::loadImage(QString path)
 
 QPixmap ImageModel::getEditedImageQPixmap(QSize imageLabelSize)
 {
-    cv::Mat img = this->_data.image;
-    float inW = img.cols;
-    float inH = img.rows;
-    float outW = imageLabelSize.width();
-    float outH = imageLabelSize.height();
-    float newW;
-    float newH;
-
-    float aspectRatio = (float)inW / (float)inH;
-    int interpolation = cv::INTER_CUBIC; // assuming we are stretching the image
-
-    if(inW > outW || inH > outH) // shrinking image
-        interpolation = cv::INTER_AREA;
-
-    if(aspectRatio > 1) // horizontal image
-    {
-        newW = outW;
-        newH = newW / aspectRatio;
-    }
-    else if(aspectRatio < 1) // vertical image
-    {
-        newH = outH;
-        newW = newH*aspectRatio;
-    }
-    // else square image
-    else // square image
-    {
-        newW = outW;
-        newH = outH;
-        // nothing to do because newW and newH are already equal to outW and outH
-    }
-
-    cv::resize(img, img, cv::Size(newW, newH), 0, 0, interpolation);
-
-    qDebug() << "w : " << inW << " -> " << newW;
-    qDebug() << "h : " << inH << " -> " << newH;
-
-    /* Sharpening
-    cv::Mat imgGaussianBlur;
-    cv::GaussianBlur(img, imgGaussianBlur, cv::Size(0,0), 3);
-    cv::addWeighted(img, 1.5, imgGaussianBlur, -0.5, 0, img);*/
+    cv::Mat img = this->resizeMatrix(this->_data.image, imageLabelSize);
 
     QImage qimg(img.data,
                 img.cols,
@@ -64,7 +24,97 @@ QPixmap ImageModel::getEditedImageQPixmap(QSize imageLabelSize)
                 static_cast<int>(img.step),
                 QImage::Format_RGB888);
 
-    return QPixmap::fromImage(qimg.rgbSwapped());
+    qimg = qimg.rgbSwapped();
+    //qimg = qimg.scaled(imageLabelSize, Qt::KeepAspectRatio, Qt::FastTransformation);
+
+    //return QPixmap::fromImage(qimg.rgbSwapped());
+    return QPixmap::fromImage(qimg);
+}
+
+cv::Mat ImageModel::resizeMatrix(cv::Mat input, QSize availableSize)
+{
+    cv::Mat img = input;
+    float inWidth = input.cols;
+    float inHeight = input.rows;
+    float outWidth = availableSize.width();
+    float outHeight = availableSize.height();
+    float newWidth = 0;
+    float newHeight = 0;
+    float aspectRatio = inWidth / inHeight;
+    cv::InterpolationFlags interpolation;
+
+    if( inWidth > outWidth || inHeight > outHeight )    // Shrinking image
+        interpolation = cv::INTER_AREA;
+    else                                                // Stretching image
+        interpolation = cv::INTER_CUBIC;
+
+    if(aspectRatio > 1)         // Horizontal image
+    {
+        newWidth = outWidth;
+        newHeight = outWidth / aspectRatio;
+    }
+    else if(aspectRatio < 1)    // Vertical image
+    {
+        newHeight = outHeight;
+        newWidth = outHeight * aspectRatio;
+    }
+    else                        // Square image
+    {
+        newWidth = outWidth;
+        newHeight = outHeight;
+    }
+
+    //img = this->resizeMatrixBySteps(img, QSize(newWidth, newHeight), interpolation, 20);
+
+    cv::resize(img,
+               img,
+               cv::Size(),
+               (newWidth / inWidth),
+               (newHeight / inHeight),
+               interpolation);
+
+    /* Sharpening */
+    /*cv::Mat imgGaussianBlur;
+    cv::GaussianBlur(img, imgGaussianBlur, cv::Size(0,0), 3);
+    cv::addWeighted(img, 1.5, imgGaussianBlur, -0.5, 0, img);*/
+
+    qDebug() << "w : " << inWidth << " -> " << newWidth;
+    qDebug() << "h : " << inHeight << " -> " << newHeight;
+
+    return img;
+}
+
+
+cv::Mat ImageModel::resizeMatrixBySteps(cv::Mat input, QSize targetSize, cv::InterpolationFlags interpolation, int steps)
+{
+    if(steps <= 1)
+        return input;
+
+    cv::Mat img = input;
+    float inWidth = img.cols;
+    float inHeight = img.rows;
+    float outWidth = targetSize.width();
+    float outHeight = targetSize.height();
+    float stepWidth = 0;
+    float stepHeight = 0;
+
+    stepWidth = (inWidth - outWidth) / steps;
+    stepHeight = (inHeight - outHeight) / steps;
+
+    for(int i = 1; i < steps; i++)
+    {
+        // (int) conversion rounds down!!!
+        qDebug() << "W => " << inWidth + (i*stepWidth) << "int -> " << (int)(inWidth + (i*stepWidth));
+        qDebug() << "H => " << inHeight + (i*stepHeight) << "int -> " << (int)(inHeight + (i*stepHeight));
+        cv::resize(img,
+                   img,
+                   cv::Size(inWidth + (i*stepWidth), inHeight + (i*stepHeight)),
+                   0,
+                   0,
+                   interpolation);
+    }
+
+    return input;
 }
 
 void ImageModel::editFlipHorizontal()
