@@ -6,13 +6,13 @@ ImagePersistence::ImagePersistence()
 {
 }
 
-void ImagePersistence::save(QString path, ImageData state)
+void ImagePersistence::save(QString path, ImageData* state)
 {
-    cv::imwrite(path.toStdString(), state.image);
+    cv::imwrite(path.toStdString(), state->image);
 }
 
-ImageData ImagePersistence::load(QString path)
+ImageData* ImagePersistence::load(QString path)
 {
     cv::Mat image = cv::imread(path.toStdString());
-    return ImageData(path, image);
+    return new ImageData(path, image);
 }

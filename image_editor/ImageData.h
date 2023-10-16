@@ -13,12 +13,13 @@ struct ImageData
     {
         this->path = path_;
         this->image = image_;
+        this->imageOriginal = image_;
     }
-
 
     QString path;
     QString filename;
     cv::Mat image;
+    cv::Mat imageOriginal;
     int width;
     int height;
 

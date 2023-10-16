@@ -19,9 +19,14 @@ void ImageModel::saveImage(QString path)
     //cv::imwrite(path.toStdString(), this->_data.image);
 }
 
+bool ImageModel::isImageLoaded()
+{
+    return this->_data != nullptr;
+}
+
 QPixmap ImageModel::getEditedImageQPixmap(QSize imageLabelSize)
 {
-    cv::Mat img = this->resizeMatrix(this->_data.image, imageLabelSize);
+    cv::Mat img = this->resizeMatrix(this->_data->image, imageLabelSize);
 
     QImage qimg(img.data,
                 img.cols,
@@ -29,11 +34,7 @@ QPixmap ImageModel::getEditedImageQPixmap(QSize imageLabelSize)
                 static_cast<int>(img.step),
                 QImage::Format_RGB888);
 
-    qimg = qimg.rgbSwapped();
-    //qimg = qimg.scaled(imageLabelSize, Qt::KeepAspectRatio, Qt::FastTransformation);
-
-    //return QPixmap::fromImage(qimg.rgbSwapped());
-    return QPixmap::fromImage(qimg);
+    return QPixmap::fromImage(qimg.rgbSwapped());
 }
 
 cv::Mat ImageModel::resizeMatrix(cv::Mat input, QSize availableSize)
@@ -124,27 +125,42 @@ cv::Mat ImageModel::resizeMatrixBySteps(cv::Mat input, QSize targetSize, cv::Int
     return input;
 }
 
+QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
+{
+    float width = histogramLabelSize.width();
+    float height = histogramLabelSize.height();
+    cv::Mat img(height, width, CV_8UC3, cv::Scalar(0,0,0));
+
+    QImage qimg(img.data,
+                img.cols,
+                img.rows,
+                static_cast<int>(img.step),
+                QImage::Format_Indexed8);
+
+    return QPixmap::fromImage(qimg.rgbSwapped());
+}
+
 void ImageModel::editFlipHorizontal()
 {
-    cv::flip(this->_data.image, this->_data.image, 0);
+    cv::flip(this->_data->image, this->_data->image, 0);
     emit imageLoaded();
 }
 
 void ImageModel::editFlipVertical()
 {
-    cv::flip(this->_data.image, this->_data.image, 1);
+    cv::flip(this->_data->image, this->_data->image, 1);
     emit imageLoaded();
 }
 
 void ImageModel::editRotate90Plus()
 {
-    cv::rotate(this->_data.image, this->_data.image, cv::ROTATE_90_CLOCKWISE);
+    cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_CLOCKWISE);
     emit imageLoaded();
 }
 
 void ImageModel::editRotate90Minus()
 {
-    cv::rotate(this->_data.image, this->_data.image, cv::ROTATE_90_COUNTERCLOCKWISE);
+    cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_COUNTERCLOCKWISE);
     emit imageLoaded();
 }
 

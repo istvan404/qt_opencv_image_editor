@@ -10,16 +10,16 @@
 class ImagePersistenceInterface
 {
 public:
-    virtual void save(QString path, ImageData state) = 0;
-    virtual ImageData load(QString path) = 0;
+    virtual void save(QString path, ImageData* state) = 0;
+    virtual ImageData* load(QString path) = 0;
 };
 
 class ImagePersistence : public ImagePersistenceInterface
 {
 public:
     ImagePersistence();
-    void save(QString path, ImageData state);
-    ImageData load(QString path);
+    void save(QString path, ImageData* state);
+    ImageData* load(QString path);
 };
 
 #endif // IMAGEPERSISTENCE_H

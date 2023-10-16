@@ -51,6 +51,7 @@ private:
 
     // Right-Bottom Details
     QVBoxLayout* _detailsLayout;
+    QLabel* _labelHistogram;
     // }
 
     // Menu

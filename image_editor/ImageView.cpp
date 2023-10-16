@@ -38,7 +38,7 @@ ImageView::ImageView(QWidget *parent)
 
     // Right side top settings
     _settingsLayout = new QVBoxLayout();
-    _editLayout->addLayout(_settingsLayout);
+    _editLayout->addLayout(_settingsLayout, 70);
     _settingsLayout->setAlignment(Qt::AlignTop);
     _buttonFlipHorizontal = new QPushButton("Flip Horizontal");
     _buttonFlipVertical = new QPushButton("Flip Vertical");
@@ -53,7 +53,10 @@ ImageView::ImageView(QWidget *parent)
 
     // Right side bottom data
     _detailsLayout = new QVBoxLayout();
-    _editLayout->addLayout(_detailsLayout);
+    _editLayout->addLayout(_detailsLayout, 30);
+    _labelHistogram = new QLabel();
+    _labelHistogram->setAlignment(Qt::AlignCenter);
+    _detailsLayout->addWidget(_labelHistogram);
 
 
     _menuBar = new QMenuBar(this);
@@ -65,7 +68,7 @@ ImageView::ImageView(QWidget *parent)
     _fileMenu->addAction(_actionLoad);
 
     _actionSave = new QAction("Save");
-    //_actionSave->setShortcut(QKeySequence::fromString("Ctrl+S"));
+    _actionSave->setShortcut(QKeySequence::fromString("Ctrl+S"));
     _actionSave->setStatusTip("Save the current edited image.");
     _fileMenu->addAction(_actionSave);
 
@@ -105,6 +108,9 @@ void ImageView::onImageLoaded()
 {
     _imageLabel->setFixedSize(_imageLabel->size());
     _imageLabel->setPixmap( _model->getEditedImageQPixmap( _imageLabel->size() ) );
+
+    _labelHistogram->setFixedSize(_labelHistogram->size());
+    _labelHistogram->setPixmap(_model->getHistogram(_labelHistogram->size()));
 }
 
 void ImageView::onLoadAction()
@@ -118,6 +124,12 @@ void ImageView::onLoadAction()
 
 void ImageView::onSaveAction()
 {
+    if(!_model->isImageLoaded())
+    {
+        qDebug() << "Model's image is not loaded yet.";
+        return;
+    }
+
     QString path = QFileDialog::getSaveFileName(this, "Save image", "", "Images (*.JPG *.jpg *.png *.bmp)");
     if(path != "") {
         _model->saveImage(path);
