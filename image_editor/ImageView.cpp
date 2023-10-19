@@ -50,10 +50,12 @@ ImageView::ImageView(QWidget *parent)
     _settingsLayout->addWidget(_buttonRotate90Plus);
     _settingsLayout->addWidget(_buttonRotate90Minus);
     _settingsLayout->addWidget(_checkboxToggleScale);
+    _checkboxToggleScale->setCheckState(Qt::Checked);
 
     // Right side bottom data
     _detailsLayout = new QVBoxLayout();
     _editLayout->addLayout(_detailsLayout, 30);
+    _detailsLayout->setSpacing(0);
     _labelHistogram = new QLabel();
     _labelHistogram->setAlignment(Qt::AlignCenter);
     _detailsLayout->addWidget(_labelHistogram);
@@ -118,7 +120,6 @@ void ImageView::onLoadAction()
     QString path = QFileDialog::getOpenFileName(this, "Open image", "", "Images (*.JPG *.jpg *.png *.bmp)");
     if(path != "") {
         _model->loadImage(path);
-        _checkboxToggleScale->setCheckState(Qt::Checked);
     }
 }
 
