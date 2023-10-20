@@ -41,7 +41,6 @@ private:
     bool _toggleImageFillSpace;
 
     cv::Mat resizeMatrix(cv::Mat input, QSize availableSize);
-    cv::Mat resizeMatrixBySteps(cv::Mat input, QSize targetSize, cv::InterpolationFlags interpolation, int steps);
 
 signals:
     void imageLoaded();

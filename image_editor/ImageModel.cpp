@@ -76,8 +76,6 @@ cv::Mat ImageModel::resizeMatrix(cv::Mat input, QSize availableSize)
         newHeight = outHeight;
     }
 
-    //img = this->resizeMatrixBySteps(img, QSize(newWidth, newHeight), interpolation, 20);
-
     cv::resize(img,
                img,
                cv::Size(),
@@ -85,47 +83,7 @@ cv::Mat ImageModel::resizeMatrix(cv::Mat input, QSize availableSize)
                (newHeight / inHeight),
                interpolation);
 
-
-
-    /* Sharpening */
-    /*cv::Mat imgGaussianBlur;
-    cv::GaussianBlur(img, imgGaussianBlur, cv::Size(0,0), 3);
-    cv::addWeighted(img, 1.5, imgGaussianBlur, -0.5, 0, img);*/
-
     return img;
-}
-
-
-cv::Mat ImageModel::resizeMatrixBySteps(cv::Mat input, QSize targetSize, cv::InterpolationFlags interpolation, int steps)
-{
-    if(steps <= 1)
-        return input;
-
-    cv::Mat img = input;
-    float inWidth = img.cols;
-    float inHeight = img.rows;
-    float outWidth = targetSize.width();
-    float outHeight = targetSize.height();
-    float stepWidth = 0;
-    float stepHeight = 0;
-
-    stepWidth = (inWidth - outWidth) / steps;
-    stepHeight = (inHeight - outHeight) / steps;
-
-    for(int i = 1; i < steps; i++)
-    {
-        // (int) conversion rounds down!!!
-        qDebug() << "W => " << inWidth + (i*stepWidth) << "int -> " << (int)(inWidth + (i*stepWidth));
-        qDebug() << "H => " << inHeight + (i*stepHeight) << "int -> " << (int)(inHeight + (i*stepHeight));
-        cv::resize(img,
-                   img,
-                   cv::Size(inWidth + (i*stepWidth), inHeight + (i*stepHeight)),
-                   0,
-                   0,
-                   interpolation);
-    }
-
-    return input;
 }
 
 QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
@@ -181,7 +139,7 @@ void ImageModel::editAutoWhiteBalance()
     float percent = 1;
     //assert(in.channels() == 3);
     //assert(percent > 0 && percent < 100);
-    float half_percent = percent / 200.0f;
+    float halfPercent = percent / 200.0f;
 
     std::vector<cv::Mat> bgrChannelSplit;
     cv::split(this->_data->image,bgrChannelSplit);
@@ -190,8 +148,8 @@ void ImageModel::editAutoWhiteBalance()
         cv::Mat monoImage;
         bgrChannelSplit[i].reshape(1,1).copyTo(monoImage);
         cv::sort(monoImage,monoImage,cv::SORT_EVERY_ROW + cv::SORT_ASCENDING);
-        int lowval = monoImage.at<uchar>(cvFloor(((float)monoImage.cols) * half_percent));
-        int highval = monoImage.at<uchar>(cvCeil(((float)monoImage.cols) * (1.0 - half_percent)));
+        int lowval = monoImage.at<uchar>(cvFloor(((float)monoImage.cols) * halfPercent));
+        int highval = monoImage.at<uchar>(cvCeil(((float)monoImage.cols) * (1.0 - halfPercent)));
 
         //saturate below the low percentile and above the high percentile
         bgrChannelSplit[i].setTo(lowval,bgrChannelSplit[i] < lowval);
