@@ -53,7 +53,7 @@ ImageView::ImageView(QWidget *parent)
     _settingsLayout->addWidget(_buttonRotate90Plus);
     _settingsLayout->addWidget(_buttonRotate90Minus);
     _settingsLayout->addWidget(_checkboxToggleScale);
-    _checkboxToggleScale->setCheckState(Qt::Checked);
+    _checkboxToggleScale->setCheckable(false);
     _settingsLayout->addWidget(_buttonAutoWhiteBalance);
 
     // Right side bottom data
@@ -103,12 +103,13 @@ ImageView::ImageView(QWidget *parent)
     connect(_buttonRotate90Minus, &QPushButton::clicked, this, [this](){
         _model->editRotate90Minus();
     });
-    connect(_checkboxToggleScale, &QCheckBox::stateChanged, this, [this](){
+    connect(_checkboxToggleScale, &QCheckBox::clicked, this, [this](){
         _model->editToggleImageScale( _checkboxToggleScale->isChecked() );
     });
     connect(_buttonAutoWhiteBalance, &QPushButton::clicked, this, [this](){
         this->setCursor(Qt::CursorShape::BusyCursor);
         _model->editAutoWhiteBalance();
+        this->setCursor(Qt::CursorShape::ArrowCursor);
     });
 
     setMenuBar(_menuBar);
@@ -120,6 +121,8 @@ ImageView::~ImageView()
 
 void ImageView::onImageLoaded()
 {
+    qDebug() << "onImageLoaded emited at " << QTime::currentTime();
+
     _imageGraphicsScene = new QGraphicsScene(this);
     _imageGraphicsScene->addPixmap(_model->getEditedImageQPixmap( _imageGraphicsView->size() ));
     _imageGraphicsView->setScene(_imageGraphicsScene);
@@ -128,7 +131,7 @@ void ImageView::onImageLoaded()
     _histogramGraphicsScene->addPixmap(_model->getHistogram(_histogramGraphicsView->size()));
     _histogramGraphicsView->setScene(_histogramGraphicsScene);
 
-    this->setCursor(Qt::CursorShape::ArrowCursor);
+    _checkboxToggleScale->setCheckable(true);
 }
 
 void ImageView::onLoadAction()
@@ -136,6 +139,7 @@ void ImageView::onLoadAction()
     QString path = QFileDialog::getOpenFileName(this, "Open image", "", "Images (*.JPG *.jpg *.png *.bmp)");
     if(path != "") {
         _model->loadImage(path);
+        _checkboxToggleScale->setCheckState(Qt::Checked);
     }
 }
 

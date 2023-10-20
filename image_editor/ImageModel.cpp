@@ -15,8 +15,11 @@ void ImageModel::loadImage(QString path)
 
 void ImageModel::saveImage(QString path)
 {
+    // Edge cases
+    if(!this->isImageLoaded())
+        return;
+
     _persistence->save(path, this->_data);
-    //cv::imwrite(path.toStdString(), this->_data.image);
 }
 
 bool ImageModel::isImageLoaded()
@@ -42,6 +45,10 @@ QPixmap ImageModel::getEditedImageQPixmap(QSize imageLabelSize)
 
 cv::Mat ImageModel::resizeMatrix(cv::Mat input, QSize availableSize)
 {
+    // Edge cases
+    if(!this->isImageLoaded())
+        return input;
+
     if(!this->_toggleImageFillSpace)
         return input;
 
@@ -88,6 +95,10 @@ cv::Mat ImageModel::resizeMatrix(cv::Mat input, QSize availableSize)
 
 QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 {
+    // Edge cases
+    if(!this->isImageLoaded())
+        return QPixmap();           // TODO: Revisit this solution to edge case, maybe EMIT some problem? THROW error?
+
     float width = histogramLabelSize.width()-10;
     float height = histogramLabelSize.height()-10;
     cv::Mat img(height, width, CV_8UC3, cv::Scalar(0,0,0));
@@ -106,36 +117,60 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 
 void ImageModel::editFlipHorizontal()
 {
+    // Edge cases
+    if(!this->isImageLoaded())
+        return;
+
     cv::flip(this->_data->image, this->_data->image, 0);
     emit imageLoaded();
 }
 
 void ImageModel::editFlipVertical()
 {
+    // Edge cases
+    if(!this->isImageLoaded())
+        return;
+
     cv::flip(this->_data->image, this->_data->image, 1);
     emit imageLoaded();
 }
 
 void ImageModel::editRotate90Plus()
 {
+    // Edge cases
+    if(!this->isImageLoaded())
+        return;
+
     cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_CLOCKWISE);
     emit imageLoaded();
 }
 
 void ImageModel::editRotate90Minus()
 {
+    // Edge cases
+    if(!this->isImageLoaded())
+        return;
+
     cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_COUNTERCLOCKWISE);
     emit imageLoaded();
 }
 
 void ImageModel::editToggleImageScale(bool toggle)
 {
+    // Edge cases
+    if(!this->isImageLoaded())
+        return;
+
    this->_toggleImageFillSpace = toggle;
    emit imageLoaded();
 }
 
 void ImageModel::editAutoWhiteBalance()
 {
+    // Edge cases
+    if(!this->isImageLoaded())
+        return;
+
     float percent = 1;
     //assert(in.channels() == 3);
     //assert(percent > 0 && percent < 100);
