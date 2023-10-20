@@ -29,8 +29,12 @@ ImageView::ImageView(QWidget *parent)
     _imageLabel->setAlignment(Qt::AlignCenter);
     _layoutImageContainer = new QVBoxLayout();
     _layoutMain->addLayout(_layoutImageContainer, 66);
-    _layoutImageContainer->addWidget(_imageLabel);
-    //qDebug() << _imageLabel->size().width();
+    //_layoutImageContainer->addWidget(_imageLabel);
+
+    _imageGraphicsScene = new QGraphicsScene(this);
+    _imageGraphicsView = new QGraphicsView(this);
+    _layoutImageContainer->addWidget(_imageGraphicsView);
+
 
     // Right side
     _editLayout = new QVBoxLayout();
@@ -55,10 +59,14 @@ ImageView::ImageView(QWidget *parent)
     // Right side bottom data
     _detailsLayout = new QVBoxLayout();
     _editLayout->addLayout(_detailsLayout, 30);
-    _detailsLayout->setSpacing(0);
-    _labelHistogram = new QLabel();
-    _labelHistogram->setAlignment(Qt::AlignCenter);
-    _detailsLayout->addWidget(_labelHistogram);
+    //_detailsLayout->setSpacing(0);
+    //_labelHistogram = new QLabel();
+    //_labelHistogram->setAlignment(Qt::AlignCenter);
+    //_detailsLayout->addWidget(_labelHistogram);
+
+    _histogramGraphicsScene = new QGraphicsScene(this);
+    _histogramGraphicsView = new QGraphicsView(this);
+    _detailsLayout->addWidget(_histogramGraphicsView);
 
 
     _menuBar = new QMenuBar(this);
@@ -108,11 +116,19 @@ ImageView::~ImageView()
 
 void ImageView::onImageLoaded()
 {
-    _imageLabel->setFixedSize(_imageLabel->size());
-    _imageLabel->setPixmap( _model->getEditedImageQPixmap( _imageLabel->size() ) );
+    //_imageLabel->setFixedSize(_imageLabel->size());
+    //_imageLabel->setPixmap( _model->getEditedImageQPixmap( _imageLabel->size() ) );
 
-    _labelHistogram->setFixedSize(_labelHistogram->size());
-    _labelHistogram->setPixmap(_model->getHistogram(_labelHistogram->size()));
+    _imageGraphicsScene = new QGraphicsScene(this);
+    _imageGraphicsScene->addPixmap(_model->getEditedImageQPixmap( _imageGraphicsView->size() ));
+    _imageGraphicsView->setScene(_imageGraphicsScene);
+
+    //_labelHistogram->setFixedSize(_labelHistogram->size());
+    //_labelHistogram->setPixmap(_model->getHistogram(_labelHistogram->size()));
+
+    _histogramGraphicsScene = new QGraphicsScene(this);
+    _histogramGraphicsScene->addPixmap(_model->getHistogram(_histogramGraphicsView->size()));
+    _histogramGraphicsView->setScene(_histogramGraphicsScene);
 }
 
 void ImageView::onLoadAction()

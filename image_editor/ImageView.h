@@ -11,6 +11,8 @@
 #include <QCheckBox>
 
 #include <QDebug>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -37,6 +39,9 @@ private:
     QVBoxLayout* _layoutImageContainer;
     QLabel* _imageLabel;
 
+    QGraphicsScene* _imageGraphicsScene;
+    QGraphicsView* _imageGraphicsView;
+
     // { #Right side
     QVBoxLayout* _editLayout;
 
@@ -52,6 +57,9 @@ private:
     // Right-Bottom Details
     QVBoxLayout* _detailsLayout;
     QLabel* _labelHistogram;
+
+    QGraphicsScene* _histogramGraphicsScene;
+    QGraphicsView* _histogramGraphicsView;
     // }
 
     // Menu

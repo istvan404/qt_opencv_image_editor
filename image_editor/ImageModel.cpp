@@ -26,7 +26,10 @@ bool ImageModel::isImageLoaded()
 
 QPixmap ImageModel::getEditedImageQPixmap(QSize imageLabelSize)
 {
-    cv::Mat img = this->resizeMatrix(this->_data->image, imageLabelSize);
+    QSize imageSize = QSize( imageLabelSize.width()-10, imageLabelSize.height()-10 );
+
+    cv::Mat img = this->resizeMatrix(this->_data->image, imageSize);
+    //cv::Mat img = this->_data->image;
 
     QImage qimg(img.data,
                 img.cols,
@@ -127,15 +130,18 @@ cv::Mat ImageModel::resizeMatrixBySteps(cv::Mat input, QSize targetSize, cv::Int
 
 QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 {
-    float width = histogramLabelSize.width();
-    float height = histogramLabelSize.height();
+    float width = histogramLabelSize.width()-10;
+    float height = histogramLabelSize.height()-10;
     cv::Mat img(height, width, CV_8UC3, cv::Scalar(0,0,0));
+
+    cv::line(img, cv::Point(0,0), cv::Point(0, 100), cv::Scalar(255,0,0),1);
+    cv::line(img, cv::Point(0,0), cv::Point(100, 0), cv::Scalar(255,0,0),1);
 
     QImage qimg(img.data,
                 img.cols,
                 img.rows,
                 static_cast<int>(img.step),
-                QImage::Format_Indexed8);
+                QImage::Format_RGB888);
 
     return QPixmap::fromImage(qimg.rgbSwapped());
 }
