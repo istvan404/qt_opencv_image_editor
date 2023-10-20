@@ -33,6 +33,7 @@ public:
     void editRotate90Plus();
     void editRotate90Minus();
     void editToggleImageScale(bool toggle);
+    void editAutoWhiteBalance();
 
 private:
     ImagePersistenceInterface* _persistence = nullptr;

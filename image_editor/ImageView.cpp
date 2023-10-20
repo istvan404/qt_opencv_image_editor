@@ -25,8 +25,6 @@ ImageView::ImageView(QWidget *parent)
     _centralWidget->setLayout(_layoutMain);
 
     // Left side
-    _imageLabel = new QLabel();
-    _imageLabel->setAlignment(Qt::AlignCenter);
     _layoutImageContainer = new QVBoxLayout();
     _layoutMain->addLayout(_layoutImageContainer, 66);
     //_layoutImageContainer->addWidget(_imageLabel);
@@ -49,20 +47,18 @@ ImageView::ImageView(QWidget *parent)
     _buttonRotate90Plus = new QPushButton("Rotate +90 Degrees");
     _buttonRotate90Minus = new QPushButton("Rotate -90 Degrees");
     _checkboxToggleScale = new QCheckBox("Image scale to fit space");
+    _buttonAutoWhiteBalance = new QPushButton("Auto White Balance");
     _settingsLayout->addWidget(_buttonFlipHorizontal);
     _settingsLayout->addWidget(_buttonFlipVertical);
     _settingsLayout->addWidget(_buttonRotate90Plus);
     _settingsLayout->addWidget(_buttonRotate90Minus);
     _settingsLayout->addWidget(_checkboxToggleScale);
     _checkboxToggleScale->setCheckState(Qt::Checked);
+    _settingsLayout->addWidget(_buttonAutoWhiteBalance);
 
     // Right side bottom data
     _detailsLayout = new QVBoxLayout();
     _editLayout->addLayout(_detailsLayout, 30);
-    //_detailsLayout->setSpacing(0);
-    //_labelHistogram = new QLabel();
-    //_labelHistogram->setAlignment(Qt::AlignCenter);
-    //_detailsLayout->addWidget(_labelHistogram);
 
     _histogramGraphicsScene = new QGraphicsScene(this);
     _histogramGraphicsView = new QGraphicsView(this);
@@ -95,19 +91,27 @@ ImageView::ImageView(QWidget *parent)
     connect(_model, &ImageModel::imageLoaded, this, &ImageView::onImageLoaded);
 
     // Connect Right-Top Settings' Buttons To Slots
-    connect(_buttonFlipHorizontal, &QPushButton::clicked, this, [this](){ _model->editFlipHorizontal(); });
-    connect(_buttonFlipVertical, &QPushButton::clicked, this, [this](){ _model->editFlipVertical(); });
-    connect(_buttonRotate90Plus, &QPushButton::clicked, this, [this](){ _model->editRotate90Plus(); });
-    connect(_buttonRotate90Minus, &QPushButton::clicked, this, [this](){ _model->editRotate90Minus(); });
-    connect(_checkboxToggleScale, &QCheckBox::stateChanged, this, [this](){ _model->editToggleImageScale( _checkboxToggleScale->isChecked() ); });
+    connect(_buttonFlipHorizontal, &QPushButton::clicked, this, [this](){
+        _model->editFlipHorizontal();
+    });
+    connect(_buttonFlipVertical, &QPushButton::clicked, this, [this](){
+        _model->editFlipVertical();
+    });
+    connect(_buttonRotate90Plus, &QPushButton::clicked, this, [this](){
+        _model->editRotate90Plus();
+    });
+    connect(_buttonRotate90Minus, &QPushButton::clicked, this, [this](){
+        _model->editRotate90Minus();
+    });
+    connect(_checkboxToggleScale, &QCheckBox::stateChanged, this, [this](){
+        _model->editToggleImageScale( _checkboxToggleScale->isChecked() );
+    });
+    connect(_buttonAutoWhiteBalance, &QPushButton::clicked, this, [this](){
+        this->setCursor(Qt::CursorShape::BusyCursor);
+        _model->editAutoWhiteBalance();
+    });
 
     setMenuBar(_menuBar);
-
-    qDebug() << "Main layout size: " << _layoutMain->sizeHint();
-    qDebug() << "ImageContainer layout size: " << _layoutImageContainer->sizeHint();
-    qDebug() << "_editLayout size: " << _editLayout->sizeHint();
-    qDebug() << "_imageLabel size: " << _imageLabel->size();
-    //_imageLabel->setFixedSize(_imageLabel->size());
 }
 
 ImageView::~ImageView()
@@ -116,19 +120,15 @@ ImageView::~ImageView()
 
 void ImageView::onImageLoaded()
 {
-    //_imageLabel->setFixedSize(_imageLabel->size());
-    //_imageLabel->setPixmap( _model->getEditedImageQPixmap( _imageLabel->size() ) );
-
     _imageGraphicsScene = new QGraphicsScene(this);
     _imageGraphicsScene->addPixmap(_model->getEditedImageQPixmap( _imageGraphicsView->size() ));
     _imageGraphicsView->setScene(_imageGraphicsScene);
 
-    //_labelHistogram->setFixedSize(_labelHistogram->size());
-    //_labelHistogram->setPixmap(_model->getHistogram(_labelHistogram->size()));
-
     _histogramGraphicsScene = new QGraphicsScene(this);
     _histogramGraphicsScene->addPixmap(_model->getHistogram(_histogramGraphicsView->size()));
     _histogramGraphicsView->setScene(_histogramGraphicsScene);
+
+    this->setCursor(Qt::CursorShape::ArrowCursor);
 }
 
 void ImageView::onLoadAction()

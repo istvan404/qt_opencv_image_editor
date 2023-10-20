@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QCursor>
 
 #include <QDebug>
 #include <QGraphicsScene>
@@ -37,8 +38,6 @@ private:
 
     // Left side
     QVBoxLayout* _layoutImageContainer;
-    QLabel* _imageLabel;
-
     QGraphicsScene* _imageGraphicsScene;
     QGraphicsView* _imageGraphicsView;
 
@@ -52,12 +51,11 @@ private:
     QPushButton* _buttonRotate90Plus;
     QPushButton* _buttonRotate90Minus;
     QCheckBox* _checkboxToggleScale;
+    QPushButton* _buttonAutoWhiteBalance;
 
 
     // Right-Bottom Details
     QVBoxLayout* _detailsLayout;
-    QLabel* _labelHistogram;
-
     QGraphicsScene* _histogramGraphicsScene;
     QGraphicsView* _histogramGraphicsView;
     // }

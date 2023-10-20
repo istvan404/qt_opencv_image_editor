@@ -175,3 +175,32 @@ void ImageModel::editToggleImageScale(bool toggle)
    this->_toggleImageFillSpace = toggle;
    emit imageLoaded();
 }
+
+void ImageModel::editAutoWhiteBalance()
+{
+    float percent = 1;
+    //assert(in.channels() == 3);
+    //assert(percent > 0 && percent < 100);
+    float half_percent = percent / 200.0f;
+
+    std::vector<cv::Mat> bgrChannelSplit;
+    cv::split(this->_data->image,bgrChannelSplit);
+    for(int i=0;i<3;i++) {
+        //find the low and high precentile values (based on the input percentile)
+        cv::Mat monoImage;
+        bgrChannelSplit[i].reshape(1,1).copyTo(monoImage);
+        cv::sort(monoImage,monoImage,cv::SORT_EVERY_ROW + cv::SORT_ASCENDING);
+        int lowval = monoImage.at<uchar>(cvFloor(((float)monoImage.cols) * half_percent));
+        int highval = monoImage.at<uchar>(cvCeil(((float)monoImage.cols) * (1.0 - half_percent)));
+
+        //saturate below the low percentile and above the high percentile
+        bgrChannelSplit[i].setTo(lowval,bgrChannelSplit[i] < lowval);
+        bgrChannelSplit[i].setTo(highval,bgrChannelSplit[i] > highval);
+
+        //scale the channel
+        cv::normalize(bgrChannelSplit[i],bgrChannelSplit[i],0,255,cv::NORM_MINMAX);
+    }
+    cv::merge(bgrChannelSplit,this->_data->image);
+
+    emit imageLoaded();
+}
