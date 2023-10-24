@@ -54,6 +54,8 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 
     cv::Mat img(height, width, CV_8UC3, cv::Scalar(10,10,10));
 
+    img = generateHistogramRGB(img);
+
     img = generateHistogramGridOverlay(img, 6, 4);
 
     QImage qimg(img.data,
@@ -63,6 +65,33 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
                 QImage::Format_RGB888);
 
     return QPixmap::fromImage(qimg.rgbSwapped());
+}
+
+cv::Mat ImageModel::generateHistogramBW(cv::Mat source)
+{
+    cv::Mat img = source;
+
+    return img;
+}
+
+cv::Mat ImageModel::generateHistogramRGB(cv::Mat source)
+{
+    cv::Mat img = source;
+    int histSize = 256;
+    int b_channel[256];
+    int g_channel[256];
+    int r_channel[256];
+    for(int i = 0; i < histSize; i++)
+    {
+        b_channel[i] = 0;
+        g_channel[i] = 0;
+        r_channel[i] = 0;
+    }
+
+    std::vector<cv::Mat> bgr_channels;
+    cv::split(img, bgr_channels);
+
+    return img;
 }
 
 cv::Mat ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows)
