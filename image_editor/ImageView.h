@@ -52,6 +52,8 @@ private:
     QPushButton* _buttonRotate90Minus;
     QCheckBox* _checkboxToggleScale;
     QPushButton* _buttonAutoWhiteBalance;
+    QPushButton* _buttonZoomOut;
+    QPushButton* _buttonZoomIn;
 
 
     // Right-Bottom Details
@@ -77,6 +79,8 @@ private slots:
     // Model's signal slot
     void onImageLoaded();
     // Settings button slots
+    void onButtonZoomInClicked();
+    void onButtonZoomOutClicked();
     //void onButtonFlipHorizontal(); // ?
     //void onButtonFlipVertical(); // ?
 };

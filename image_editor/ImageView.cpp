@@ -48,6 +48,8 @@ ImageView::ImageView(QWidget *parent)
     _buttonRotate90Minus = new QPushButton("Rotate -90 Degrees");
     _checkboxToggleScale = new QCheckBox("Image scale to fit space");
     _buttonAutoWhiteBalance = new QPushButton("Auto White Balance");
+    _buttonZoomIn = new QPushButton("Zoom In");
+    _buttonZoomOut = new QPushButton("Zoom Out");
     _settingsLayout->addWidget(_buttonFlipHorizontal);
     _settingsLayout->addWidget(_buttonFlipVertical);
     _settingsLayout->addWidget(_buttonRotate90Plus);
@@ -55,6 +57,8 @@ ImageView::ImageView(QWidget *parent)
     _settingsLayout->addWidget(_checkboxToggleScale);
     _checkboxToggleScale->setCheckable(false);
     _settingsLayout->addWidget(_buttonAutoWhiteBalance);
+    _settingsLayout->addWidget(_buttonZoomIn);
+    _settingsLayout->addWidget(_buttonZoomOut);
 
     // Right side bottom data
     _detailsLayout = new QVBoxLayout();
@@ -87,7 +91,7 @@ ImageView::ImageView(QWidget *parent)
     connect( _actionSave, &QAction::triggered, this, &ImageView::onSaveAction);
     connect( _actionExit, &QAction::triggered, this, &ImageView::onExitAction);
 
-    // Connect Model Signals To View
+    // Connect Model Signals To View's Slot
     connect(_model, &ImageModel::imageLoaded, this, &ImageView::onImageLoaded);
 
     // Connect Right-Top Settings' Buttons To Slots
@@ -111,12 +115,26 @@ ImageView::ImageView(QWidget *parent)
         _model->editAutoWhiteBalance();
         this->setCursor(Qt::CursorShape::ArrowCursor);
     });
+    connect(_buttonZoomIn, SIGNAL(clicked(bool)), this, SLOT(onButtonZoomInClicked()));
+    connect(_buttonZoomOut, SIGNAL(clicked(bool)), this, SLOT(onButtonZoomOutClicked()));
 
     setMenuBar(_menuBar);
 }
 
 ImageView::~ImageView()
 {
+}
+
+void ImageView::onButtonZoomInClicked()
+{
+    qDebug() << "Zoom In Clicked";
+    _imageGraphicsView->scale(1.1,1.1);
+}
+
+void ImageView::onButtonZoomOutClicked()
+{
+    qDebug() << "Zoom Out Clicked";
+    _imageGraphicsView->scale(0.9,0.9);
 }
 
 void ImageView::onImageLoaded()
@@ -136,7 +154,7 @@ void ImageView::onImageLoaded()
 
 void ImageView::onLoadAction()
 {
-    QString path = QFileDialog::getOpenFileName(this, "Open image", "", "Images (*.JPG *.jpg *.png *.bmp)");
+    QString path = QFileDialog::getOpenFileName(this, "Select an Image", "", "Images (*.jpg *.png *.bmp)");
     if(path != "") {
         _model->loadImage(path);
         _checkboxToggleScale->setCheckState(Qt::Checked);
@@ -151,7 +169,7 @@ void ImageView::onSaveAction()
         return;
     }
 
-    QString path = QFileDialog::getSaveFileName(this, "Save image", "", "Images (*.JPG *.jpg *.png *.bmp)");
+    QString path = QFileDialog::getSaveFileName(this, "Save image", "", "Images (*.jpg *.png *.bmp)");
     if(path != "") {
         _model->saveImage(path);
     }
