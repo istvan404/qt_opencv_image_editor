@@ -4,7 +4,7 @@ ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
     : QObject{parent}
 {
     _persistence = persistence;
-    _toggleImageFillSpace = true;
+    _toggleImageFillSpace = false;
 }
 
 void ImageModel::loadImage(QString path)
@@ -51,6 +51,8 @@ cv::Mat ImageModel::resizeMatrix(cv::Mat input, QSize availableSize)
 
     if(!this->_toggleImageFillSpace)
         return input;
+
+    qDebug() << "IMG will be resized.";
 
     cv::Mat img = input;
     float inWidth = input.cols;
