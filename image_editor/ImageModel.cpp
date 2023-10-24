@@ -45,12 +45,16 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
     if(!this->isImageLoaded())
         return QPixmap();           // TODO: Revisit this solution to edge case, maybe EMIT some problem? THROW error?
 
-    float width = histogramLabelSize.width()-10;
-    float height = histogramLabelSize.height()-10;
-    cv::Mat img(height, width, CV_8UC3, cv::Scalar(0,0,0));
+    int width = histogramLabelSize.width();
+    if(width % 2 != 0)
+        width++;
+    int height = histogramLabelSize.height();
+    if(height % 2 != 0)
+        height++;
 
-    cv::line(img, cv::Point(0,0), cv::Point(0, 100), cv::Scalar(255,0,0),1);
-    cv::line(img, cv::Point(0,0), cv::Point(100, 0), cv::Scalar(255,0,0),1);
+    cv::Mat img(height, width, CV_8UC3, cv::Scalar(10,10,10));
+
+    img = generateHistogramGridOverlay(img, 14, 7);
 
     QImage qimg(img.data,
                 img.cols,
@@ -59,6 +63,39 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
                 QImage::Format_RGB888);
 
     return QPixmap::fromImage(qimg.rgbSwapped());
+}
+
+cv::Mat ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows)
+{
+    cv::Mat img = source;
+    int width = img.cols;
+    int height = img.rows;
+    int thickness = 1;
+    cv::Scalar color = cv::Scalar(100,100,100);
+
+    cv::rectangle(img, cv::Rect(cv::Point(0,0), cv::Point(width, height)), color, thickness);
+
+    int verticalSpacing = (width - gridCols*thickness*2) / gridCols;
+    for(int i = 1; i <= gridCols; i++)
+    {
+        cv::line(img,
+                 cv::Point(i*verticalSpacing+2, 0),
+                 cv::Point(i*verticalSpacing+2, height),
+                 color,
+                 thickness);
+    }
+
+    int horizontalSpacing = (height - gridRows*thickness*2) / gridRows;
+    for(int i = 1; i <= gridRows; i++)
+    {
+        cv::line(img,
+                 cv::Point(0, i*horizontalSpacing-3),
+                 cv::Point(width, i*horizontalSpacing-3),
+                 color,
+                 thickness);
+    }
+
+    return img;
 }
 
 void ImageModel::editFlipHorizontal()
