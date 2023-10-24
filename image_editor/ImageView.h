@@ -50,7 +50,6 @@ private:
     QPushButton* _buttonFlipVertical;
     QPushButton* _buttonRotate90Plus;
     QPushButton* _buttonRotate90Minus;
-    QCheckBox* _checkboxToggleScale;
     QPushButton* _buttonAutoWhiteBalance;
     QPushButton* _buttonZoomOut;
     QPushButton* _buttonZoomIn;

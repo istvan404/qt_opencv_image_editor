@@ -46,7 +46,6 @@ ImageView::ImageView(QWidget *parent)
     _buttonFlipVertical = new QPushButton("Flip Vertical");
     _buttonRotate90Plus = new QPushButton("Rotate +90 Degrees");
     _buttonRotate90Minus = new QPushButton("Rotate -90 Degrees");
-    _checkboxToggleScale = new QCheckBox("Image scale to fit space");
     _buttonAutoWhiteBalance = new QPushButton("Auto White Balance");
     _buttonZoomIn = new QPushButton("Zoom In");
     _buttonZoomOut = new QPushButton("Zoom Out");
@@ -55,8 +54,6 @@ ImageView::ImageView(QWidget *parent)
     _settingsLayout->addWidget(_buttonFlipVertical);
     _settingsLayout->addWidget(_buttonRotate90Plus);
     _settingsLayout->addWidget(_buttonRotate90Minus);
-    _settingsLayout->addWidget(_checkboxToggleScale);
-    _checkboxToggleScale->setCheckable(false);
     _settingsLayout->addWidget(_buttonAutoWhiteBalance);
     _settingsLayout->addWidget(_buttonZoomIn);
     _settingsLayout->addWidget(_buttonZoomOut);
@@ -109,9 +106,6 @@ ImageView::ImageView(QWidget *parent)
     connect(_buttonRotate90Minus, &QPushButton::clicked, this, [this](){
         _model->editRotate90Minus();
     });
-    connect(_checkboxToggleScale, &QCheckBox::clicked, this, [this](){
-        _model->editToggleImageScale( _checkboxToggleScale->isChecked() );
-    });
     connect(_buttonAutoWhiteBalance, &QPushButton::clicked, this, [this](){
         this->setCursor(Qt::CursorShape::BusyCursor);
         _model->editAutoWhiteBalance();
@@ -152,7 +146,7 @@ void ImageView::onImageLoaded()
     qDebug() << "onImageLoaded emited at " << QTime::currentTime();
 
     _imageGraphicsScene = new QGraphicsScene(this);
-    _imageGraphicsScene->addPixmap(_model->getEditedImageQPixmap( _imageGraphicsView->size() ));
+    _imageGraphicsScene->addPixmap(_model->getEditedImageQPixmap());
     _imageGraphicsView->setScene(_imageGraphicsScene);
     _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 
@@ -161,7 +155,6 @@ void ImageView::onImageLoaded()
     _histogramGraphicsView->setScene(_histogramGraphicsScene);
     _histogramGraphicsView->fitInView(_histogramGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 
-    _checkboxToggleScale->setCheckable(true);
 }
 
 void ImageView::onLoadAction()

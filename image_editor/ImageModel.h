@@ -22,9 +22,9 @@ public:
     void loadImage(QString path);
     void saveImage(QString path);
 
-    QPixmap getEditedImageQPixmap(QSize imageLabelSize);
+    QPixmap getEditedImageQPixmap();
     // TODO:
-    QPixmap getOriginalImageQPixmap(QSize imageLabelSize); // Save the edited
+    QPixmap getOriginalImageQPixmap(); // Save the edited
 
     // Histogram:
     QPixmap getHistogram(QSize histogramLabelSize);
@@ -34,13 +34,11 @@ public:
     void editFlipVertical();
     void editRotate90Plus();
     void editRotate90Minus();
-    void editToggleImageScale(bool toggle);
     void editAutoWhiteBalance();
 
 private:
     ImagePersistenceInterface* _persistence = nullptr;
     ImageData* _data = nullptr;
-    bool _toggleImageFillSpace;
 
     cv::Mat resizeMatrix(cv::Mat input, QSize availableSize);
 

@@ -4,7 +4,6 @@ ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
     : QObject{parent}
 {
     _persistence = persistence;
-    _toggleImageFillSpace = false;
 }
 
 void ImageModel::loadImage(QString path)
@@ -27,12 +26,9 @@ bool ImageModel::isImageLoaded()
     return this->_data != nullptr;
 }
 
-QPixmap ImageModel::getEditedImageQPixmap(QSize imageLabelSize)
+QPixmap ImageModel::getEditedImageQPixmap()
 {
-    QSize imageSize = QSize( imageLabelSize.width()-10, imageLabelSize.height()-10 );
-
-    cv::Mat img = this->resizeMatrix(this->_data->image, imageSize);
-    //cv::Mat img = this->_data->image;
+    cv::Mat img = this->_data->image;
 
     QImage qimg(img.data,
                 img.cols,
@@ -47,9 +43,6 @@ cv::Mat ImageModel::resizeMatrix(cv::Mat input, QSize availableSize)
 {
     // Edge cases
     if(!this->isImageLoaded())
-        return input;
-
-    if(!this->_toggleImageFillSpace)
         return input;
 
     qDebug() << "IMG will be resized.";
@@ -155,16 +148,6 @@ void ImageModel::editRotate90Minus()
 
     cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_COUNTERCLOCKWISE);
     emit imageLoaded();
-}
-
-void ImageModel::editToggleImageScale(bool toggle)
-{
-    // Edge cases
-    if(!this->isImageLoaded())
-        return;
-
-   this->_toggleImageFillSpace = toggle;
-   emit imageLoaded();
 }
 
 void ImageModel::editAutoWhiteBalance()
