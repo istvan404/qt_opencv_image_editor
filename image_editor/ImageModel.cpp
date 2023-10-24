@@ -54,7 +54,7 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 
     cv::Mat img(height, width, CV_8UC3, cv::Scalar(10,10,10));
 
-    img = generateHistogramGridOverlay(img, 14, 7);
+    img = generateHistogramGridOverlay(img, 6, 4);
 
     QImage qimg(img.data,
                 img.cols,
@@ -73,24 +73,26 @@ cv::Mat ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, i
     int thickness = 1;
     cv::Scalar color = cv::Scalar(100,100,100);
 
-    cv::rectangle(img, cv::Rect(cv::Point(0,0), cv::Point(width, height)), color, thickness);
+    cv::rectangle(img, cv::Rect(cv::Point(0,0), cv::Point(width, height)), color, thickness*2);
 
-    int verticalSpacing = (width - gridCols*thickness*2) / gridCols;
+    int verticalSpacing = (width - 2*thickness - gridCols*thickness) / (gridCols+1);
     for(int i = 1; i <= gridCols; i++)
     {
+        int spacing = i*verticalSpacing + thickness + thickness*(i-1);
         cv::line(img,
-                 cv::Point(i*verticalSpacing+2, 0),
-                 cv::Point(i*verticalSpacing+2, height),
+                 cv::Point(spacing+1, 0),
+                 cv::Point(spacing+1, height),
                  color,
                  thickness);
     }
 
-    int horizontalSpacing = (height - gridRows*thickness*2) / gridRows;
+    int horizontalSpacing = (height - 2*thickness - gridRows*thickness) / (gridRows+1);
     for(int i = 1; i <= gridRows; i++)
     {
+        int spacing = i*horizontalSpacing + thickness + thickness*(i-1);
         cv::line(img,
-                 cv::Point(0, i*horizontalSpacing-3),
-                 cv::Point(width, i*horizontalSpacing-3),
+                 cv::Point(0, spacing+1),
+                 cv::Point(width, spacing+1),
                  color,
                  thickness);
     }
