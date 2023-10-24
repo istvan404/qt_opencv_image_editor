@@ -187,6 +187,7 @@ void ImageView::onImageModelLoaded()
     qDebug() << "View catched model's ImageLoaded signal" << QTime::currentTime();
     reloadImage();
     _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
+    // Fixing the Histogram bug:
     _histogramGraphicsView->fitInView(_histogramGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 }
 
