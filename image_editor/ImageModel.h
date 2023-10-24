@@ -40,8 +40,6 @@ private:
     ImagePersistenceInterface* _persistence = nullptr;
     ImageData* _data = nullptr;
 
-    cv::Mat resizeMatrix(cv::Mat input, QSize availableSize);
-
     // Histogram:
     cv::Mat generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows);
     cv::Mat generateHistogramBW(cv::Mat source);

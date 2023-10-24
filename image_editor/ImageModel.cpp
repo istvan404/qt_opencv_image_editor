@@ -39,55 +39,6 @@ QPixmap ImageModel::getEditedImageQPixmap()
     return QPixmap::fromImage(qimg.rgbSwapped());
 }
 
-cv::Mat ImageModel::resizeMatrix(cv::Mat input, QSize availableSize)
-{
-    // Edge cases
-    if(!this->isImageLoaded())
-        return input;
-
-    qDebug() << "IMG will be resized.";
-
-    cv::Mat img = input;
-    float inWidth = input.cols;
-    float inHeight = input.rows;
-    float outWidth = availableSize.width();
-    float outHeight = availableSize.height();
-    float newWidth = 0;
-    float newHeight = 0;
-    float aspectRatio = inWidth / inHeight;
-    cv::InterpolationFlags interpolation;
-
-    if( inWidth > outWidth || inHeight > outHeight )    // Shrinking image
-        interpolation = cv::INTER_AREA;
-    else                                                // Stretching image
-        interpolation = cv::INTER_CUBIC;
-
-    if(aspectRatio > 1)         // Horizontal image
-    {
-        newWidth = outWidth;
-        newHeight = outWidth / aspectRatio;
-    }
-    else if(aspectRatio < 1)    // Vertical image
-    {
-        newHeight = outHeight;
-        newWidth = outHeight * aspectRatio;
-    }
-    else                        // Square image
-    {
-        newWidth = outWidth;
-        newHeight = outHeight;
-    }
-
-    cv::resize(img,
-               img,
-               cv::Size(),
-               (newWidth / inWidth),
-               (newHeight / inHeight),
-               interpolation);
-
-    return img;
-}
-
 QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 {
     // Edge cases
