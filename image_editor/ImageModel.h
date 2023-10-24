@@ -42,6 +42,12 @@ private:
 
     cv::Mat resizeMatrix(cv::Mat input, QSize availableSize);
 
+    // Histogram:
+    cv::Mat overlayGrid(int horizontalCount, int verticalCount);
+    cv::Mat generateHistogramBW(cv::Mat source);
+    cv::Mat generateHistogramRGB(cv::Mat source);
+
+
 signals:
     void imageLoaded();
 };
