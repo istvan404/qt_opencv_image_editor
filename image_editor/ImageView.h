@@ -3,12 +3,12 @@
 
 #include "ImageModel.h"
 #include <QMainWindow>
+#include <QMessageBox>
 #include <QMenuBar>
 #include <QFileDialog>
 #include <QBoxLayout>
 #include <QLabel>
 #include <QPushButton>
-#include <QCheckBox>
 #include <QCursor>
 
 #include <QDebug>
@@ -71,13 +71,16 @@ private:
     QAction* _actionSave;
     QAction* _actionExit;
 
+    void reloadImage();
+
 private slots:
     // MenuBar Actions' slots
     void onLoadAction();
     void onSaveAction();
     void onExitAction();
     // Model's signal slot
-    void onImageLoaded();
+    void onImageModelLoaded();
+    void onImageModelUpdated();
     // Settings button slots
     void onButtonZoomInClicked();
     void onButtonZoomOutClicked();

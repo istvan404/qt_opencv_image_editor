@@ -68,7 +68,7 @@ void ImageModel::editFlipHorizontal()
         return;
 
     cv::flip(this->_data->image, this->_data->image, 0);
-    emit imageLoaded();
+    emit imageUpdated();
 }
 
 void ImageModel::editFlipVertical()
@@ -78,7 +78,7 @@ void ImageModel::editFlipVertical()
         return;
 
     cv::flip(this->_data->image, this->_data->image, 1);
-    emit imageLoaded();
+    emit imageUpdated();
 }
 
 void ImageModel::editRotate90Plus()
@@ -88,7 +88,7 @@ void ImageModel::editRotate90Plus()
         return;
 
     cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_CLOCKWISE);
-    emit imageLoaded();
+    emit imageUpdated();
 }
 
 void ImageModel::editRotate90Minus()
@@ -98,7 +98,7 @@ void ImageModel::editRotate90Minus()
         return;
 
     cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_COUNTERCLOCKWISE);
-    emit imageLoaded();
+    emit imageUpdated();
 }
 
 void ImageModel::editAutoWhiteBalance()
@@ -107,7 +107,7 @@ void ImageModel::editAutoWhiteBalance()
     if(!this->isImageLoaded())
         return;
 
-    float percent = 1;
+    float percent = 2;
     //assert(in.channels() == 3);
     //assert(percent > 0 && percent < 100);
     float halfPercent = percent / 200.0f;
@@ -131,5 +131,5 @@ void ImageModel::editAutoWhiteBalance()
     }
     cv::merge(bgrChannelSplit,this->_data->image);
 
-    emit imageLoaded();
+    emit imageUpdated();
 }

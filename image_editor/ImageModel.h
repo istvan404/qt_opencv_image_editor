@@ -48,6 +48,7 @@ private:
 
 signals:
     void imageLoaded();
+    void imageUpdated();
 };
 
 #endif // IMAGEMODEL_H

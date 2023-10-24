@@ -4,7 +4,7 @@
 ImageView::ImageView(QWidget *parent)
     : QMainWindow(parent)
 {
-    setWindowTitle("Image Editor w/ OpenCV 4.8.1");
+    setWindowTitle("Image Editor - OpenCV 4.8.1");
     /*_windowWidth = new int(1280);
     _windowHeight = new int(720);
     resize(*_windowWidth,*_windowHeight);
@@ -91,7 +91,8 @@ ImageView::ImageView(QWidget *parent)
     connect( _actionExit, &QAction::triggered, this, &ImageView::onExitAction);
 
     // Connect Model Signals To View's Slot
-    connect(_model, &ImageModel::imageLoaded, this, &ImageView::onImageLoaded);
+    connect(_model, &ImageModel::imageLoaded, this, &ImageView::onImageModelLoaded);
+    connect(_model, &ImageModel::imageUpdated, this, &ImageView::onImageModelUpdated);
 
     // Connect Right-Top Settings' Buttons To Slots
     connect(_buttonFlipHorizontal, &QPushButton::clicked, this, [this](){
@@ -116,45 +117,83 @@ ImageView::ImageView(QWidget *parent)
     connect(_buttonZoomFit, SIGNAL(clicked(bool)), this, SLOT(onButtonZoomFitClicked()));
 
     setMenuBar(_menuBar);
+
+
+    _imageGraphicsScene = new QGraphicsScene(this);
+    _histogramGraphicsScene = new QGraphicsScene(this);
 }
 
 ImageView::~ImageView()
 {
 }
 
+void ImageView::reloadImage()
+{
+    _imageGraphicsScene = new QGraphicsScene(this);
+    _imageGraphicsScene->clear();
+    _imageGraphicsScene->addPixmap(_model->getEditedImageQPixmap());
+    _imageGraphicsView->setScene(_imageGraphicsScene);
+    _imageGraphicsView->update();
+
+    _histogramGraphicsScene = new QGraphicsScene(this);
+    _histogramGraphicsScene->clear();
+    _histogramGraphicsScene->addPixmap(_model->getHistogram(_histogramGraphicsView->size()));
+    _histogramGraphicsView->setScene(_histogramGraphicsScene);
+    _histogramGraphicsView->update();
+}
+
 void ImageView::onButtonZoomInClicked()
 {
-    qDebug() << "Zoom In Clicked";
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+
     _imageGraphicsView->scale(1.1,1.1);
 }
 
 void ImageView::onButtonZoomOutClicked()
 {
-    qDebug() << "Zoom Out Clicked";
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+
     _imageGraphicsView->scale(0.9,0.9);
 
 }
 
 void ImageView::onButtonZoomFitClicked()
 {
-    qDebug() << "Zoom Fit Clicked";
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+
     _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 }
 
-void ImageView::onImageLoaded()
+void ImageView::onImageModelLoaded()
 {
-    qDebug() << "onImageLoaded emited at " << QTime::currentTime();
-
-    _imageGraphicsScene = new QGraphicsScene(this);
-    _imageGraphicsScene->addPixmap(_model->getEditedImageQPixmap());
-    _imageGraphicsView->setScene(_imageGraphicsScene);
+    qDebug() << "View catched model's ImageLoaded signal" << QTime::currentTime();
+    reloadImage();
     _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
-
-    _histogramGraphicsScene = new QGraphicsScene(this);
-    _histogramGraphicsScene->addPixmap(_model->getHistogram(_histogramGraphicsView->size()));
-    _histogramGraphicsView->setScene(_histogramGraphicsScene);
     _histogramGraphicsView->fitInView(_histogramGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
+}
 
+void ImageView::onImageModelUpdated()
+{
+    qDebug() << "View catched model's ImageUpdated signal" << QTime::currentTime();
+    reloadImage();
 }
 
 void ImageView::onLoadAction()
@@ -162,7 +201,6 @@ void ImageView::onLoadAction()
     QString path = QFileDialog::getOpenFileName(this, "Select an Image", "", "Images (*.jpg *.png *.bmp)");
     if(path != "") {
         _model->loadImage(path);
-        //_checkboxToggleScale->setCheckState(Qt::Checked);
     }
 }
 
@@ -170,17 +208,34 @@ void ImageView::onSaveAction()
 {
     if(!_model->isImageLoaded())
     {
-        qDebug() << "Model's image is not loaded yet.";
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
         return;
     }
 
-    QString path = QFileDialog::getSaveFileName(this, "Save image", "", "Images (*.jpg *.png *.bmp)");
-    if(path != "") {
+    QString path = QFileDialog::getSaveFileName(this,
+                                                "Save image",
+                                                "",
+                                                "Images (*.jpg *.png *.bmp)");
+
+    if(path != "")
         _model->saveImage(path);
-    }
 }
 
 void ImageView::onExitAction()
 {
+    if(_model->isImageLoaded())
+    {
+        int answer = QMessageBox::warning(this,
+                                          "Image Editor - Warning",
+                                          "All progress since the last save will be lost!",
+                                          QMessageBox::Ok,
+                                          QMessageBox::Cancel);
+
+        if(answer == QMessageBox::Cancel)
+            return;
+    }
+
     close();
 }
