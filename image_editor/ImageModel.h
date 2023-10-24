@@ -25,6 +25,8 @@ public:
     QPixmap getEditedImageQPixmap(QSize imageLabelSize);
     // TODO:
     QPixmap getOriginalImageQPixmap(QSize imageLabelSize); // Save the edited
+
+    // Histogram:
     QPixmap getHistogram(QSize histogramLabelSize);
 
     bool isImageLoaded();
@@ -43,7 +45,7 @@ private:
     cv::Mat resizeMatrix(cv::Mat input, QSize availableSize);
 
     // Histogram:
-    cv::Mat overlayGrid(int horizontalCount, int verticalCount);
+    cv::Mat generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows);
     cv::Mat generateHistogramBW(cv::Mat source);
     cv::Mat generateHistogramRGB(cv::Mat source);
 
