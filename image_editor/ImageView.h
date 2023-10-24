@@ -54,6 +54,7 @@ private:
     QPushButton* _buttonAutoWhiteBalance;
     QPushButton* _buttonZoomOut;
     QPushButton* _buttonZoomIn;
+    QPushButton* _buttonZoomFit;
 
 
     // Right-Bottom Details
@@ -81,6 +82,7 @@ private slots:
     // Settings button slots
     void onButtonZoomInClicked();
     void onButtonZoomOutClicked();
+    void onButtonZoomFitClicked();
     //void onButtonFlipHorizontal(); // ?
     //void onButtonFlipVertical(); // ?
 };

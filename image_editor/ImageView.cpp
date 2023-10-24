@@ -50,6 +50,7 @@ ImageView::ImageView(QWidget *parent)
     _buttonAutoWhiteBalance = new QPushButton("Auto White Balance");
     _buttonZoomIn = new QPushButton("Zoom In");
     _buttonZoomOut = new QPushButton("Zoom Out");
+    _buttonZoomFit = new QPushButton("Scale to fit");
     _settingsLayout->addWidget(_buttonFlipHorizontal);
     _settingsLayout->addWidget(_buttonFlipVertical);
     _settingsLayout->addWidget(_buttonRotate90Plus);
@@ -59,6 +60,7 @@ ImageView::ImageView(QWidget *parent)
     _settingsLayout->addWidget(_buttonAutoWhiteBalance);
     _settingsLayout->addWidget(_buttonZoomIn);
     _settingsLayout->addWidget(_buttonZoomOut);
+    _settingsLayout->addWidget(_buttonZoomFit);
 
     // Right side bottom data
     _detailsLayout = new QVBoxLayout();
@@ -117,6 +119,7 @@ ImageView::ImageView(QWidget *parent)
     });
     connect(_buttonZoomIn, SIGNAL(clicked(bool)), this, SLOT(onButtonZoomInClicked()));
     connect(_buttonZoomOut, SIGNAL(clicked(bool)), this, SLOT(onButtonZoomOutClicked()));
+    connect(_buttonZoomFit, SIGNAL(clicked(bool)), this, SLOT(onButtonZoomFitClicked()));
 
     setMenuBar(_menuBar);
 }
@@ -135,6 +138,13 @@ void ImageView::onButtonZoomOutClicked()
 {
     qDebug() << "Zoom Out Clicked";
     _imageGraphicsView->scale(0.9,0.9);
+
+}
+
+void ImageView::onButtonZoomFitClicked()
+{
+    qDebug() << "Zoom Fit Clicked";
+    _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void ImageView::onImageLoaded()
@@ -144,10 +154,12 @@ void ImageView::onImageLoaded()
     _imageGraphicsScene = new QGraphicsScene(this);
     _imageGraphicsScene->addPixmap(_model->getEditedImageQPixmap( _imageGraphicsView->size() ));
     _imageGraphicsView->setScene(_imageGraphicsScene);
+    _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 
     _histogramGraphicsScene = new QGraphicsScene(this);
     _histogramGraphicsScene->addPixmap(_model->getHistogram(_histogramGraphicsView->size()));
     _histogramGraphicsView->setScene(_histogramGraphicsScene);
+    _histogramGraphicsView->fitInView(_histogramGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 
     _checkboxToggleScale->setCheckable(true);
 }
@@ -157,7 +169,7 @@ void ImageView::onLoadAction()
     QString path = QFileDialog::getOpenFileName(this, "Select an Image", "", "Images (*.jpg *.png *.bmp)");
     if(path != "") {
         _model->loadImage(path);
-        _checkboxToggleScale->setCheckState(Qt::Checked);
+        //_checkboxToggleScale->setCheckState(Qt::Checked);
     }
 }
 
