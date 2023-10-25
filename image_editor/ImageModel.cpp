@@ -52,46 +52,120 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
     if(height % 2 != 0)
         height++;
 
-    cv::Mat img(height, width, CV_8UC3, cv::Scalar(10,10,10));
+    cv::Mat img = this->_data->image;
+    cv::Mat histogram(height, width, CV_8UC3, cv::Scalar(10,10,10));
 
-    img = generateHistogramRGB(img);
+    histogram = generateHistogramRGB(histogram, img);
 
-    img = generateHistogramGridOverlay(img, 6, 4);
+    histogram = generateHistogramGridOverlay(histogram, 6, 4);
 
-    QImage qimg(img.data,
-                img.cols,
-                img.rows,
-                static_cast<int>(img.step),
+    QImage qimg(histogram.data,
+                histogram.cols,
+                histogram.rows,
+                static_cast<int>(histogram.step),
                 QImage::Format_RGB888);
 
     return QPixmap::fromImage(qimg.rgbSwapped());
 }
 
-cv::Mat ImageModel::generateHistogramBW(cv::Mat source)
+cv::Mat ImageModel::generateHistogramBW(cv::Mat source, cv::Mat image)
 {
-    cv::Mat img = source;
+    cv::Mat histogram = source;
 
-    return img;
+    return histogram;
 }
 
-cv::Mat ImageModel::generateHistogramRGB(cv::Mat source)
+cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
 {
-    cv::Mat img = source;
-    int histSize = 256;
-    int b_channel[256];
-    int g_channel[256];
-    int r_channel[256];
-    for(int i = 0; i < histSize; i++)
-    {
-        b_channel[i] = 0;
-        g_channel[i] = 0;
-        r_channel[i] = 0;
-    }
-
+    cv::Mat histogram = source;
+    cv::Mat img = image;
     std::vector<cv::Mat> bgr_channels;
+    int histSize = 256;
+    float range[] = {0,256};
+    const float* histRange[] = {range};
+    bool uniform = true;
+    bool accumulate = false;
+    cv::Mat b_channel;
+    cv::Mat g_channel;
+    cv::Mat r_channel;
+
     cv::split(img, bgr_channels);
 
-    return img;
+    cv::calcHist(&bgr_channels[0],
+            1,
+            0,
+            cv::Mat(),
+            b_channel,
+            1,
+            &histSize,
+            histRange,
+            uniform,
+            accumulate);
+
+    cv::calcHist(&bgr_channels[1],
+            1,
+            0,
+            cv::Mat(),
+            g_channel,
+            1,
+            &histSize,
+            histRange,
+            uniform,
+            accumulate);
+
+    cv::calcHist(&bgr_channels[2],
+            1,
+            0,
+            cv::Mat(),
+            r_channel,
+            1,
+            &histSize,
+            histRange,
+            uniform,
+            accumulate);
+
+    int hist_w = histogram.cols;
+    int hist_h = histogram.rows;
+    int bin_w = cvRound( (double) hist_w/histSize );
+
+    normalize(b_channel, b_channel, 0, histogram.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+    normalize(g_channel, g_channel, 0, histogram.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+    normalize(r_channel, r_channel, 0, histogram.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+
+
+
+    for( int i = 1; i < histSize; i++ )
+    {
+        //qDebug() << "i = " << i << " -> b: " << cvRound(b_channel.at<float>(i));
+        //qDebug() << "i = " << i << " -> g: " << cvRound(g_channel.at<float>(i));
+        //qDebug() << "i = " << i << " -> r: " << cvRound(r_channel.at<float>(i));
+
+        cv::line( histogram,
+                  cv::Point( bin_w*(i-1), hist_h - cvRound(b_channel.at<float>(i-1)) ),
+                  cv::Point( bin_w*(i), hist_h - cvRound(b_channel.at<float>(i)) ),
+                  cv::Scalar( 255, 0, 0),
+                  2,
+                  8,
+                  0 );
+
+        cv::line( histogram,
+                  cv::Point( bin_w*(i-1), hist_h - cvRound(g_channel.at<float>(i-1)) ),
+                  cv::Point( bin_w*(i), hist_h - cvRound(g_channel.at<float>(i)) ),
+                  cv::Scalar( 0, 255, 0),
+                  2,
+                  8,
+                  0 );
+
+        cv::line( histogram,
+                  cv::Point( bin_w*(i-1), hist_h - cvRound(r_channel.at<float>(i-1)) ),
+                  cv::Point( bin_w*(i), hist_h - cvRound(r_channel.at<float>(i)) ),
+                  cv::Scalar( 0, 0, 255),
+                  2,
+                  8,
+                  0 );
+    }
+
+    return histogram;
 }
 
 cv::Mat ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows)

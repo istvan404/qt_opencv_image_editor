@@ -42,8 +42,8 @@ private:
 
     // Histogram:
     cv::Mat generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows);
-    cv::Mat generateHistogramBW(cv::Mat source);
-    cv::Mat generateHistogramRGB(cv::Mat source);
+    cv::Mat generateHistogramBW(cv::Mat source, cv::Mat img);
+    cv::Mat generateHistogramRGB(cv::Mat source, cv::Mat img);
 
 
 signals:
