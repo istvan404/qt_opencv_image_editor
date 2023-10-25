@@ -45,19 +45,23 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
     if(!this->isImageLoaded())
         return QPixmap();           // TODO: Revisit this solution to edge case, maybe EMIT some problem? THROW error?
 
-    int width = histogramLabelSize.width();
+    /*int width = histogramLabelSize.width();
     if(width % 2 != 0)
         width++;
     int height = histogramLabelSize.height();
     if(height % 2 != 0)
-        height++;
+        height++;*/
+
+    double aspectRatio = histogramLabelSize.width() / histogramLabelSize.height();
+    int width = 256;
+    int height = 256 / aspectRatio;
 
     cv::Mat img = this->_data->image;
     cv::Mat histogram(height, width, CV_8UC3, cv::Scalar(10,10,10));
 
     histogram = generateHistogramRGB(histogram, img);
 
-    histogram = generateHistogramGridOverlay(histogram, 6, 4);
+    histogram = generateHistogramGridOverlay(histogram, 4, 3);
 
     QImage qimg(histogram.data,
                 histogram.cols,
@@ -132,9 +136,68 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
     normalize(g_channel, g_channel, 0, histogram.rows, cv::NORM_MINMAX, -1, cv::Mat() );
     normalize(r_channel, r_channel, 0, histogram.rows, cv::NORM_MINMAX, -1, cv::Mat() );
 
-
-
+    qDebug() << "bin_w = " << bin_w;
     for( int i = 1; i < histSize; i++ )
+        {
+            int b_start = hist_h - cvRound(b_channel.at<float>(i));
+            int g_start = hist_h - cvRound(g_channel.at<float>(i));
+            int r_start = hist_h - cvRound(r_channel.at<float>(i));
+
+            if(b_start < g_start && b_start < r_start)
+            {
+                cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), cv::Scalar( 255, 0, 0 ), 1, 8, 0);
+                // blue is the highest
+                if( g_start < r_start )
+                {
+                    // green is the second highest
+                    cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 0 ), 1, 8, 0);
+                    cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
+                }
+                else
+                {
+                    // red is the second highest
+                    cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), cv::Scalar( 255, 0, 255 ), 1, 8, 0);
+                    cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
+                }
+            }
+            else if(g_start < b_start && g_start < r_start)
+            {
+                // green is the highest
+                cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), cv::Scalar( 0, 255, 0 ), 1, 8, 0);
+                if(b_start < r_start)
+                {
+                    // blue is the second highest
+                    cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 0 ), 1, 8, 0);
+                    cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
+                }
+                else
+                {
+                    // red is the second highest
+                    cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), cv::Scalar( 0, 255, 255 ), 1, 8, 0);
+                    cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
+                }
+            }
+            else
+            {
+                // red is the highest or some are equal
+                cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), cv::Scalar( 0, 0, 255 ), 1, 8, 0);
+                if(b_start < g_start)
+                {
+                    // blue is the second highest
+                    cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), cv::Scalar( 255, 0, 255 ), 1, 8, 0);
+                    cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
+                }
+                else
+                {
+                    // green is the second highest
+                    cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), cv::Scalar( 0, 255, 255 ), 1, 8, 0);
+                    cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
+                }
+            }
+        }
+
+
+    /*for( int i = 1; i < histSize; i++ )
     {
         //qDebug() << "i = " << i << " -> b: " << cvRound(b_channel.at<float>(i));
         //qDebug() << "i = " << i << " -> g: " << cvRound(g_channel.at<float>(i));
@@ -163,7 +226,7 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
                   2,
                   8,
                   0 );
-    }
+    }*/
 
     return histogram;
 }
