@@ -129,6 +129,59 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
             accumulate);
 
     int hist_h = histogram.rows;
+/*
+    for( int i = 0; i < histSize; i++ )
+    {
+        qDebug() << "b_channel[" << i << "] = " << cvRound(b_channel.at<float>(i))
+                 << " | "
+                 << "g_channel[" << i << "] = " << cvRound(g_channel.at<float>(i))
+                 << " | "
+                 << "r_channel[" << i << "] = " << cvRound(r_channel.at<float>(i));
+    }
+
+    qDebug() << "hist_h = " << hist_h;*/
+
+    float max = 0;
+    for(int i = 0; i < histSize; i++)
+    {
+        if( b_channel.at<float>(i) > max )
+            max = b_channel.at<float>(i);
+        if( g_channel.at<float>(i) > max )
+            max = g_channel.at<float>(i);
+        if( r_channel.at<float>(i) > max )
+            max = r_channel.at<float>(i);
+    }
+
+    std::vector<float> all_values(histSize*3);
+    for(int i = 0; i < histSize; i++)
+    {
+        all_values[i] = b_channel.at<float>(i);
+        all_values[i+histSize] = b_channel.at<float>(i);
+        all_values[i+histSize+histSize] = b_channel.at<float>(i);
+    }
+
+    std::sort(all_values.begin(), all_values.end());
+    std::reverse(all_values.begin(), all_values.end());
+
+    float ceiling = -1;
+    for(int i = 1; i < (3*histSize)*0.2; i++)
+    {
+        qDebug() << "all_values[" << i << "] =" << all_values[i];
+        float a = all_values[i-1];
+        float b = all_values[i];
+        if( (a/b) > 1.5 )
+        {
+            ceiling = b;
+        }
+    }
+
+    if(ceiling != -1)
+    {
+        qDebug() << "ceiling := " << ceiling;
+        b_channel.setTo(ceiling,b_channel > ceiling);
+        g_channel.setTo(ceiling,g_channel > ceiling);
+        r_channel.setTo(ceiling,r_channel > ceiling);
+    }
 
     normalize(b_channel, b_channel, 0, hist_h, cv::NORM_MINMAX, -1, cv::Mat() );
     normalize(g_channel, g_channel, 0, hist_h, cv::NORM_MINMAX, -1, cv::Mat() );
@@ -144,6 +197,11 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
 
     for( int i = 0; i < histSize; i++ )
     {
+        qDebug() << "b_channel[" << i << "] = " << cvRound(b_channel.at<float>(i))
+                 << " | "
+                 << "g_channel[" << i << "] = " << cvRound(g_channel.at<float>(i))
+                 << " | "
+                 << "r_channel[" << i << "] = " << cvRound(r_channel.at<float>(i));
 
         int b_start = hist_h - cvRound(b_channel.at<float>(i));
         int g_start = hist_h - cvRound(g_channel.at<float>(i));
@@ -286,7 +344,7 @@ void ImageModel::editAutoWhiteBalance()
     if(!this->isImageLoaded())
         return;
 
-    float percent = 2;
+    float percent = 10;
     //assert(in.channels() == 3);
     //assert(percent > 0 && percent < 100);
     float halfPercent = percent / 200.0f;
