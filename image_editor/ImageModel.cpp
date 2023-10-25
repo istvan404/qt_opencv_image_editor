@@ -136,7 +136,6 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
     normalize(g_channel, g_channel, 0, histogram.rows, cv::NORM_MINMAX, -1, cv::Mat() );
     normalize(r_channel, r_channel, 0, histogram.rows, cv::NORM_MINMAX, -1, cv::Mat() );
 
-    qDebug() << "bin_w = " << bin_w;
     for( int i = 1; i < histSize; i++ )
         {
             int b_start = hist_h - cvRound(b_channel.at<float>(i));
@@ -197,36 +196,6 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
         }
 
 
-    /*for( int i = 1; i < histSize; i++ )
-    {
-        //qDebug() << "i = " << i << " -> b: " << cvRound(b_channel.at<float>(i));
-        //qDebug() << "i = " << i << " -> g: " << cvRound(g_channel.at<float>(i));
-        //qDebug() << "i = " << i << " -> r: " << cvRound(r_channel.at<float>(i));
-
-        cv::line( histogram,
-                  cv::Point( bin_w*(i-1), hist_h - cvRound(b_channel.at<float>(i-1)) ),
-                  cv::Point( bin_w*(i), hist_h - cvRound(b_channel.at<float>(i)) ),
-                  cv::Scalar( 255, 0, 0),
-                  2,
-                  8,
-                  0 );
-
-        cv::line( histogram,
-                  cv::Point( bin_w*(i-1), hist_h - cvRound(g_channel.at<float>(i-1)) ),
-                  cv::Point( bin_w*(i), hist_h - cvRound(g_channel.at<float>(i)) ),
-                  cv::Scalar( 0, 255, 0),
-                  2,
-                  8,
-                  0 );
-
-        cv::line( histogram,
-                  cv::Point( bin_w*(i-1), hist_h - cvRound(r_channel.at<float>(i-1)) ),
-                  cv::Point( bin_w*(i), hist_h - cvRound(r_channel.at<float>(i)) ),
-                  cv::Scalar( 0, 0, 255),
-                  2,
-                  8,
-                  0 );
-    }*/
 
     return histogram;
 }
