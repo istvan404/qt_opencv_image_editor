@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QCursor>
+#include <QSlider>
 
 #include <QDebug>
 #include <QGraphicsScene>

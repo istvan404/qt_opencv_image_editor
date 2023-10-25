@@ -59,6 +59,39 @@ ImageView::ImageView(QWidget *parent)
     _settingsLayout->addWidget(_buttonZoomOut);
     _settingsLayout->addWidget(_buttonZoomFit);
 
+
+    QGridLayout* whiteBalance_grid = new QGridLayout();
+    QLabel* whiteBalance_label = new QLabel("White Balance");
+    QSlider* whiteBalance_slider = new QSlider(Qt::Orientation::Horizontal);
+    QLabel* whiteBalance_min = new QLabel("0");
+    QLabel* whiteBalance_max = new QLabel("100");
+    QLabel* whiteBalance_count = new QLabel("21");
+    QPushButton* whiteBalance_button = new QPushButton("Apply");
+
+    whiteBalance_slider->setMinimum(0);
+    whiteBalance_slider->setMaximum(20);
+    whiteBalance_slider->setTickInterval(1);
+    whiteBalance_slider->setValue(0);
+    whiteBalance_slider->setTickPosition(QSlider::TicksAbove);
+
+
+    whiteBalance_grid->setSpacing(0);
+    whiteBalance_grid->addWidget(whiteBalance_label, 0, 0, 1, 3);
+    whiteBalance_grid->addWidget(whiteBalance_min, 1, 0, 1, 1);
+    whiteBalance_grid->addWidget(whiteBalance_max, 1, 1, 1, 1, Qt::AlignRight);
+    whiteBalance_grid->addWidget(whiteBalance_slider, 2, 0, 1, 2);
+    whiteBalance_grid->addWidget(whiteBalance_count, 2, 2, 1, 1, Qt::AlignCenter);
+    whiteBalance_grid->addWidget(whiteBalance_button, 3, 0, 1, 3);
+    /*
+    whiteBalance_grid->addWidget(new QPushButton("Label"), 0, 0, 1, 3);
+    whiteBalance_grid->addWidget(new QPushButton("Min"), 1, 0, 1, 1);
+    whiteBalance_grid->addWidget(new QPushButton("Max"), 1, 2, 1, 1);
+    whiteBalance_grid->addWidget(new QPushButton("Slider"), 2, 0, 1, 2);
+    whiteBalance_grid->addWidget(new QPushButton("Count"), 2, 2, 1, 1);
+    whiteBalance_grid->addWidget(whiteBalance_button, 3, 0, 1, 3);*/
+
+    _settingsLayout->addLayout(whiteBalance_grid);
+
     // Right side bottom data
     _detailsLayout = new QVBoxLayout();
     _editLayout->addLayout(_detailsLayout, 30);
