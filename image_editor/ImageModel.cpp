@@ -61,7 +61,7 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 
     histogram = generateHistogramRGB(histogram, img);
 
-    histogram = generateHistogramGridOverlay(histogram, 4, 3);
+    histogram = generateHistogramGridOverlay(histogram, 3, 2);
 
     QImage qimg(histogram.data,
                 histogram.cols,
@@ -128,74 +128,79 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
             uniform,
             accumulate);
 
-    int hist_w = histogram.cols;
     int hist_h = histogram.rows;
-    int bin_w = cvRound( (double) hist_w/histSize );
 
-    normalize(b_channel, b_channel, 0, histogram.rows, cv::NORM_MINMAX, -1, cv::Mat() );
-    normalize(g_channel, g_channel, 0, histogram.rows, cv::NORM_MINMAX, -1, cv::Mat() );
-    normalize(r_channel, r_channel, 0, histogram.rows, cv::NORM_MINMAX, -1, cv::Mat() );
+    normalize(b_channel, b_channel, 0, hist_h, cv::NORM_MINMAX, -1, cv::Mat() );
+    normalize(g_channel, g_channel, 0, hist_h, cv::NORM_MINMAX, -1, cv::Mat() );
+    normalize(r_channel, r_channel, 0, hist_h, cv::NORM_MINMAX, -1, cv::Mat() );
 
-    for( int i = 1; i < histSize; i++ )
+    cv::Scalar color_b = cv::Scalar(255, 0, 0);         // blue
+    cv::Scalar color_g = cv::Scalar(0, 255, 0);         // green
+    cv::Scalar color_r = cv::Scalar(0, 0, 255);         // red
+    cv::Scalar color_gr = cv::Scalar(0, 255, 255);      // yellow
+    cv::Scalar color_br = cv::Scalar(255, 0, 255);      // magenta
+    cv::Scalar color_bg = cv::Scalar(255, 255, 0);      // cyan
+    cv::Scalar color_bgr = cv::Scalar(255, 255, 255);   // white
+
+    for( int i = 0; i < histSize; i++ )
+    {
+
+        int b_start = hist_h - cvRound(b_channel.at<float>(i));
+        int g_start = hist_h - cvRound(g_channel.at<float>(i));
+        int r_start = hist_h - cvRound(r_channel.at<float>(i));
+
+        if(b_start < g_start && b_start < r_start)
         {
-            int b_start = hist_h - cvRound(b_channel.at<float>(i));
-            int g_start = hist_h - cvRound(g_channel.at<float>(i));
-            int r_start = hist_h - cvRound(r_channel.at<float>(i));
-
-            if(b_start < g_start && b_start < r_start)
+            // blue is the highest
+            cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), color_b, 1, 8, 0);
+            if( g_start < r_start )
             {
-                cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), cv::Scalar( 255, 0, 0 ), 1, 8, 0);
-                // blue is the highest
-                if( g_start < r_start )
-                {
-                    // green is the second highest
-                    cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 0 ), 1, 8, 0);
-                    cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
-                }
-                else
-                {
-                    // red is the second highest
-                    cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), cv::Scalar( 255, 0, 255 ), 1, 8, 0);
-                    cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
-                }
-            }
-            else if(g_start < b_start && g_start < r_start)
-            {
-                // green is the highest
-                cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), cv::Scalar( 0, 255, 0 ), 1, 8, 0);
-                if(b_start < r_start)
-                {
-                    // blue is the second highest
-                    cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 0 ), 1, 8, 0);
-                    cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
-                }
-                else
-                {
-                    // red is the second highest
-                    cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), cv::Scalar( 0, 255, 255 ), 1, 8, 0);
-                    cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
-                }
+                // green is the second highest
+                cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), color_bg, 1, 8, 0);
+                cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), color_bgr, 1, 8, 0);
             }
             else
             {
-                // red is the highest or some are equal
-                cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), cv::Scalar( 0, 0, 255 ), 1, 8, 0);
-                if(b_start < g_start)
-                {
-                    // blue is the second highest
-                    cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), cv::Scalar( 255, 0, 255 ), 1, 8, 0);
-                    cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
-                }
-                else
-                {
-                    // green is the second highest
-                    cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), cv::Scalar( 0, 255, 255 ), 1, 8, 0);
-                    cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), cv::Scalar( 255, 255, 255 ), 1, 8, 0);
-                }
+                // red is the second highest
+                cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), color_br, 1, 8, 0);
+                cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), color_bgr, 1, 8, 0);
             }
         }
-
-
+        else if(g_start < b_start && g_start < r_start)
+        {
+            // green is the highest
+            cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), color_g, 1, 8, 0);
+            if(b_start < r_start)
+            {
+                // blue is the second highest
+                cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), color_bg, 1, 8, 0);
+                cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), color_bgr, 1, 8, 0);
+            }
+            else
+            {
+                // red is the second highest
+                cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), color_gr, 1, 8, 0);
+                cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), color_bgr, 1, 8, 0);
+            }
+        }
+        else
+        {
+            // red is the highest or some are equal
+            cv::line(histogram, cv::Point(i, r_start), cv::Point(i, hist_h), color_r, 1, 8, 0);
+            if(b_start < g_start)
+            {
+                // blue is the second highest
+                cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), color_br, 1, 8, 0);
+                cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), color_bgr, 1, 8, 0);
+            }
+            else
+            {
+                // green is the second highest
+                cv::line(histogram, cv::Point(i, g_start), cv::Point(i, hist_h), color_gr, 1, 8, 0);
+                cv::line(histogram, cv::Point(i, b_start), cv::Point(i, hist_h), color_bgr, 1, 8, 0);
+            }
+        }
+    }
 
     return histogram;
 }
