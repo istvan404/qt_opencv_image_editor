@@ -105,7 +105,6 @@ ImageView::ImageView(QWidget *parent)
         this->setCursor(Qt::CursorShape::ArrowCursor);
     });
 
-    setMenuBar(_menuBar);
 
     _imageGraphicsScene = new QGraphicsScene(this);
     _histogramGraphicsScene = new QGraphicsScene(this);
@@ -122,6 +121,8 @@ void ImageView::setupMenuBar()
 
     setupMenuFile();
     setupMenuView();
+
+    setMenuBar(_menuBar);
 }
 
 void ImageView::setupMenuFile()
@@ -330,6 +331,18 @@ void ImageView::onImageModelUpdated()
 
 void ImageView::onActionLoad()
 {
+    if(_model->isImageLoaded())
+    {
+        int answer = QMessageBox::warning(this,
+                                          "Image Editor - Warning",
+                                          "There is an image already loaded. If you continue, the current image won't be saved!",
+                                          QMessageBox::Ok,
+                                          QMessageBox::Cancel);
+
+        if(answer == QMessageBox::Cancel)
+            return;
+    }
+
     QString path = QFileDialog::getOpenFileName(this, "Select an Image", "", "Images (*.jpg *.png *.bmp)");
     if(path != "") {
         _model->loadImage(path);
