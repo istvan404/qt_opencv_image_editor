@@ -24,6 +24,8 @@ ImageView::ImageView(QWidget *parent)
     _layoutMain->setSpacing(10);
     _centralWidget->setLayout(_layoutMain);
 
+    setupMenuBar();
+
     // Left side
     _layoutImageContainer = new QVBoxLayout();
     _layoutMain->addLayout(_layoutImageContainer, 66);
@@ -39,9 +41,9 @@ ImageView::ImageView(QWidget *parent)
     _layoutMain->addLayout(_editLayout,33);
 
     // Right side top settings
-    _settingsLayout = new QVBoxLayout();
-    _editLayout->addLayout(_settingsLayout, 70);
-    _settingsLayout->setAlignment(Qt::AlignTop);
+    _adjustmentsLayout = new QVBoxLayout();
+    _editLayout->addLayout(_adjustmentsLayout, 70);
+    _adjustmentsLayout->setAlignment(Qt::AlignTop);
     _buttonFlipHorizontal = new QPushButton("Flip Horizontal");
     _buttonFlipVertical = new QPushButton("Flip Vertical");
     _buttonRotate90Plus = new QPushButton("Rotate +90 Degrees");
@@ -50,14 +52,14 @@ ImageView::ImageView(QWidget *parent)
     _buttonZoomIn = new QPushButton("Zoom In");
     _buttonZoomOut = new QPushButton("Zoom Out");
     _buttonZoomFit = new QPushButton("Scale to fit");
-    _settingsLayout->addWidget(_buttonFlipHorizontal);
-    _settingsLayout->addWidget(_buttonFlipVertical);
-    _settingsLayout->addWidget(_buttonRotate90Plus);
-    _settingsLayout->addWidget(_buttonRotate90Minus);
-    _settingsLayout->addWidget(_buttonAutoWhiteBalance);
-    _settingsLayout->addWidget(_buttonZoomIn);
-    _settingsLayout->addWidget(_buttonZoomOut);
-    _settingsLayout->addWidget(_buttonZoomFit);
+    _adjustmentsLayout->addWidget(_buttonFlipHorizontal);
+    _adjustmentsLayout->addWidget(_buttonFlipVertical);
+    _adjustmentsLayout->addWidget(_buttonRotate90Plus);
+    _adjustmentsLayout->addWidget(_buttonRotate90Minus);
+    _adjustmentsLayout->addWidget(_buttonAutoWhiteBalance);
+    _adjustmentsLayout->addWidget(_buttonZoomIn);
+    _adjustmentsLayout->addWidget(_buttonZoomOut);
+    _adjustmentsLayout->addWidget(_buttonZoomFit);
 
 
     QGridLayout* whiteBalance_grid = new QGridLayout();
@@ -94,7 +96,7 @@ ImageView::ImageView(QWidget *parent)
     whiteBalance_grid->addWidget(new QPushButton("Count"), 2, 2, 1, 1);
     whiteBalance_grid->addWidget(whiteBalance_button, 3, 0, 1, 3);*/
 
-    _settingsLayout->addLayout(whiteBalance_grid);
+    _adjustmentsLayout->addLayout(whiteBalance_grid);
 
     // Right side bottom data
     _detailsLayout = new QVBoxLayout();
@@ -105,27 +107,6 @@ ImageView::ImageView(QWidget *parent)
     _detailsLayout->addWidget(_histogramGraphicsView);
 
 
-    _menuBar = new QMenuBar(this);
-    _fileMenu = new QMenu("File", this);
-    _menuBar->addMenu(_fileMenu);
-
-    _actionLoad = new QAction("Load");
-    _actionLoad->setStatusTip("Load an image.");
-    _fileMenu->addAction(_actionLoad);
-
-    _actionSave = new QAction("Save");
-    _actionSave->setShortcut(QKeySequence::fromString("Ctrl+S"));
-    _actionSave->setStatusTip("Save the current edited image.");
-    _fileMenu->addAction(_actionSave);
-
-    _actionExit = new QAction("Exit");
-    _actionExit->setStatusTip("Your progress since the last save will be lost.");
-    _fileMenu->addAction(_actionExit);
-
-    // Connect MenuBar Actions To Slots
-    connect( _actionLoad, &QAction::triggered, this, &ImageView::onLoadAction);
-    connect( _actionSave, &QAction::triggered, this, &ImageView::onSaveAction);
-    connect( _actionExit, &QAction::triggered, this, &ImageView::onExitAction);
 
     // Connect Model Signals To View's Slot
     connect(_model, &ImageModel::imageLoaded, this, &ImageView::onImageModelLoaded);
@@ -164,7 +145,62 @@ ImageView::~ImageView()
 {
 }
 
-void ImageView::reloadImage()
+void ImageView::setupMenuBar()
+{
+    // Initialization
+    _menuBar = new QMenuBar(this);
+
+    setupMenuFile();
+    setupMenuView();
+}
+
+void ImageView::setupMenuFile()
+{
+    // Initialization
+    _menuFile = new QMenu("File", this);
+    _actionLoad = new QAction("Load");
+    _actionLoad->setStatusTip("Load an image.");
+    _actionSave = new QAction("Save");
+    _actionSave->setShortcut(QKeySequence::fromString("Ctrl+S"));
+    _actionSave->setStatusTip("Save the current edited image.");
+    _actionExit = new QAction("Exit");
+    _actionExit->setStatusTip("Your progress since the last save will be lost.");
+
+    // Adding to viewport
+    _menuBar->addMenu(_menuFile);
+    _menuFile->addAction(_actionLoad);
+    _menuFile->addAction(_actionSave);
+    _menuFile->addAction(_actionExit);
+
+    // Connect SIGNALs to SLOTs
+    connect( _actionLoad, SIGNAL(triggered(bool)), this, SLOT(onActionLoad()));
+    connect( _actionSave, SIGNAL(triggered(bool)), this, SLOT(onActionSave()));
+    connect( _actionExit, SIGNAL(triggered(bool)), this, SLOT(onActionExit()));
+}
+
+void ImageView::setupMenuView()
+{
+    // Initialization
+    _menuView = new QMenu("View", this);
+    _actionZoomIn = new QAction("Zoom In");
+    _actionZoomIn->setShortcut(QKeySequence::fromString("Ctrl+I"));
+    _actionZoomOut = new QAction("Zoom Out");
+    _actionZoomOut->setShortcut(QKeySequence::fromString("Ctrl+O"));
+    _actionZoomFit = new QAction("Scale to fit");
+
+    // Adding to viewport
+    _menuBar->addMenu(_menuView);
+    _menuView->addAction(_actionZoomIn);
+    _menuView->addAction(_actionZoomOut);
+    _menuView->addAction(_actionZoomFit);
+
+    // Connect SIGNALs to SLOTs
+    connect(_actionZoomIn,  SIGNAL(triggered(bool)), this, SLOT(onActionZoomIn()));
+    connect(_actionZoomOut, SIGNAL(triggered(bool)), this, SLOT(onActionZoomOut()));
+    connect(_actionZoomFit, SIGNAL(triggered(bool)), this, SLOT(onActionZoomFit()));
+}
+
+void ImageView::loadImage()
 {
     _imageGraphicsScene = new QGraphicsScene(this);
     _imageGraphicsScene->clear();
@@ -177,6 +213,46 @@ void ImageView::reloadImage()
     _histogramGraphicsScene->addPixmap(_model->getHistogram(_histogramGraphicsView->size()));
     _histogramGraphicsView->setScene(_histogramGraphicsScene);
     _histogramGraphicsView->update();
+}
+
+void ImageView::onActionZoomIn()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+
+    _imageGraphicsView->scale(1.1,1.1);
+}
+
+void ImageView::onActionZoomOut()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+
+    _imageGraphicsView->scale(0.9,0.9);
+
+}
+
+void ImageView::onActionZoomFit()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+
+    _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void ImageView::onButtonZoomInClicked()
@@ -222,7 +298,7 @@ void ImageView::onButtonZoomFitClicked()
 void ImageView::onImageModelLoaded()
 {
     qDebug() << "View catched model's ImageLoaded signal" << QTime::currentTime();
-    reloadImage();
+    loadImage();
     _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
     // Fixing the Histogram bug:
     _histogramGraphicsView->fitInView(_histogramGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
@@ -231,10 +307,10 @@ void ImageView::onImageModelLoaded()
 void ImageView::onImageModelUpdated()
 {
     qDebug() << "View catched model's ImageUpdated signal" << QTime::currentTime();
-    reloadImage();
+    loadImage();
 }
 
-void ImageView::onLoadAction()
+void ImageView::onActionLoad()
 {
     QString path = QFileDialog::getOpenFileName(this, "Select an Image", "", "Images (*.jpg *.png *.bmp)");
     if(path != "") {
@@ -242,7 +318,7 @@ void ImageView::onLoadAction()
     }
 }
 
-void ImageView::onSaveAction()
+void ImageView::onActionSave()
 {
     if(!_model->isImageLoaded())
     {
@@ -261,7 +337,7 @@ void ImageView::onSaveAction()
         _model->saveImage(path);
 }
 
-void ImageView::onExitAction()
+void ImageView::onActionExit()
 {
     if(_model->isImageLoaded())
     {

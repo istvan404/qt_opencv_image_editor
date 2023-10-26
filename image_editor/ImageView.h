@@ -45,8 +45,8 @@ private:
     // { #Right side
     QVBoxLayout* _editLayout;
 
-    // Right-Top Settings
-    QVBoxLayout* _settingsLayout;
+    // Right-Top Adjustments
+    QVBoxLayout* _adjustmentsLayout;
     QPushButton* _buttonFlipHorizontal;
     QPushButton* _buttonFlipVertical;
     QPushButton* _buttonRotate90Plus;
@@ -67,22 +67,36 @@ private:
     QMenuBar* _menuBar;
 
     // File
-    QMenu* _fileMenu;
+    QMenu* _menuFile;
     QAction* _actionLoad;
     QAction* _actionSave;
     QAction* _actionExit;
 
-    void reloadImage();
+    // File
+    QMenu* _menuView;
+    QAction* _actionZoomIn;
+    QAction* _actionZoomOut;
+    QAction* _actionZoomFit;
+
+    void setupMenuBar();
+    void setupMenuFile();
+    void setupMenuView();
+    void loadImage();
 
 private slots:
     // MenuBar Actions' slots
-    void onLoadAction();
-    void onSaveAction();
-    void onExitAction();
+    void onActionLoad();
+    void onActionSave();
+    void onActionExit();
+    void onActionZoomIn();
+    void onActionZoomOut();
+    void onActionZoomFit();
+
     // Model's signal slot
     void onImageModelLoaded();
     void onImageModelUpdated();
-    // Settings button slots
+
+    // Adjustments button slots
     void onButtonZoomInClicked();
     void onButtonZoomOutClicked();
     void onButtonZoomFitClicked();
