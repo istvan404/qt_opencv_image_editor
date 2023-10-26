@@ -35,76 +35,11 @@ ImageView::ImageView(QWidget *parent)
     _imageGraphicsView = new QGraphicsView(this);
     _layoutImageContainer->addWidget(_imageGraphicsView);
 
-
-    // Right side
-    _editLayout = new QVBoxLayout();
-    _layoutMain->addLayout(_editLayout,33);
-
-    // Right side top settings
-    _adjustmentsLayout = new QVBoxLayout();
-    _editLayout->addLayout(_adjustmentsLayout, 70);
-    _adjustmentsLayout->setAlignment(Qt::AlignTop);
-    _buttonAutoWhiteBalance = new QPushButton("Auto White Balance");
-    _adjustmentsLayout->addWidget(_buttonAutoWhiteBalance);
-
-
-    QGridLayout* whiteBalance_grid = new QGridLayout();
-    QLabel* whiteBalance_label = new QLabel("White Balance");
-    QSlider* whiteBalance_slider = new QSlider(Qt::Orientation::Horizontal);
-    QLabel* whiteBalance_min = new QLabel("0");
-    QLabel* whiteBalance_max = new QLabel("100");
-    QLabel* whiteBalance_count = new QLabel("21");
-    QPushButton* whiteBalance_button = new QPushButton("Apply");
-
-    whiteBalance_slider->setMinimum(0);
-    whiteBalance_slider->setMaximum(20);
-    whiteBalance_slider->setTickInterval(1);
-    whiteBalance_slider->setValue(0);
-    whiteBalance_slider->setTickPosition(QSlider::TicksAbove);
-
-    QFont font = QFont();
-    //font.setBold(true);
-    font.setPointSize(12);
-    whiteBalance_label->setFont(font);
-
-    whiteBalance_grid->setSpacing(0);
-    whiteBalance_grid->addWidget(whiteBalance_label, 0, 0, 1, 4);
-    whiteBalance_grid->addWidget(whiteBalance_min, 1, 0, 1, 1);
-    whiteBalance_grid->addWidget(whiteBalance_max, 1, 2, 1, 1, Qt::AlignRight);
-    whiteBalance_grid->addWidget(whiteBalance_slider, 2, 0, 1, 3);
-    whiteBalance_grid->addWidget(whiteBalance_count, 2, 3, 1, 1, Qt::AlignCenter);
-    whiteBalance_grid->addWidget(whiteBalance_button, 3, 0, 1, 4);
-    /*
-    whiteBalance_grid->addWidget(new QPushButton("Label"), 0, 0, 1, 3);
-    whiteBalance_grid->addWidget(new QPushButton("Min"), 1, 0, 1, 1);
-    whiteBalance_grid->addWidget(new QPushButton("Max"), 1, 2, 1, 1);
-    whiteBalance_grid->addWidget(new QPushButton("Slider"), 2, 0, 1, 2);
-    whiteBalance_grid->addWidget(new QPushButton("Count"), 2, 2, 1, 1);
-    whiteBalance_grid->addWidget(whiteBalance_button, 3, 0, 1, 3);*/
-
-    _adjustmentsLayout->addLayout(whiteBalance_grid);
-
-    // Right side bottom data
-    _detailsLayout = new QVBoxLayout();
-    _editLayout->addLayout(_detailsLayout, 30);
-
-    _histogramGraphicsScene = new QGraphicsScene(this);
-    _histogramGraphicsView = new QGraphicsView(this);
-    _detailsLayout->addWidget(_histogramGraphicsView);
-
-
+    setupSide();
 
     // Connect Model Signals To View's Slot
     connect(_model, &ImageModel::imageLoaded, this, &ImageView::onImageModelLoaded);
     connect(_model, &ImageModel::imageUpdated, this, &ImageView::onImageModelUpdated);
-
-    // Connect Right-Top Settings' Buttons To Slots
-    connect(_buttonAutoWhiteBalance, &QPushButton::clicked, this, [this](){
-        this->setCursor(Qt::CursorShape::BusyCursor);
-        _model->editAutoWhiteBalance(10);
-        this->setCursor(Qt::CursorShape::ArrowCursor);
-    });
-
 
     _imageGraphicsScene = new QGraphicsScene(this);
     _histogramGraphicsScene = new QGraphicsScene(this);
@@ -112,6 +47,121 @@ ImageView::ImageView(QWidget *parent)
 
 ImageView::~ImageView()
 {
+}
+
+void ImageView::setupSide()
+{
+    // Right side
+    _layoutSide = new QVBoxLayout();
+    _layoutMain->addLayout(_layoutSide,33);
+
+    setupAdjustments();
+    setupHistogram();
+}
+
+void ImageView::setupAdjustments()
+{
+    // Initialization
+    _layoutAdjustments =        new QVBoxLayout();
+    _labelAdjustmentsTitle =    new QLabel("Adjustments");
+    _buttonAdjustmentsReset =   new QPushButton("Reset");
+
+    // Personalization
+    //_layoutSide->setSpacing(10);
+    _layoutSide->setContentsMargins(0, 10, 0, 10);
+    _layoutAdjustments->setAlignment(Qt::AlignTop);
+    QFont title = QFont();
+    title.setPointSize(10);
+    title.setBold(true);
+    _labelAdjustmentsTitle->setFont(title);
+
+    // Display
+    _layoutSide->addLayout(_layoutAdjustments, 70);
+    _layoutAdjustments->addWidget(_labelAdjustmentsTitle);
+    _layoutAdjustments->addWidget(_buttonAdjustmentsReset);
+
+    // Connect SIGNALs to SLOTs
+    connect(_buttonAdjustmentsReset, SIGNAL(clicked(bool)), this, SLOT(onAdjustmentsResetButtonClicked()));
+
+    // Testing new design
+    _layoutAdjustmentsWhiteBalance = new QGridLayout();
+    _labelAdjustmentWhiteBalance = new QLabel("White Balance");
+    _sliderAdjustmentWhiteBalanceSlider = new QSlider(Qt::Orientation::Horizontal);
+    _labelAdjustmentWhiteBalanceMin = new QLabel("0");
+    _labelAdjustmentWhiteBalanceMax = new QLabel("20");
+    _labelAdjustmentWhiteBalanceValue = new QLabel("0");
+    _buttonAdjustmentWhiteBalanceButton = new QPushButton("Apply");
+
+    //_sliderAdjustmentWhiteBalanceSlider->setMinimum(0);
+    //_sliderAdjustmentWhiteBalanceSlider->setMaximum(20);
+    _sliderAdjustmentWhiteBalanceSlider->setRange(0, 20);
+    _sliderAdjustmentWhiteBalanceSlider->setMouseTracking(false);
+    _sliderAdjustmentWhiteBalanceSlider->setTickInterval(1);
+    _sliderAdjustmentWhiteBalanceSlider->setValue(0);
+    _sliderAdjustmentWhiteBalanceSlider->setSingleStep(1);
+    //_sliderAdjustmentWhiteBalanceSlider->setTickPosition(QSlider::TicksAbove);
+
+    QFont font = QFont();
+    font.setPointSize(10);
+    _labelAdjustmentWhiteBalance->setFont(font);
+
+    _layoutAdjustmentsWhiteBalance->setSpacing(0);
+    _layoutAdjustmentsWhiteBalance->addWidget(_labelAdjustmentWhiteBalance, 0, 0, 1, 4);
+    _layoutAdjustmentsWhiteBalance->addWidget(_labelAdjustmentWhiteBalanceMin, 1, 0, 1, 1);
+    _layoutAdjustmentsWhiteBalance->addWidget(_labelAdjustmentWhiteBalanceMax, 1, 2, 1, 1, Qt::AlignRight);
+    _layoutAdjustmentsWhiteBalance->addWidget(_sliderAdjustmentWhiteBalanceSlider, 2, 0, 1, 3);
+    _layoutAdjustmentsWhiteBalance->addWidget(_labelAdjustmentWhiteBalanceValue, 2, 3, 1, 1, Qt::AlignCenter);
+    _layoutAdjustmentsWhiteBalance->addWidget(_buttonAdjustmentWhiteBalanceButton, 3, 0, 1, 4);
+    _layoutAdjustments->addLayout(_layoutAdjustmentsWhiteBalance);
+
+    //connect(_sliderAdjustmentWhiteBalanceSlider, SIGNAL(sliderPressed()), this, SLOT(onAdjustmentWhiteBalanceSliderReleased()));
+    //connect(_sliderAdjustmentWhiteBalanceSlider, SIGNAL(sliderMoved(int)), this, SLOT(onAdjustmentWhiteBalanceSliderReleased()));
+    //connect(_layoutAdjustmentsWhiteBalance, ???, this, SLOT(onAdjustmentWhiteBalanceSliderReleased()));
+    connect(_sliderAdjustmentWhiteBalanceSlider, SIGNAL(sliderReleased()), this, SLOT(onAdjustmentWhiteBalanceSliderReleased()));
+    connect(_buttonAdjustmentWhiteBalanceButton, SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceButtonClicked()));
+}
+
+void ImageView::onAdjustmentsResetButtonClicked()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+
+    _model->editReset();
+}
+
+void ImageView::onAdjustmentWhiteBalanceSliderReleased()
+{
+    _labelAdjustmentWhiteBalanceValue->setText( QString::number(_sliderAdjustmentWhiteBalanceSlider->value()) );
+}
+
+void ImageView::onAdjustmentWhiteBalanceButtonClicked()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+
+    this->setCursor(Qt::CursorShape::BusyCursor);
+    _model->editAutoWhiteBalance(_sliderAdjustmentWhiteBalanceSlider->value());
+    this->setCursor(Qt::CursorShape::ArrowCursor);
+}
+
+void ImageView::setupHistogram()
+{
+    _layoutHistogram = new QVBoxLayout();
+    _layoutSide->addLayout(_layoutHistogram, 30);
+
+    _histogramGraphicsScene = new QGraphicsScene(this);
+    _histogramGraphicsView = new QGraphicsView(this);
+    _layoutHistogram->addWidget(_histogramGraphicsView);
 }
 
 void ImageView::setupMenuBar()
@@ -128,16 +178,18 @@ void ImageView::setupMenuBar()
 void ImageView::setupMenuFile()
 {
     // Initialization
-    _menuFile = new QMenu("File", this);
-    _actionLoad = new QAction("Load");
+    _menuFile =     new QMenu("File", this);
+    _actionLoad =   new QAction("Load");
+    _actionSave =   new QAction("Save");
+    _actionExit =   new QAction("Exit");
+
+    // Personalization
     _actionLoad->setStatusTip("Load an image.");
-    _actionSave = new QAction("Save");
     _actionSave->setShortcut(QKeySequence::fromString("Ctrl+S"));
     _actionSave->setStatusTip("Save the current edited image.");
-    _actionExit = new QAction("Exit");
     _actionExit->setStatusTip("Your progress since the last save will be lost.");
 
-    // Adding to viewport
+    // Display
     _menuBar->addMenu(_menuFile);
     _menuFile->addAction(_actionLoad);
     _menuFile->addAction(_actionSave);
@@ -152,21 +204,23 @@ void ImageView::setupMenuFile()
 void ImageView::setupMenuView()
 {
     // Initialization
-    _menuView = new QMenu("View", this);
-    _actionZoomIn = new QAction("Zoom In");
-    _actionZoomIn->setShortcut(QKeySequence::fromString("Ctrl+I"));
-    _actionZoomOut = new QAction("Zoom Out");
-    _actionZoomOut->setShortcut(QKeySequence::fromString("Ctrl+O"));
-    _actionZoomFit = new QAction("Scale to fit");
+    _menuView =             new QMenu("View", this);
+    _actionZoomIn =         new QAction("Zoom In");
+    _actionZoomOut =        new QAction("Zoom Out");
+    _actionZoomFit =        new QAction("Scale to fit");
     _actionFlipHorizontal = new QAction("Flip Horizontal");
-    _actionFlipVertical = new QAction("Flip Vertical");
-    _actionRotate90CW = new QAction("Rotate 90 CW");
-    _actionRotate90CW->setShortcut(QKeySequence::fromString("Ctrl+R"));
-    _actionRotate90CCW = new QAction("Rotate 90 CCW");
-    _actionRotate90CCW->setShortcut(QKeySequence::fromString("Ctrl+Shift+R"));
-    _actionRotate180 = new QAction("Rotate 180 degrees");
+    _actionFlipVertical =   new QAction("Flip Vertical");
+    _actionRotate90CW =     new QAction("Rotate 90 CW");
+    _actionRotate90CCW =    new QAction("Rotate 90 CCW");
+    _actionRotate180 =      new QAction("Rotate 180 degrees");
 
-    // Adding to viewport
+    // Personalization
+    _actionZoomIn->setShortcut(QKeySequence::fromString("Ctrl+I"));
+    _actionZoomOut->setShortcut(QKeySequence::fromString("Ctrl+O"));
+    _actionRotate90CW->setShortcut(QKeySequence::fromString("Ctrl+R"));
+    _actionRotate90CCW->setShortcut(QKeySequence::fromString("Ctrl+Shift+R"));
+
+    // Display
     _menuBar->addMenu(_menuView);
     _menuView->addAction(_actionZoomIn);
     _menuView->addAction(_actionZoomOut);
@@ -319,7 +373,6 @@ void ImageView::onImageModelLoaded()
     qDebug() << "View catched model's ImageLoaded signal" << QTime::currentTime();
     loadImage();
     _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
-    // Fixing the Histogram bug:
     _histogramGraphicsView->fitInView(_histogramGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 }
 

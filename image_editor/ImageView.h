@@ -28,44 +28,18 @@ public:
     ~ImageView();
 
 private:
-
     ImageModel* _model;
-
-    /*int* _windowWidth;
-    int* _windowHeight;*/
-
-    QWidget* _centralWidget;
-    QHBoxLayout* _layoutMain;
-
-    // Left side
-    QVBoxLayout* _layoutImageContainer;
-    QGraphicsScene* _imageGraphicsScene;
-    QGraphicsView* _imageGraphicsView;
-
-    // { #Right side
-    QVBoxLayout* _editLayout;
-
-    // Right-Top Adjustments
-    QVBoxLayout* _adjustmentsLayout;
-    QPushButton* _buttonAutoWhiteBalance;
-
-
-    // Right-Bottom Details
-    QVBoxLayout* _detailsLayout;
-    QGraphicsScene* _histogramGraphicsScene;
-    QGraphicsView* _histogramGraphicsView;
-    // }
 
     // Menu
     QMenuBar* _menuBar;
 
-    // File
+    // Menu: File
     QMenu* _menuFile;
     QAction* _actionLoad;
     QAction* _actionSave;
     QAction* _actionExit;
 
-    // File
+    // Menu: File
     QMenu* _menuView;
     QAction* _actionZoomIn;
     QAction* _actionZoomOut;
@@ -76,13 +50,44 @@ private:
     QAction* _actionRotate90CCW;
     QAction* _actionRotate180;
 
+    // Layout
+    QWidget* _centralWidget;
+    QHBoxLayout* _layoutMain;
+
+    // Layout: Image
+    QVBoxLayout* _layoutImageContainer;
+    QGraphicsScene* _imageGraphicsScene;
+    QGraphicsView* _imageGraphicsView;
+
+    // Layout: Side
+    QVBoxLayout* _layoutSide;
+    // Layout: Side: Adjustments
+    QVBoxLayout* _layoutAdjustments;
+    QLabel* _labelAdjustmentsTitle;
+    QPushButton* _buttonAdjustmentsReset;
+    // Layout: Side: Adjustments: White Balance
+    QGridLayout* _layoutAdjustmentsWhiteBalance;
+    QLabel* _labelAdjustmentWhiteBalance;
+    QLabel* _labelAdjustmentWhiteBalanceMin;
+    QLabel* _labelAdjustmentWhiteBalanceMax;
+    QLabel* _labelAdjustmentWhiteBalanceValue;
+    QSlider* _sliderAdjustmentWhiteBalanceSlider;
+    QPushButton* _buttonAdjustmentWhiteBalanceButton;
+    // Layout: Side: Histogram
+    QVBoxLayout* _layoutHistogram;
+    QGraphicsScene* _histogramGraphicsScene;
+    QGraphicsView* _histogramGraphicsView;
+
     void setupMenuBar();
     void setupMenuFile();
     void setupMenuView();
+    void setupSide();
+    void setupAdjustments();
+    void setupHistogram();
     void loadImage();
 
 private slots:
-    // MenuBar Actions' slots
+    // Menu Actions
     void onActionLoad();
     void onActionSave();
     void onActionExit();
@@ -95,10 +100,13 @@ private slots:
     void onActionRotate90CCW();
     void onActionRotate180();
 
-    // Model's signal slot
+    // SLOTs of model's signals
     void onImageModelLoaded();
     void onImageModelUpdated();
 
-    // Adjustments button slots
+    // SLOTs of adjustments
+    void onAdjustmentsResetButtonClicked();
+    void onAdjustmentWhiteBalanceSliderReleased();
+    void onAdjustmentWhiteBalanceButtonClicked();
 };
 #endif // IMAGEVIEW_H

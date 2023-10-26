@@ -301,6 +301,15 @@ cv::Mat ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, i
     return img;
 }
 
+void ImageModel::editReset()
+{
+    if(!this->isImageLoaded())
+        return;
+
+    this->_data->image = this->_data->imageOriginal.clone();
+    emit imageUpdated();
+}
+
 void ImageModel::editFlipHorizontal()
 {
     // Edge cases
@@ -340,7 +349,7 @@ void ImageModel::editAutoWhiteBalance(int value)
 {
     float percent = value;
     const float percentLimitMin = 0;
-    const float percentLimitMax = 40;
+    const float percentLimitMax = 20;
 
     if(!this->isImageLoaded())
         return;
@@ -348,11 +357,11 @@ void ImageModel::editAutoWhiteBalance(int value)
     if(this->_data->image.channels() != 3)
         return;
 
-    if(percent < percentLimitMin)
-        percent = percentLimitMin;
+    if(percent <= percentLimitMin)
+        return;
 
     if(percent > percentLimitMax)
-        percent = percentLimitMax;
+        return;
 
     float halfPercent = percent / 200.0f;
 

@@ -30,6 +30,7 @@ public:
     QPixmap getHistogram(QSize histogramLabelSize);
 
     bool isImageLoaded();
+    void editReset();
     void editFlipHorizontal();
     void editFlipVertical();
     void editRotate(int degree);

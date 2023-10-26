@@ -4,7 +4,7 @@
 #include <QString>
 #include <QHash>
 #include <opencv2/core/core.hpp>
-// #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 struct ImageData
 {
@@ -12,8 +12,8 @@ struct ImageData
     ImageData(QString path_, cv::Mat image_)
     {
         this->path = path_;
-        this->image = image_;
-        this->imageOriginal = image_;
+        this->image = image_.clone();
+        this->imageOriginal = image.clone();
     }
 
     QString path;
