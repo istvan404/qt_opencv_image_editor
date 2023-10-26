@@ -44,22 +44,8 @@ ImageView::ImageView(QWidget *parent)
     _adjustmentsLayout = new QVBoxLayout();
     _editLayout->addLayout(_adjustmentsLayout, 70);
     _adjustmentsLayout->setAlignment(Qt::AlignTop);
-    _buttonFlipHorizontal = new QPushButton("Flip Horizontal");
-    _buttonFlipVertical = new QPushButton("Flip Vertical");
-    _buttonRotate90Plus = new QPushButton("Rotate +90 Degrees");
-    _buttonRotate90Minus = new QPushButton("Rotate -90 Degrees");
     _buttonAutoWhiteBalance = new QPushButton("Auto White Balance");
-    _buttonZoomIn = new QPushButton("Zoom In");
-    _buttonZoomOut = new QPushButton("Zoom Out");
-    _buttonZoomFit = new QPushButton("Scale to fit");
-    _adjustmentsLayout->addWidget(_buttonFlipHorizontal);
-    _adjustmentsLayout->addWidget(_buttonFlipVertical);
-    _adjustmentsLayout->addWidget(_buttonRotate90Plus);
-    _adjustmentsLayout->addWidget(_buttonRotate90Minus);
     _adjustmentsLayout->addWidget(_buttonAutoWhiteBalance);
-    _adjustmentsLayout->addWidget(_buttonZoomIn);
-    _adjustmentsLayout->addWidget(_buttonZoomOut);
-    _adjustmentsLayout->addWidget(_buttonZoomFit);
 
 
     QGridLayout* whiteBalance_grid = new QGridLayout();
@@ -113,29 +99,13 @@ ImageView::ImageView(QWidget *parent)
     connect(_model, &ImageModel::imageUpdated, this, &ImageView::onImageModelUpdated);
 
     // Connect Right-Top Settings' Buttons To Slots
-    connect(_buttonFlipHorizontal, &QPushButton::clicked, this, [this](){
-        _model->editFlipHorizontal();
-    });
-    connect(_buttonFlipVertical, &QPushButton::clicked, this, [this](){
-        _model->editFlipVertical();
-    });
-    connect(_buttonRotate90Plus, &QPushButton::clicked, this, [this](){
-        _model->editRotate90Plus();
-    });
-    connect(_buttonRotate90Minus, &QPushButton::clicked, this, [this](){
-        _model->editRotate90Minus();
-    });
     connect(_buttonAutoWhiteBalance, &QPushButton::clicked, this, [this](){
         this->setCursor(Qt::CursorShape::BusyCursor);
         _model->editAutoWhiteBalance(10);
         this->setCursor(Qt::CursorShape::ArrowCursor);
     });
-    connect(_buttonZoomIn, SIGNAL(clicked(bool)), this, SLOT(onButtonZoomInClicked()));
-    connect(_buttonZoomOut, SIGNAL(clicked(bool)), this, SLOT(onButtonZoomOutClicked()));
-    connect(_buttonZoomFit, SIGNAL(clicked(bool)), this, SLOT(onButtonZoomFitClicked()));
 
     setMenuBar(_menuBar);
-
 
     _imageGraphicsScene = new QGraphicsScene(this);
     _histogramGraphicsScene = new QGraphicsScene(this);
@@ -340,46 +310,6 @@ void ImageView::onActionRotate180()
         return;
     }
     _model->editRotate(180);
-    _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
-}
-
-void ImageView::onButtonZoomInClicked()
-{
-    if(!_model->isImageLoaded())
-    {
-        QMessageBox::warning(this,
-                             "Image Editor - Warning",
-                             "There is no image loaded");
-        return;
-    }
-
-    _imageGraphicsView->scale(1.1,1.1);
-}
-
-void ImageView::onButtonZoomOutClicked()
-{
-    if(!_model->isImageLoaded())
-    {
-        QMessageBox::warning(this,
-                             "Image Editor - Warning",
-                             "There is no image loaded");
-        return;
-    }
-
-    _imageGraphicsView->scale(0.9,0.9);
-
-}
-
-void ImageView::onButtonZoomFitClicked()
-{
-    if(!_model->isImageLoaded())
-    {
-        QMessageBox::warning(this,
-                             "Image Editor - Warning",
-                             "There is no image loaded");
-        return;
-    }
-
     _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 }
 

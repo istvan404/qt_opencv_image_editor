@@ -33,8 +33,6 @@ public:
     void editFlipHorizontal();
     void editFlipVertical();
     void editRotate(int degree);
-    void editRotate90Plus();
-    void editRotate90Minus();
     void editAutoWhiteBalance(int value);
 
 private:

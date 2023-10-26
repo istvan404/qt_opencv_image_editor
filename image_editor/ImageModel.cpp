@@ -336,26 +336,6 @@ void ImageModel::editRotate(int degree)
     emit imageUpdated();
 }
 
-void ImageModel::editRotate90Plus()
-{
-    // Edge cases
-    if(!this->isImageLoaded())
-        return;
-
-    cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_CLOCKWISE);
-    emit imageUpdated();
-}
-
-void ImageModel::editRotate90Minus()
-{
-    // Edge cases
-    if(!this->isImageLoaded())
-        return;
-
-    cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_COUNTERCLOCKWISE);
-    emit imageUpdated();
-}
-
 void ImageModel::editAutoWhiteBalance(int value)
 {
     float percent = value;

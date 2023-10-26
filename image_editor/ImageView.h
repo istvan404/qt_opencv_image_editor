@@ -47,14 +47,7 @@ private:
 
     // Right-Top Adjustments
     QVBoxLayout* _adjustmentsLayout;
-    QPushButton* _buttonFlipHorizontal;
-    QPushButton* _buttonFlipVertical;
-    QPushButton* _buttonRotate90Plus;
-    QPushButton* _buttonRotate90Minus;
     QPushButton* _buttonAutoWhiteBalance;
-    QPushButton* _buttonZoomOut;
-    QPushButton* _buttonZoomIn;
-    QPushButton* _buttonZoomFit;
 
 
     // Right-Bottom Details
@@ -107,10 +100,5 @@ private slots:
     void onImageModelUpdated();
 
     // Adjustments button slots
-    void onButtonZoomInClicked();
-    void onButtonZoomOutClicked();
-    void onButtonZoomFitClicked();
-    //void onButtonFlipHorizontal(); // ?
-    //void onButtonFlipVertical(); // ?
 };
 #endif // IMAGEVIEW_H
