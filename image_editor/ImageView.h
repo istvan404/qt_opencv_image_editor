@@ -77,6 +77,8 @@ private:
     QAction* _actionZoomIn;
     QAction* _actionZoomOut;
     QAction* _actionZoomFit;
+    QAction* _actionFlipHorizontal;
+    QAction* _actionFlipVertical;
 
     void setupMenuBar();
     void setupMenuFile();
@@ -91,6 +93,8 @@ private slots:
     void onActionZoomIn();
     void onActionZoomOut();
     void onActionZoomFit();
+    void onActionFlipHorizontal();
+    void onActionFlipVertical();
 
     // Model's signal slot
     void onImageModelLoaded();

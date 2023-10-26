@@ -187,17 +187,24 @@ void ImageView::setupMenuView()
     _actionZoomOut = new QAction("Zoom Out");
     _actionZoomOut->setShortcut(QKeySequence::fromString("Ctrl+O"));
     _actionZoomFit = new QAction("Scale to fit");
+    _actionFlipHorizontal = new QAction("Flip Horizontal");
+    _actionFlipVertical = new QAction("Flip Vertical");
 
     // Adding to viewport
     _menuBar->addMenu(_menuView);
     _menuView->addAction(_actionZoomIn);
     _menuView->addAction(_actionZoomOut);
     _menuView->addAction(_actionZoomFit);
+    _menuView->addSeparator();
+    _menuView->addAction(_actionFlipHorizontal);
+    _menuView->addAction(_actionFlipVertical);
 
     // Connect SIGNALs to SLOTs
-    connect(_actionZoomIn,  SIGNAL(triggered(bool)), this, SLOT(onActionZoomIn()));
-    connect(_actionZoomOut, SIGNAL(triggered(bool)), this, SLOT(onActionZoomOut()));
-    connect(_actionZoomFit, SIGNAL(triggered(bool)), this, SLOT(onActionZoomFit()));
+    connect(_actionZoomIn,          SIGNAL(triggered(bool)), this, SLOT(onActionZoomIn()));
+    connect(_actionZoomOut,         SIGNAL(triggered(bool)), this, SLOT(onActionZoomOut()));
+    connect(_actionZoomFit,         SIGNAL(triggered(bool)), this, SLOT(onActionZoomFit()));
+    connect(_actionFlipHorizontal,  SIGNAL(triggered(bool)), this, SLOT(onActionFlipHorizontal()));
+    connect(_actionFlipVertical,    SIGNAL(triggered(bool)), this, SLOT(onActionFlipVertical()));
 }
 
 void ImageView::loadImage()
@@ -253,6 +260,30 @@ void ImageView::onActionZoomFit()
     }
 
     _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
+}
+
+void ImageView::onActionFlipHorizontal()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+    _model->editFlipHorizontal();
+}
+
+void ImageView::onActionFlipVertical()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+    _model->editFlipVertical();
 }
 
 void ImageView::onButtonZoomInClicked()
