@@ -9,6 +9,9 @@ ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
 void ImageModel::loadImage(QString path)
 {
     this->_data = _persistence->load(path);
+    qDebug() << "img.type() == CV_8UC4 ->" << (this->_data->image.type() == CV_8UC4); // unsigned 8 bit with 4 channels
+    qDebug() << "img.type() == CV_8UC3 ->" << (this->_data->image.type() == CV_8UC3); // unsigned 8 bit with 3 channels
+    qDebug() << "img.type() == CV_8UC1 ->" << (this->_data->image.type() == CV_8UC1); // unsigned 8 bit with 1 channels
     emit imageLoaded();
 }
 
@@ -166,7 +169,7 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
     float ceiling = -1;
     for(int i = 1; i < (3*histSize)*0.2; i++)
     {
-        qDebug() << "all_values[" << i << "] =" << all_values[i];
+        //qDebug() << "all_values[" << i << "] =" << all_values[i];
         float a = all_values[i-1];
         float b = all_values[i];
         if( (a/b) > 1.5 )
@@ -177,7 +180,7 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
 
     if(ceiling != -1)
     {
-        qDebug() << "ceiling := " << ceiling;
+        //qDebug() << "ceiling := " << ceiling;
         b_channel.setTo(ceiling,b_channel > ceiling);
         g_channel.setTo(ceiling,g_channel > ceiling);
         r_channel.setTo(ceiling,r_channel > ceiling);
@@ -197,11 +200,11 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
 
     for( int i = 0; i < histSize; i++ )
     {
-        qDebug() << "b_channel[" << i << "] = " << cvRound(b_channel.at<float>(i))
+        /*qDebug() << "b_channel[" << i << "] = " << cvRound(b_channel.at<float>(i))
                  << " | "
                  << "g_channel[" << i << "] = " << cvRound(g_channel.at<float>(i))
                  << " | "
-                 << "r_channel[" << i << "] = " << cvRound(r_channel.at<float>(i));
+                 << "r_channel[" << i << "] = " << cvRound(r_channel.at<float>(i));*/
 
         int b_start = hist_h - cvRound(b_channel.at<float>(i));
         int g_start = hist_h - cvRound(g_channel.at<float>(i));

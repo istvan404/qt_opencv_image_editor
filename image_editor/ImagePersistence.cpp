@@ -1,5 +1,4 @@
 #include "ImagePersistence.h"
-#include <QString>
 
 
 ImagePersistence::ImagePersistence()
@@ -13,6 +12,6 @@ void ImagePersistence::save(QString path, ImageData* state)
 
 ImageData* ImagePersistence::load(QString path)
 {
-    cv::Mat image = cv::imread(path.toStdString());
+    cv::Mat image = cv::imread(path.toStdString(), cv::IMREAD_COLOR);
     return new ImageData(path, image);
 }
