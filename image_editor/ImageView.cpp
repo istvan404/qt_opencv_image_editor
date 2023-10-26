@@ -146,7 +146,7 @@ ImageView::ImageView(QWidget *parent)
     });
     connect(_buttonAutoWhiteBalance, &QPushButton::clicked, this, [this](){
         this->setCursor(Qt::CursorShape::BusyCursor);
-        _model->editAutoWhiteBalance();
+        _model->editAutoWhiteBalance(10);
         this->setCursor(Qt::CursorShape::ArrowCursor);
     });
     connect(_buttonZoomIn, SIGNAL(clicked(bool)), this, SLOT(onButtonZoomInClicked()));

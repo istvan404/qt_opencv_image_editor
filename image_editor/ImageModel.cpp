@@ -341,32 +341,39 @@ void ImageModel::editRotate90Minus()
     emit imageUpdated();
 }
 
-void ImageModel::editAutoWhiteBalance()
+void ImageModel::editAutoWhiteBalance(int value)
 {
-    // Edge cases
+    float percent = value;
+    const float percentLimitMin = 0;
+    const float percentLimitMax = 40;
+
     if(!this->isImageLoaded())
         return;
 
-    float percent = 10;
-    //assert(in.channels() == 3);
-    //assert(percent > 0 && percent < 100);
+    if(this->_data->image.channels() != 3)
+        return;
+
+    if(percent < percentLimitMin)
+        percent = percentLimitMin;
+
+    if(percent > percentLimitMax)
+        percent = percentLimitMax;
+
     float halfPercent = percent / 200.0f;
 
     std::vector<cv::Mat> bgrChannelSplit;
     cv::split(this->_data->image,bgrChannelSplit);
     for(int i=0;i<3;i++) {
-        //find the low and high precentile values (based on the input percentile)
-        cv::Mat monoImage;
-        bgrChannelSplit[i].reshape(1,1).copyTo(monoImage);
-        cv::sort(monoImage,monoImage,cv::SORT_EVERY_ROW + cv::SORT_ASCENDING);
-        int lowval = monoImage.at<uchar>(cvFloor(((float)monoImage.cols) * halfPercent));
-        int highval = monoImage.at<uchar>(cvCeil(((float)monoImage.cols) * (1.0 - halfPercent)));
 
-        //saturate below the low percentile and above the high percentile
-        bgrChannelSplit[i].setTo(lowval,bgrChannelSplit[i] < lowval);
-        bgrChannelSplit[i].setTo(highval,bgrChannelSplit[i] > highval);
+        cv::Mat singleChannel;
+        bgrChannelSplit[i].reshape(1,1).copyTo(singleChannel);
+        cv::sort(singleChannel,singleChannel,cv::SORT_EVERY_ROW + cv::SORT_ASCENDING);
+        int floorValue = singleChannel.at<uchar>(cvFloor(((float)singleChannel.cols) * halfPercent));
+        int ceilingValue = singleChannel.at<uchar>(cvCeil(((float)singleChannel.cols) * (1.0 - halfPercent)));
 
-        //scale the channel
+        bgrChannelSplit[i].setTo(floorValue,bgrChannelSplit[i] < floorValue);
+        bgrChannelSplit[i].setTo(ceilingValue,bgrChannelSplit[i] > ceilingValue);
+
         cv::normalize(bgrChannelSplit[i],bgrChannelSplit[i],0,255,cv::NORM_MINMAX);
     }
     cv::merge(bgrChannelSplit,this->_data->image);
