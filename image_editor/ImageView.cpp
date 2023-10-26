@@ -74,14 +74,18 @@ ImageView::ImageView(QWidget *parent)
     whiteBalance_slider->setValue(0);
     whiteBalance_slider->setTickPosition(QSlider::TicksAbove);
 
+    QFont font = QFont();
+    //font.setBold(true);
+    font.setPointSize(12);
+    whiteBalance_label->setFont(font);
 
     whiteBalance_grid->setSpacing(0);
-    whiteBalance_grid->addWidget(whiteBalance_label, 0, 0, 1, 3);
+    whiteBalance_grid->addWidget(whiteBalance_label, 0, 0, 1, 4);
     whiteBalance_grid->addWidget(whiteBalance_min, 1, 0, 1, 1);
-    whiteBalance_grid->addWidget(whiteBalance_max, 1, 1, 1, 1, Qt::AlignRight);
-    whiteBalance_grid->addWidget(whiteBalance_slider, 2, 0, 1, 2);
-    whiteBalance_grid->addWidget(whiteBalance_count, 2, 2, 1, 1, Qt::AlignCenter);
-    whiteBalance_grid->addWidget(whiteBalance_button, 3, 0, 1, 3);
+    whiteBalance_grid->addWidget(whiteBalance_max, 1, 2, 1, 1, Qt::AlignRight);
+    whiteBalance_grid->addWidget(whiteBalance_slider, 2, 0, 1, 3);
+    whiteBalance_grid->addWidget(whiteBalance_count, 2, 3, 1, 1, Qt::AlignCenter);
+    whiteBalance_grid->addWidget(whiteBalance_button, 3, 0, 1, 4);
     /*
     whiteBalance_grid->addWidget(new QPushButton("Label"), 0, 0, 1, 3);
     whiteBalance_grid->addWidget(new QPushButton("Min"), 1, 0, 1, 1);
