@@ -189,6 +189,11 @@ void ImageView::setupMenuView()
     _actionZoomFit = new QAction("Scale to fit");
     _actionFlipHorizontal = new QAction("Flip Horizontal");
     _actionFlipVertical = new QAction("Flip Vertical");
+    _actionRotate90CW = new QAction("Rotate 90 CW");
+    _actionRotate90CW->setShortcut(QKeySequence::fromString("Ctrl+R"));
+    _actionRotate90CCW = new QAction("Rotate 90 CCW");
+    _actionRotate90CCW->setShortcut(QKeySequence::fromString("Ctrl+Shift+R"));
+    _actionRotate180 = new QAction("Rotate 180 degrees");
 
     // Adding to viewport
     _menuBar->addMenu(_menuView);
@@ -198,6 +203,10 @@ void ImageView::setupMenuView()
     _menuView->addSeparator();
     _menuView->addAction(_actionFlipHorizontal);
     _menuView->addAction(_actionFlipVertical);
+    _menuView->addSeparator();
+    _menuView->addAction(_actionRotate90CW);
+    _menuView->addAction(_actionRotate90CCW);
+    _menuView->addAction(_actionRotate180);
 
     // Connect SIGNALs to SLOTs
     connect(_actionZoomIn,          SIGNAL(triggered(bool)), this, SLOT(onActionZoomIn()));
@@ -205,15 +214,24 @@ void ImageView::setupMenuView()
     connect(_actionZoomFit,         SIGNAL(triggered(bool)), this, SLOT(onActionZoomFit()));
     connect(_actionFlipHorizontal,  SIGNAL(triggered(bool)), this, SLOT(onActionFlipHorizontal()));
     connect(_actionFlipVertical,    SIGNAL(triggered(bool)), this, SLOT(onActionFlipVertical()));
+    connect(_actionRotate90CW,      SIGNAL(triggered(bool)), this, SLOT(onActionRotate90CW()));
+    connect(_actionRotate90CCW,     SIGNAL(triggered(bool)), this, SLOT(onActionRotate90CCW()));
+    connect(_actionRotate180,       SIGNAL(triggered(bool)), this, SLOT(onActionRotate180()));
 }
 
 void ImageView::loadImage()
 {
+    if(_imageGraphicsScene != nullptr)
+        delete _imageGraphicsScene;
+
     _imageGraphicsScene = new QGraphicsScene(this);
     _imageGraphicsScene->clear();
     _imageGraphicsScene->addPixmap(_model->getEditedImageQPixmap());
     _imageGraphicsView->setScene(_imageGraphicsScene);
     _imageGraphicsView->update();
+
+    if(_histogramGraphicsScene != nullptr)
+        delete _histogramGraphicsScene;
 
     _histogramGraphicsScene = new QGraphicsScene(this);
     _histogramGraphicsScene->clear();
@@ -284,6 +302,45 @@ void ImageView::onActionFlipVertical()
         return;
     }
     _model->editFlipVertical();
+}
+
+void ImageView::onActionRotate90CW()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+    _model->editRotate(90);
+    _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
+}
+
+void ImageView::onActionRotate90CCW()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+    _model->editRotate(-90);
+    _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
+}
+
+void ImageView::onActionRotate180()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+    _model->editRotate(180);
+    _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
 }
 
 void ImageView::onButtonZoomInClicked()

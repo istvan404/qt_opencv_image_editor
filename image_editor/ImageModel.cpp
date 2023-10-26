@@ -321,6 +321,21 @@ void ImageModel::editFlipVertical()
     emit imageUpdated();
 }
 
+void ImageModel::editRotate(int degree)
+{
+    if(!this->isImageLoaded())
+        return;
+
+    if(degree == 90)
+        cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_CLOCKWISE);
+    else if(degree == -90)
+        cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_COUNTERCLOCKWISE);
+    else if(degree == 180)
+        cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_180);
+
+    emit imageUpdated();
+}
+
 void ImageModel::editRotate90Plus()
 {
     // Edge cases
