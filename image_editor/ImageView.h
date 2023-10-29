@@ -69,13 +69,7 @@ private:
     QPushButton* _buttonAdjustmentsReset;
     // Layout: Side: Adjustments: White Balance
     Adjustment* _adjustmentWhiteBalance;
-    /*QGridLayout* _layoutAdjustmentsWhiteBalance;
-    QLabel* _labelAdjustmentWhiteBalance;
-    QLabel* _labelAdjustmentWhiteBalanceMin;
-    QLabel* _labelAdjustmentWhiteBalanceMax;
-    QLabel* _labelAdjustmentWhiteBalanceValue;
-    QSlider* _sliderAdjustmentWhiteBalanceSlider;
-    QPushButton* _buttonAdjustmentWhiteBalanceButton;*/
+    Adjustment* _adjustmentShadowProtection;
 
     // Layout: Side: Histogram
     QVBoxLayout* _layoutHistogram;
@@ -113,7 +107,6 @@ private slots:
 
     // SLOTs of adjustments
     void onAdjustmentsResetButtonClicked();
-    void onAdjustmentWhiteBalanceSliderReleased();
     void onAdjustmentWhiteBalanceButtonClicked();
 };
 #endif // IMAGEVIEW_H

@@ -65,6 +65,8 @@ void ImageView::setupAdjustments()
     _layoutAdjustments =        new QVBoxLayout();
     _labelAdjustmentsTitle =    new QLabel("Adjustments");
     _buttonAdjustmentsReset =   new QPushButton("Reset");
+    _adjustmentWhiteBalance = new Adjustment("White Balance", 0, 20, 0);
+    _adjustmentShadowProtection = new Adjustment("Shadow Protection", 0, 100, 0);
 
     // Personalization
     _layoutAdjustments->setAlignment(Qt::AlignTop);
@@ -78,50 +80,13 @@ void ImageView::setupAdjustments()
     _layoutSide->addLayout(_layoutAdjustments, 70);
     _layoutAdjustments->addWidget(_labelAdjustmentsTitle);
     _layoutAdjustments->addWidget(_buttonAdjustmentsReset);
+    _layoutAdjustments->addLayout(_adjustmentWhiteBalance);
+    _layoutAdjustments->addLayout(_adjustmentShadowProtection);
 
     // Connect SIGNALs to SLOTs
     connect(_buttonAdjustmentsReset, SIGNAL(clicked(bool)), this, SLOT(onAdjustmentsResetButtonClicked()));
-
-    // Testing new design
-
-    _adjustmentWhiteBalance = new Adjustment("White Balance", 0, 20, 0);
-    _layoutAdjustments->addLayout(_adjustmentWhiteBalance);
     connect(_adjustmentWhiteBalance->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceButtonClicked()));
-
-    /*_layoutAdjustmentsWhiteBalance = new QGridLayout();
-    _labelAdjustmentWhiteBalance = new QLabel("White Balance");
-    _sliderAdjustmentWhiteBalanceSlider = new QSlider(Qt::Orientation::Horizontal);
-    _labelAdjustmentWhiteBalanceMin = new QLabel("0");
-    _labelAdjustmentWhiteBalanceMax = new QLabel("20");
-    _labelAdjustmentWhiteBalanceValue = new QLabel("0");
-    _buttonAdjustmentWhiteBalanceButton = new QPushButton("Apply");
-
-    _sliderAdjustmentWhiteBalanceSlider->setRange(0, 20);
-    _sliderAdjustmentWhiteBalanceSlider->setTickInterval(1);
-    _sliderAdjustmentWhiteBalanceSlider->setValue(0);
-    _sliderAdjustmentWhiteBalanceSlider->setTickPosition(QSlider::TicksAbove);
-
-    QFont font = QFont();
-    font.setPointSize(10);
-    _labelAdjustmentWhiteBalance->setFont(font);
-
-    _layoutAdjustmentsWhiteBalance->setSpacing(0);
-    _layoutAdjustmentsWhiteBalance->addWidget(_labelAdjustmentWhiteBalance, 0, 0, 1, 4);
-    _layoutAdjustmentsWhiteBalance->addWidget(_labelAdjustmentWhiteBalanceMin, 1, 0, 1, 1);
-    _layoutAdjustmentsWhiteBalance->addWidget(_labelAdjustmentWhiteBalanceMax, 1, 2, 1, 1, Qt::AlignRight);
-    _layoutAdjustmentsWhiteBalance->addWidget(_sliderAdjustmentWhiteBalanceSlider, 2, 0, 1, 3);
-    _layoutAdjustmentsWhiteBalance->addWidget(_labelAdjustmentWhiteBalanceValue, 2, 3, 1, 1, Qt::AlignCenter);
-    _layoutAdjustmentsWhiteBalance->addWidget(_buttonAdjustmentWhiteBalanceButton, 3, 0, 1, 4);
-    _layoutAdjustments->addLayout(_layoutAdjustmentsWhiteBalance);
-
-    connect(_sliderAdjustmentWhiteBalanceSlider, SIGNAL(valueChanged(int)), this, SLOT(onAdjustmentWhiteBalanceSliderReleased()));
-    connect(_buttonAdjustmentWhiteBalanceButton, SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceButtonClicked()));*/
-
-    // Testing out custom UI element
-    Adjustment* shadowAdjustment = new Adjustment("Shadow", 0, 20, 0);
-    _layoutAdjustments->addLayout(shadowAdjustment);
-    connect(shadowAdjustment->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceButtonClicked()));
-
+    connect(_adjustmentShadowProtection->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceButtonClicked()));
 }
 
 void ImageView::onAdjustmentsResetButtonClicked()
@@ -137,11 +102,6 @@ void ImageView::onAdjustmentsResetButtonClicked()
     _model->editReset();
 }
 
-void ImageView::onAdjustmentWhiteBalanceSliderReleased()
-{
-    //_labelAdjustmentWhiteBalanceValue->setText( QString::number(_sliderAdjustmentWhiteBalanceSlider->value()) );
-}
-
 void ImageView::onAdjustmentWhiteBalanceButtonClicked()
 {
     if(!_model->isImageLoaded())
@@ -153,7 +113,6 @@ void ImageView::onAdjustmentWhiteBalanceButtonClicked()
     }
 
     this->setCursor(Qt::CursorShape::BusyCursor);
-    //_model->editAutoWhiteBalance(_sliderAdjustmentWhiteBalanceSlider->value());
     _model->editAutoWhiteBalance(_adjustmentWhiteBalance->value());
     this->setCursor(Qt::CursorShape::ArrowCursor);
 }
