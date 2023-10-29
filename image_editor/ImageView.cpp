@@ -86,7 +86,7 @@ void ImageView::setupAdjustments()
     // Connect SIGNALs to SLOTs
     connect(_buttonAdjustmentsReset, SIGNAL(clicked(bool)), this, SLOT(onAdjustmentsResetButtonClicked()));
     connect(_adjustmentWhiteBalance->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceClicked()));
-    connect(_adjustmentShadowProtection->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceClicked()));
+    connect(_adjustmentShadowProtection->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentShadowProtectionClicked()));
 }
 
 void ImageView::onAdjustmentsResetButtonClicked()
