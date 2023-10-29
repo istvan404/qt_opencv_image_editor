@@ -85,8 +85,8 @@ void ImageView::setupAdjustments()
 
     // Connect SIGNALs to SLOTs
     connect(_buttonAdjustmentsReset, SIGNAL(clicked(bool)), this, SLOT(onAdjustmentsResetButtonClicked()));
-    connect(_adjustmentWhiteBalance->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceButtonClicked()));
-    connect(_adjustmentShadowProtection->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceButtonClicked()));
+    connect(_adjustmentWhiteBalance->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceClicked()));
+    connect(_adjustmentShadowProtection->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceClicked()));
 }
 
 void ImageView::onAdjustmentsResetButtonClicked()
@@ -102,7 +102,7 @@ void ImageView::onAdjustmentsResetButtonClicked()
     _model->editReset();
 }
 
-void ImageView::onAdjustmentWhiteBalanceButtonClicked()
+void ImageView::onAdjustmentWhiteBalanceClicked()
 {
     if(!_model->isImageLoaded())
     {
@@ -114,6 +114,22 @@ void ImageView::onAdjustmentWhiteBalanceButtonClicked()
 
     this->setCursor(Qt::CursorShape::BusyCursor);
     _model->editAutoWhiteBalance(_adjustmentWhiteBalance->value());
+    this->setCursor(Qt::CursorShape::ArrowCursor);
+}
+
+void ImageView::onAdjustmentShadowProtectionClicked()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+
+    this->setCursor(Qt::CursorShape::BusyCursor);
+    qDebug() << "Shadow protection apply button clicked!";
+    //_model->editAutoWhiteBalance(_adjustmentWhiteBalance->value());
     this->setCursor(Qt::CursorShape::ArrowCursor);
 }
 
