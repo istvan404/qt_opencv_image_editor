@@ -11,6 +11,7 @@
 #include <QPushButton>
 #include <QCursor>
 #include <QSlider>
+#include <QMouseEvent>
 
 #include <QDebug>
 #include <QGraphicsScene>
@@ -78,12 +79,15 @@ private:
     QGraphicsScene* _histogramGraphicsScene;
     QGraphicsView* _histogramGraphicsView;
 
+    void setupCentralWidget();
     void setupMenuBar();
     void setupMenuFile();
     void setupMenuView();
+    void setupImageViewport();
     void setupSide();
     void setupAdjustments();
     void setupHistogram();
+    void connectModel();
     void loadImage();
 
 private slots:

@@ -1,21 +1,62 @@
 #include "ImageView.h"
 
 
+class MySlider : public QSlider
+{
+protected:
+    void mousePressEvent( QMouseEvent* event )
+    {
+        if(event->button() == Qt::LeftButton)
+        {
+            if(orientation() == Qt::Horizontal)
+            {
+                int newValue = std::round(minimum() + ((maximum()-minimum()) * (static_cast<float>(event->position().x())) / (static_cast<float>(width())) ));
+                if(value() == newValue)
+                {
+                    qDebug() << "Accept event... value = " << value() << " newValue = " << newValue;
+                    event->accept();
+                    QSlider::mousePressEvent(event);
+                }
+            }
+            //event->accept();
+        }
+        //QSlider::mousePressEvent(event);
+    }
+};
+
+
 ImageView::ImageView(QWidget *parent)
     : QMainWindow(parent)
 {
     setWindowTitle("Image Editor - OpenCV 4.8.1");
-    /*_windowWidth = new int(1280);
-    _windowHeight = new int(720);
-    resize(*_windowWidth,*_windowHeight);
-    setMinimumSize(1280,720);
-    setMaximumSize(1920,1080);*/
     setFixedSize(1280, 720);
     qDebug() << "OpenCV current version: " << CV_VERSION;
 
     _model = new ImageModel(new ImagePersistence(), this);
 
+    setupCentralWidget();
+    setupMenuBar();
+    setupImageViewport();
+    setupSide();
+    connectModel();
 
+    //_imageGraphicsScene = new QGraphicsScene(this);
+    //_histogramGraphicsScene = new QGraphicsScene(this);
+}
+
+ImageView::~ImageView()
+{
+}
+
+void ImageView::connectModel()
+{
+    // Connect Model Signals To View's Slot
+    connect(_model, &ImageModel::imageLoaded, this, &ImageView::onImageModelLoaded);
+    connect(_model, &ImageModel::imageUpdated, this, &ImageView::onImageModelUpdated);
+}
+
+void ImageView::setupCentralWidget()
+{
     _centralWidget = new QWidget();
     setCentralWidget(_centralWidget);
 
@@ -23,30 +64,17 @@ ImageView::ImageView(QWidget *parent)
     _layoutMain->setContentsMargins(0,0,0,0);
     _layoutMain->setSpacing(10);
     _centralWidget->setLayout(_layoutMain);
+}
 
-    setupMenuBar();
-
+void ImageView::setupImageViewport()
+{
     // Left side
     _layoutImageContainer = new QVBoxLayout();
     _layoutMain->addLayout(_layoutImageContainer, 66);
-    //_layoutImageContainer->addWidget(_imageLabel);
 
     _imageGraphicsScene = new QGraphicsScene(this);
     _imageGraphicsView = new QGraphicsView(this);
     _layoutImageContainer->addWidget(_imageGraphicsView);
-
-    setupSide();
-
-    // Connect Model Signals To View's Slot
-    connect(_model, &ImageModel::imageLoaded, this, &ImageView::onImageModelLoaded);
-    connect(_model, &ImageModel::imageUpdated, this, &ImageView::onImageModelUpdated);
-
-    _imageGraphicsScene = new QGraphicsScene(this);
-    _histogramGraphicsScene = new QGraphicsScene(this);
-}
-
-ImageView::~ImageView()
-{
 }
 
 void ImageView::setupSide()
@@ -67,9 +95,8 @@ void ImageView::setupAdjustments()
     _buttonAdjustmentsReset =   new QPushButton("Reset");
 
     // Personalization
-    //_layoutSide->setSpacing(10);
-    _layoutSide->setContentsMargins(0, 10, 0, 10);
     _layoutAdjustments->setAlignment(Qt::AlignTop);
+    _layoutAdjustments->setContentsMargins(0, 10, 0, 10);
     QFont title = QFont();
     title.setPointSize(10);
     title.setBold(true);
@@ -87,18 +114,16 @@ void ImageView::setupAdjustments()
     _layoutAdjustmentsWhiteBalance = new QGridLayout();
     _labelAdjustmentWhiteBalance = new QLabel("White Balance");
     _sliderAdjustmentWhiteBalanceSlider = new QSlider(Qt::Orientation::Horizontal);
+    //_sliderAdjustmentWhiteBalanceSlider = new MySlider();
+    //_sliderAdjustmentWhiteBalanceSlider->setOrientation(Qt::Horizontal);
     _labelAdjustmentWhiteBalanceMin = new QLabel("0");
     _labelAdjustmentWhiteBalanceMax = new QLabel("20");
     _labelAdjustmentWhiteBalanceValue = new QLabel("0");
     _buttonAdjustmentWhiteBalanceButton = new QPushButton("Apply");
 
-    //_sliderAdjustmentWhiteBalanceSlider->setMinimum(0);
-    //_sliderAdjustmentWhiteBalanceSlider->setMaximum(20);
     _sliderAdjustmentWhiteBalanceSlider->setRange(0, 20);
-    _sliderAdjustmentWhiteBalanceSlider->setMouseTracking(false);
     _sliderAdjustmentWhiteBalanceSlider->setTickInterval(1);
     _sliderAdjustmentWhiteBalanceSlider->setValue(0);
-    _sliderAdjustmentWhiteBalanceSlider->setSingleStep(1);
     //_sliderAdjustmentWhiteBalanceSlider->setTickPosition(QSlider::TicksAbove);
 
     QFont font = QFont();
@@ -117,7 +142,8 @@ void ImageView::setupAdjustments()
     //connect(_sliderAdjustmentWhiteBalanceSlider, SIGNAL(sliderPressed()), this, SLOT(onAdjustmentWhiteBalanceSliderReleased()));
     //connect(_sliderAdjustmentWhiteBalanceSlider, SIGNAL(sliderMoved(int)), this, SLOT(onAdjustmentWhiteBalanceSliderReleased()));
     //connect(_layoutAdjustmentsWhiteBalance, ???, this, SLOT(onAdjustmentWhiteBalanceSliderReleased()));
-    connect(_sliderAdjustmentWhiteBalanceSlider, SIGNAL(sliderReleased()), this, SLOT(onAdjustmentWhiteBalanceSliderReleased()));
+    connect(_sliderAdjustmentWhiteBalanceSlider, SIGNAL(valueChanged(int)), this, SLOT(onAdjustmentWhiteBalanceSliderReleased()));
+    //connect(_sliderAdjustmentWhiteBalanceSlider, SIGNAL(sliderReleased()), this, SLOT(onAdjustmentWhiteBalanceSliderReleased()));
     connect(_buttonAdjustmentWhiteBalanceButton, SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceButtonClicked()));
 }
 
