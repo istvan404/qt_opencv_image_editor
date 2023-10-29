@@ -68,13 +68,15 @@ private:
     QLabel* _labelAdjustmentsTitle;
     QPushButton* _buttonAdjustmentsReset;
     // Layout: Side: Adjustments: White Balance
-    QGridLayout* _layoutAdjustmentsWhiteBalance;
+    Adjustment* _adjustmentWhiteBalance;
+    /*QGridLayout* _layoutAdjustmentsWhiteBalance;
     QLabel* _labelAdjustmentWhiteBalance;
     QLabel* _labelAdjustmentWhiteBalanceMin;
     QLabel* _labelAdjustmentWhiteBalanceMax;
     QLabel* _labelAdjustmentWhiteBalanceValue;
     QSlider* _sliderAdjustmentWhiteBalanceSlider;
-    QPushButton* _buttonAdjustmentWhiteBalanceButton;
+    QPushButton* _buttonAdjustmentWhiteBalanceButton;*/
+
     // Layout: Side: Histogram
     QVBoxLayout* _layoutHistogram;
     QGraphicsScene* _histogramGraphicsScene;

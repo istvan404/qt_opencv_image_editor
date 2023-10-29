@@ -13,6 +13,7 @@ public:
     Adjustment(QString title, int min, int max, int defaultValue);
 
     QPushButton* button();
+    int value();
 private:
     QString _title;
     int _min;

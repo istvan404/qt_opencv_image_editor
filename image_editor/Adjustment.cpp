@@ -35,6 +35,11 @@ QPushButton* Adjustment::button()
     return _button;
 }
 
+int Adjustment::value()
+{
+    return _slider->value();
+}
+
 void Adjustment::onSliderValueChanged()
 {
     _labelValue->setText( QString::number(_slider->value()) );
