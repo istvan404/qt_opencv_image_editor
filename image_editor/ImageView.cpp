@@ -1,30 +1,5 @@
 #include "ImageView.h"
 
-
-class MySlider : public QSlider
-{
-protected:
-    void mousePressEvent( QMouseEvent* event )
-    {
-        if(event->button() == Qt::LeftButton)
-        {
-            if(orientation() == Qt::Horizontal)
-            {
-                int newValue = std::round(minimum() + ((maximum()-minimum()) * (static_cast<float>(event->position().x())) / (static_cast<float>(width())) ));
-                if(value() == newValue)
-                {
-                    qDebug() << "Accept event... value = " << value() << " newValue = " << newValue;
-                    event->accept();
-                    QSlider::mousePressEvent(event);
-                }
-            }
-            //event->accept();
-        }
-        //QSlider::mousePressEvent(event);
-    }
-};
-
-
 ImageView::ImageView(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -114,8 +89,6 @@ void ImageView::setupAdjustments()
     _layoutAdjustmentsWhiteBalance = new QGridLayout();
     _labelAdjustmentWhiteBalance = new QLabel("White Balance");
     _sliderAdjustmentWhiteBalanceSlider = new QSlider(Qt::Orientation::Horizontal);
-    //_sliderAdjustmentWhiteBalanceSlider = new MySlider();
-    //_sliderAdjustmentWhiteBalanceSlider->setOrientation(Qt::Horizontal);
     _labelAdjustmentWhiteBalanceMin = new QLabel("0");
     _labelAdjustmentWhiteBalanceMax = new QLabel("20");
     _labelAdjustmentWhiteBalanceValue = new QLabel("0");
