@@ -2,6 +2,7 @@
 #define IMAGEVIEW_H
 
 #include "ImageModel.h"
+#include "Adjustment.h"
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QMenuBar>

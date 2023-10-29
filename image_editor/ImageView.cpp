@@ -1,65 +1,5 @@
 #include "ImageView.h"
 
-class AdjustmentGridLayout : public QGridLayout
-{
-public:
-    AdjustmentGridLayout(QString title, int min, int max, int defaultValue)
-    {
-        _title = title;
-        _min = min;
-        _max = max;
-        _defaultValue = defaultValue;
-
-        _labelTitle = new QLabel(_title);
-        _labelMin = new QLabel(QString::number(_min));
-        _labelMax = new QLabel(QString::number(_max));
-        _labelValue = new QLabel(QString::number(_defaultValue));
-        _slider = new QSlider(Qt::Horizontal);
-        _button = new QPushButton("Apply");
-
-        _slider->setRange(_min, _max);
-        _slider->setTickInterval(1);
-        _slider->setValue(_defaultValue);
-        _slider->setTickPosition(QSlider::TicksAbove);
-
-        this->setSpacing(0);
-        this->addWidget(_labelTitle, 0, 0, 1, 4);
-        this->addWidget(_labelMin, 1, 0, 1, 1);
-        this->addWidget(_labelMax, 1, 2, 1, 1, Qt::AlignRight);
-        this->addWidget(_labelValue, 2, 3, 1, 1, Qt::AlignCenter);
-        this->addWidget(_slider, 2, 0, 1, 3);
-        this->addWidget(_button, 3, 0, 1, 4);
-
-        connect(_slider, &QSlider::valueChanged, this, &AdjustmentGridLayout::onSliderValueChanged);
-    }
-
-    QPushButton* button()
-    {
-        return _button;
-    }
-private:
-    QString _title;
-    int _min;
-    int _max;
-    int _defaultValue;
-
-    QLabel* _labelTitle;
-    QLabel* _labelMin;
-    QLabel* _labelMax;
-    QLabel* _labelValue;
-    QSlider* _slider;
-    QPushButton* _button;
-
-private slots:
-    void onSliderValueChanged();
-};
-
-void AdjustmentGridLayout::onSliderValueChanged()
-{
-    _labelValue->setText( QString::number(_slider->value()) );
-}
-
-
 ImageView::ImageView(QWidget *parent)
     : QMainWindow(parent)
 {
@@ -173,12 +113,8 @@ void ImageView::setupAdjustments()
     connect(_buttonAdjustmentWhiteBalanceButton, SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceButtonClicked()));
 
     // Testing out custom UI element
-    AdjustmentGridLayout* shadowAdjustment = new AdjustmentGridLayout("Shadow",
-                                                                      0,
-                                                                      20,
-                                                                      0);
+    Adjustment* shadowAdjustment = new Adjustment("Shadow", 0, 20, 0);
     _layoutAdjustments->addLayout(shadowAdjustment);
-
     connect(shadowAdjustment->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceButtonClicked()));
 
 }
