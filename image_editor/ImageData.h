@@ -9,11 +9,11 @@
 struct ImageData
 {
     ImageData() {}
-    ImageData(QString path_, cv::Mat image_)
+    ImageData(QString path, cv::Mat image)
     {
-        this->Path = path_;
-        this->Image = image_.clone();
-        this->ImageOriginal = Image.clone();
+        Path = path;
+        Image = image.clone();
+        ImageOriginal = image.clone();
     }
 
     QString Path;
