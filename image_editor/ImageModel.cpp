@@ -373,8 +373,8 @@ void ImageModel::editWhiteBalance(int value)
 
     std::vector<cv::Mat> bgrChannelSplit;
     cv::split(this->_data->Image,bgrChannelSplit);
-    for(int i=0;i<3;i++) {
-
+    for(int i=0;i<3;i++)
+    {
         cv::Mat singleChannel;
         bgrChannelSplit[i].reshape(1,1).copyTo(singleChannel);
         cv::sort(singleChannel,singleChannel,cv::SORT_EVERY_ROW + cv::SORT_ASCENDING);
@@ -448,6 +448,68 @@ void ImageModel::editWhiteBalanceGW()
     if(!this->isImageLoaded())
     {
         return;
+    }
+
+    if(this->_data->Image.channels() != 3)
+    {
+        return;
+    }
+
+    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    {
+        return;
+    }
+
+    const int rows = this->_data->Image.rows;
+    const int cols = this->_data->Image.cols;
+
+    int Bsum = 0;
+    int Gsum = 0;
+    int Rsum = 0;
+
+    for(int y = 0; y < rows; y++)
+    {
+        for(int x = 0; x < cols; x++)
+        {
+            Bsum += this->_data->Image.at<cv::Vec3b>(y,x)[0];
+            Gsum += this->_data->Image.at<cv::Vec3b>(y,x)[1];
+            Rsum += this->_data->Image.at<cv::Vec3b>(y,x)[2];
+        }
+    }
+
+    qDebug() << "BGR sum: " << Bsum << " " << Gsum << " " << Rsum;
+
+    const int Bavg = Bsum / (rows*cols);
+    const int Gavg = Gsum / (rows*cols);
+    const int Ravg = Rsum / (rows*cols);
+
+    qDebug() << "BGR avg: " << Bavg << " " << Gavg << " " << Ravg;
+
+    if(Bavg == Gavg && Gavg == Ravg)
+    {
+        // The image already satisfies the gray world assumption
+        return;
+    }
+
+    if(Bavg <= 0 || Ravg <= 0)
+    {
+        // Avoiding the divison with zero
+        return;
+    }
+
+    const double beta  = (double)Gavg / (double)Bavg;
+    const double alpha = (double)Gavg / (double)Ravg;
+
+    qDebug() << "beta: " << beta << " alpha: " << alpha;
+
+    for(int y = 0; y < rows; y++)
+    {
+        for(int x = 0; x < cols; x++)
+        {
+            this->_data->Image.at<cv::Vec3b>(y,x)[0] = cv::saturate_cast<uchar>(this->_data->Image.at<cv::Vec3b>(y,x)[0] * beta);
+            // We do not need to modify the green channel.
+            this->_data->Image.at<cv::Vec3b>(y,x)[2] = cv::saturate_cast<uchar>(this->_data->Image.at<cv::Vec3b>(y,x)[2] * alpha);
+        }
     }
 
     emit imageUpdated();
