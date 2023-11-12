@@ -30,6 +30,18 @@ Adjustment::Adjustment(QString title, int min, int max, int defaultValue)
     connect(_slider, &QSlider::valueChanged, this, &Adjustment::onSliderValueChanged);
 }
 
+Adjustment::Adjustment(QString title)
+{
+    _title = title;
+
+    _labelTitle = new QLabel(_title);
+    _button = new QPushButton("Apply");
+
+    this->setSpacing(0);
+    this->addWidget(_labelTitle, 0, 0, 1, 4);
+    this->addWidget(_button, 1, 0, 1, 4);
+}
+
 QPushButton* Adjustment::button()
 {
     return _button;

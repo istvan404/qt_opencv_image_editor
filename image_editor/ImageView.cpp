@@ -62,13 +62,13 @@ void ImageView::setupSide()
 void ImageView::setupAdjustments()
 {
     // Initialization
-    _layoutAdjustments =        new QVBoxLayout();
-    _labelAdjustmentsTitle =    new QLabel("Adjustments");
-    _buttonAdjustmentsReset =   new QPushButton("Reset");
-    _adjustmentWhiteBalance = new Adjustment("White Balance - My Algorithm", 0, 20, 0);
-    _adjustmentWhiteBalanceGrayWorld = new Adjustment("White Balance - Gray World Algorithm", 0, 20, 0);
-    _adjustmentBrightness = new Adjustment("Brightness", 0, 50, 0);
-    _adjustmentShadowProtection = new Adjustment("Shadow Protection", 0, 100, 0);
+    _layoutAdjustments =            new QVBoxLayout();
+    _labelAdjustmentsTitle =        new QLabel("Adjustments");
+    _buttonAdjustmentsReset =       new QPushButton("Reset");
+    _adjustmentWhiteBalance =       new Adjustment("White Balance - Basic Algorithm", 0, 20, 0);
+    _adjustmentWhiteBalanceGW =     new Adjustment("White Balance - Gray World Algorithm");
+    _adjustmentBrightness =         new Adjustment("Brightness", -50, 50, 0);
+    _adjustmentShadowProtection =   new Adjustment("Shadow Protection", 0, 100, 0);
 
     // Personalization
     _layoutAdjustments->setAlignment(Qt::AlignTop);
@@ -83,15 +83,16 @@ void ImageView::setupAdjustments()
     _layoutAdjustments->addWidget(_labelAdjustmentsTitle);
     _layoutAdjustments->addWidget(_buttonAdjustmentsReset);
     _layoutAdjustments->addLayout(_adjustmentWhiteBalance);
-    _layoutAdjustments->addLayout(_adjustmentWhiteBalanceGrayWorld);
+    _layoutAdjustments->addLayout(_adjustmentWhiteBalanceGW);
     _layoutAdjustments->addLayout(_adjustmentBrightness);
     _layoutAdjustments->addLayout(_adjustmentShadowProtection);
 
     // Connect SIGNALs to SLOTs
-    connect(_buttonAdjustmentsReset, SIGNAL(clicked(bool)), this, SLOT(onAdjustmentsResetButtonClicked()));
-    connect(_adjustmentWhiteBalance->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceClicked()));
-    connect(_adjustmentBrightness->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentBrightnessClicked()));
-    connect(_adjustmentShadowProtection->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentShadowProtectionClicked()));
+    connect(_buttonAdjustmentsReset,                SIGNAL(clicked(bool)), this, SLOT(onAdjustmentsResetButtonClicked()));
+    connect(_adjustmentWhiteBalance->button(),      SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceClicked()));
+    connect(_adjustmentWhiteBalanceGW->button(),    SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceGWClicked()));
+    connect(_adjustmentBrightness->button(),        SIGNAL(clicked(bool)), this, SLOT(onAdjustmentBrightnessClicked()));
+    connect(_adjustmentShadowProtection->button(),  SIGNAL(clicked(bool)), this, SLOT(onAdjustmentShadowProtectionClicked()));
 }
 
 void ImageView::onAdjustmentsResetButtonClicked()
@@ -118,7 +119,22 @@ void ImageView::onAdjustmentWhiteBalanceClicked()
     }
 
     this->setCursor(Qt::CursorShape::BusyCursor);
-    _model->editAutoWhiteBalance(_adjustmentWhiteBalance->value());
+    _model->editWhiteBalance(_adjustmentWhiteBalance->value());
+    this->setCursor(Qt::CursorShape::ArrowCursor);
+}
+
+void ImageView::onAdjustmentWhiteBalanceGWClicked()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+
+    this->setCursor(Qt::CursorShape::BusyCursor);
+    _model->editWhiteBalanceGW();
     this->setCursor(Qt::CursorShape::ArrowCursor);
 }
 

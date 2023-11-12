@@ -69,7 +69,7 @@ private:
     QPushButton* _buttonAdjustmentsReset;
     // Layout: Side: Adjustments: White Balance
     Adjustment* _adjustmentWhiteBalance;
-    Adjustment* _adjustmentWhiteBalanceGrayWorld;
+    Adjustment* _adjustmentWhiteBalanceGW;
     Adjustment* _adjustmentBrightness;
     Adjustment* _adjustmentShadowProtection;
 
@@ -110,6 +110,7 @@ private slots:
     // SLOTs of adjustments
     void onAdjustmentsResetButtonClicked();
     void onAdjustmentWhiteBalanceClicked();
+    void onAdjustmentWhiteBalanceGWClicked();
     void onAdjustmentBrightnessClicked();
     void onAdjustmentShadowProtectionClicked();
 };

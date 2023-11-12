@@ -1,10 +1,10 @@
 #ifndef IMAGEMODEL_H
 #define IMAGEMODEL_H
 
+#include "ImagePersistence.h"
 #include <QObject>
 #include <QPixmap>
 #include <QImage>
-#include "ImagePersistence.h"
 
 #include <QDebug>
 
@@ -34,7 +34,8 @@ public:
     void editFlipHorizontal();
     void editFlipVertical();
     void editRotate(int degree);
-    void editAutoWhiteBalance(int value);
+    void editWhiteBalance(int value);
+    void editWhiteBalanceGW();
     void editBrightness(int value);
 
 private:

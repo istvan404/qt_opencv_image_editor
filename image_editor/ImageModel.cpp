@@ -347,7 +347,7 @@ void ImageModel::editRotate(int degree)
     emit imageUpdated();
 }
 
-void ImageModel::editAutoWhiteBalance(int value)
+void ImageModel::editWhiteBalance(int value)
 {
     float percent = value;
     const float percentLimitMin = 0;
@@ -393,8 +393,9 @@ void ImageModel::editAutoWhiteBalance(int value)
 
 void ImageModel::editBrightness(int value)
 {
-    int valueLimitMin = 0;
+    int valueLimitMin = -50;
     int valueLimitMax = 50;
+    int valueDefault = 0;
 
     if(!this->isImageLoaded())
     {
@@ -406,12 +407,17 @@ void ImageModel::editBrightness(int value)
         return;
     }
 
-    if(value <= valueLimitMin)
+    if(value < valueLimitMin)
     {
         return;
     }
 
     if(value > valueLimitMax)
+    {
+        return;
+    }
+
+    if(value == valueDefault)
     {
         return;
     }
@@ -431,6 +437,17 @@ void ImageModel::editBrightness(int value)
                 this->_data->Image.at<cv::Vec3b>(y,x)[c] = cv::saturate_cast<uchar>( alpha * this->_data->Image.at<cv::Vec3b>(y,x)[c] + beta );
             }
         }
+    }
+
+    emit imageUpdated();
+}
+
+void ImageModel::editWhiteBalanceGW()
+{
+    // Gray World Algorithm
+    if(!this->isImageLoaded())
+    {
+        return;
     }
 
     emit imageUpdated();

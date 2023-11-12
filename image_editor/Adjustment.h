@@ -11,6 +11,7 @@ class Adjustment : public QGridLayout
 {
 public:
     Adjustment(QString title, int min, int max, int defaultValue);
+    Adjustment(QString title);
 
     QPushButton* button();
     int value();
