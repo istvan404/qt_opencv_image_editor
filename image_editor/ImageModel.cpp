@@ -78,13 +78,6 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
     return QPixmap::fromImage(qimg.rgbSwapped());
 }
 
-cv::Mat ImageModel::generateHistogramBW(cv::Mat source, cv::Mat image)
-{
-    cv::Mat histogram = source;
-
-    return histogram;
-}
-
 cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
 {
     cv::Mat histogram = source;
