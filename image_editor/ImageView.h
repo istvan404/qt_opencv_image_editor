@@ -70,6 +70,7 @@ private:
     // Layout: Side: Adjustments: White Balance
     Adjustment* _adjustmentWhiteBalance;
     Adjustment* _adjustmentWhiteBalanceGrayWorld;
+    Adjustment* _adjustmentBrightness;
     Adjustment* _adjustmentShadowProtection;
 
     // Layout: Side: Histogram
