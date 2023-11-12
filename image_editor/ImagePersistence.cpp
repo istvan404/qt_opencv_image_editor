@@ -7,7 +7,7 @@ ImagePersistence::ImagePersistence()
 
 void ImagePersistence::save(QString path, ImageData* state)
 {
-    cv::imwrite(path.toStdString(), state->image);
+    cv::imwrite(path.toStdString(), state->Image);
 }
 
 ImageData* ImagePersistence::load(QString path)

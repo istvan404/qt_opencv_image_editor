@@ -11,17 +11,17 @@ struct ImageData
     ImageData() {}
     ImageData(QString path_, cv::Mat image_)
     {
-        this->path = path_;
-        this->image = image_.clone();
-        this->imageOriginal = image.clone();
+        this->Path = path_;
+        this->Image = image_.clone();
+        this->ImageOriginal = Image.clone();
     }
 
-    QString path;
-    QString filename;
-    cv::Mat image;
-    cv::Mat imageOriginal;
-    int width;
-    int height;
+    QString Path;
+    QString Filename;
+    cv::Mat Image;
+    cv::Mat ImageOriginal;
+    int Width;
+    int Height;
 
     // TODO: Load more details of the image; camera, camera settings, etc...
 

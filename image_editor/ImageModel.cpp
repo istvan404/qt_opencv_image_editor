@@ -9,9 +9,9 @@ ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
 void ImageModel::loadImage(QString path)
 {
     this->_data = _persistence->load(path);
-    qDebug() << "img.type() == CV_8UC4 ->" << (this->_data->image.type() == CV_8UC4); // unsigned 8 bit with 4 channels
-    qDebug() << "img.type() == CV_8UC3 ->" << (this->_data->image.type() == CV_8UC3); // unsigned 8 bit with 3 channels
-    qDebug() << "img.type() == CV_8UC1 ->" << (this->_data->image.type() == CV_8UC1); // unsigned 8 bit with 1 channels
+    qDebug() << "img.type() == CV_8UC4 ->" << (this->_data->Image.type() == CV_8UC4); // unsigned 8 bit with 4 channels
+    qDebug() << "img.type() == CV_8UC3 ->" << (this->_data->Image.type() == CV_8UC3); // unsigned 8 bit with 3 channels
+    qDebug() << "img.type() == CV_8UC1 ->" << (this->_data->Image.type() == CV_8UC1); // unsigned 8 bit with 1 channels
     emit imageLoaded();
 }
 
@@ -32,7 +32,7 @@ bool ImageModel::isImageLoaded()
 
 QPixmap ImageModel::getEditedImageQPixmap()
 {
-    cv::Mat img = this->_data->image;
+    cv::Mat img = this->_data->Image;
 
     QImage qimg(img.data,
                 img.cols,
@@ -62,7 +62,7 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
     int width = 256;
     int height = 256 / aspectRatio;
 
-    cv::Mat img = this->_data->image;
+    cv::Mat img = this->_data->Image;
     cv::Mat histogram(height, width, CV_8UC3, cv::Scalar(10,10,10));
 
     histogram = generateHistogramRGB(histogram, img);
@@ -304,7 +304,7 @@ void ImageModel::editReset()
         return;
     }
 
-    this->_data->image = this->_data->imageOriginal.clone();
+    this->_data->Image = this->_data->ImageOriginal.clone();
     emit imageUpdated();
 }
 
@@ -315,7 +315,7 @@ void ImageModel::editFlipHorizontal()
         return;
     }
 
-    cv::flip(this->_data->image, this->_data->image, 0);
+    cv::flip(this->_data->Image, this->_data->Image, 0);
     emit imageUpdated();
 }
 
@@ -326,7 +326,7 @@ void ImageModel::editFlipVertical()
         return;
     }
 
-    cv::flip(this->_data->image, this->_data->image, 1);
+    cv::flip(this->_data->Image, this->_data->Image, 1);
     emit imageUpdated();
 }
 
@@ -338,11 +338,11 @@ void ImageModel::editRotate(int degree)
     }
 
     if(degree == 90)
-        cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_CLOCKWISE);
+        cv::rotate(this->_data->Image, this->_data->Image, cv::ROTATE_90_CLOCKWISE);
     else if(degree == -90)
-        cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_COUNTERCLOCKWISE);
+        cv::rotate(this->_data->Image, this->_data->Image, cv::ROTATE_90_COUNTERCLOCKWISE);
     else if(degree == 180)
-        cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_180);
+        cv::rotate(this->_data->Image, this->_data->Image, cv::ROTATE_180);
 
     emit imageUpdated();
 }
@@ -358,7 +358,7 @@ void ImageModel::editAutoWhiteBalance(int value)
         return;
     }
 
-    if(this->_data->image.channels() != 3)
+    if(this->_data->Image.channels() != 3)
     {
         return;
     }
@@ -372,7 +372,7 @@ void ImageModel::editAutoWhiteBalance(int value)
     float halfPercent = percent / 200.0f;
 
     std::vector<cv::Mat> bgrChannelSplit;
-    cv::split(this->_data->image,bgrChannelSplit);
+    cv::split(this->_data->Image,bgrChannelSplit);
     for(int i=0;i<3;i++) {
 
         cv::Mat singleChannel;
@@ -386,7 +386,7 @@ void ImageModel::editAutoWhiteBalance(int value)
 
         cv::normalize(bgrChannelSplit[i],bgrChannelSplit[i],0,255,cv::NORM_MINMAX);
     }
-    cv::merge(bgrChannelSplit,this->_data->image);
+    cv::merge(bgrChannelSplit,this->_data->Image);
 
     emit imageUpdated();
 }
@@ -401,7 +401,7 @@ void ImageModel::editBrightness(int value)
         return;
     }
 
-    if(this->_data->image.channels() != 3)
+    if(this->_data->Image.channels() != 3)
     {
         return;
     }
@@ -419,16 +419,16 @@ void ImageModel::editBrightness(int value)
     double alpha = 1;   // Contrast control
     int beta = value;   // Brightness control
 
-    for(int y = 0; y < this->_data->image.rows; y++)
+    for(int y = 0; y < this->_data->Image.rows; y++)
     {
-        for(int x = 0; x < this->_data->image.cols; x++)
+        for(int x = 0; x < this->_data->Image.cols; x++)
         {
-            for(int c = 0; c < this->_data->image.channels(); c++)
+            for(int c = 0; c < this->_data->Image.channels(); c++)
             {
                 // This is an option for brightening the shadows and darks
                 /*if( this->_data->image.at<cv::Vec3b>(y,x)[c] > 100 )
                     continue;*/
-                this->_data->image.at<cv::Vec3b>(y,x)[c] = cv::saturate_cast<uchar>( alpha * this->_data->image.at<cv::Vec3b>(y,x)[c] + beta );
+                this->_data->Image.at<cv::Vec3b>(y,x)[c] = cv::saturate_cast<uchar>( alpha * this->_data->Image.at<cv::Vec3b>(y,x)[c] + beta );
             }
         }
     }
