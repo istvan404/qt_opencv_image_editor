@@ -69,6 +69,7 @@ private:
     QPushButton* _buttonAdjustmentsReset;
     // Layout: Side: Adjustments: White Balance
     Adjustment* _adjustmentWhiteBalance;
+    Adjustment* _adjustmentWhiteBalanceGrayWorld;
     Adjustment* _adjustmentShadowProtection;
 
     // Layout: Side: Histogram

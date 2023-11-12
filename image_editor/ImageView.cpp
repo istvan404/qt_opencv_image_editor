@@ -65,7 +65,8 @@ void ImageView::setupAdjustments()
     _layoutAdjustments =        new QVBoxLayout();
     _labelAdjustmentsTitle =    new QLabel("Adjustments");
     _buttonAdjustmentsReset =   new QPushButton("Reset");
-    _adjustmentWhiteBalance = new Adjustment("White Balance", 0, 20, 0);
+    _adjustmentWhiteBalance = new Adjustment("White Balance - My Algorithm", 0, 20, 0);
+    _adjustmentWhiteBalanceGrayWorld = new Adjustment("White Balance - Gray World Algorithm", 0, 20, 0);
     _adjustmentShadowProtection = new Adjustment("Shadow Protection", 0, 100, 0);
 
     // Personalization
@@ -81,6 +82,7 @@ void ImageView::setupAdjustments()
     _layoutAdjustments->addWidget(_labelAdjustmentsTitle);
     _layoutAdjustments->addWidget(_buttonAdjustmentsReset);
     _layoutAdjustments->addLayout(_adjustmentWhiteBalance);
+    _layoutAdjustments->addLayout(_adjustmentWhiteBalanceGrayWorld);
     _layoutAdjustments->addLayout(_adjustmentShadowProtection);
 
     // Connect SIGNALs to SLOTs
