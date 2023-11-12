@@ -110,6 +110,7 @@ private slots:
     // SLOTs of adjustments
     void onAdjustmentsResetButtonClicked();
     void onAdjustmentWhiteBalanceClicked();
+    void onAdjustmentBrightnessClicked();
     void onAdjustmentShadowProtectionClicked();
 };
 #endif // IMAGEVIEW_H

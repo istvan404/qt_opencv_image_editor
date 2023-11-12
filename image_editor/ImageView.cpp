@@ -90,6 +90,7 @@ void ImageView::setupAdjustments()
     // Connect SIGNALs to SLOTs
     connect(_buttonAdjustmentsReset, SIGNAL(clicked(bool)), this, SLOT(onAdjustmentsResetButtonClicked()));
     connect(_adjustmentWhiteBalance->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentWhiteBalanceClicked()));
+    connect(_adjustmentBrightness->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentBrightnessClicked()));
     connect(_adjustmentShadowProtection->button(), SIGNAL(clicked(bool)), this, SLOT(onAdjustmentShadowProtectionClicked()));
 }
 
@@ -119,6 +120,19 @@ void ImageView::onAdjustmentWhiteBalanceClicked()
     this->setCursor(Qt::CursorShape::BusyCursor);
     _model->editAutoWhiteBalance(_adjustmentWhiteBalance->value());
     this->setCursor(Qt::CursorShape::ArrowCursor);
+}
+
+void ImageView::onAdjustmentBrightnessClicked()
+{
+    if(!_model->isImageLoaded())
+    {
+        QMessageBox::warning(this,
+                             "Image Editor - Warning",
+                             "There is no image loaded");
+        return;
+    }
+
+    qDebug() << "Brightness pressed!";
 }
 
 void ImageView::onAdjustmentShadowProtectionClicked()
