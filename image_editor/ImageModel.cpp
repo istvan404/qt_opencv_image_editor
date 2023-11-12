@@ -17,9 +17,10 @@ void ImageModel::loadImage(QString path)
 
 void ImageModel::saveImage(QString path)
 {
-    // Edge cases
     if(!this->isImageLoaded())
+    {
         return;
+    }
 
     _persistence->save(path, this->_data);
 }
@@ -46,7 +47,9 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 {
     // Edge cases
     if(!this->isImageLoaded())
+    {
         return QPixmap();           // TODO: Revisit this solution to edge case, maybe EMIT some problem? THROW error?
+    }
 
     /*int width = histogramLabelSize.width();
     if(width % 2 != 0)
@@ -304,7 +307,9 @@ cv::Mat ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, i
 void ImageModel::editReset()
 {
     if(!this->isImageLoaded())
+    {
         return;
+    }
 
     this->_data->image = this->_data->imageOriginal.clone();
     emit imageUpdated();
@@ -312,9 +317,10 @@ void ImageModel::editReset()
 
 void ImageModel::editFlipHorizontal()
 {
-    // Edge cases
     if(!this->isImageLoaded())
+    {
         return;
+    }
 
     cv::flip(this->_data->image, this->_data->image, 0);
     emit imageUpdated();
@@ -322,9 +328,10 @@ void ImageModel::editFlipHorizontal()
 
 void ImageModel::editFlipVertical()
 {
-    // Edge cases
     if(!this->isImageLoaded())
+    {
         return;
+    }
 
     cv::flip(this->_data->image, this->_data->image, 1);
     emit imageUpdated();
@@ -333,7 +340,9 @@ void ImageModel::editFlipVertical()
 void ImageModel::editRotate(int degree)
 {
     if(!this->isImageLoaded())
+    {
         return;
+    }
 
     if(degree == 90)
         cv::rotate(this->_data->image, this->_data->image, cv::ROTATE_90_CLOCKWISE);
@@ -352,10 +361,14 @@ void ImageModel::editAutoWhiteBalance(int value)
     const float percentLimitMax = 20;
 
     if(!this->isImageLoaded())
+    {
         return;
+    }
 
     if(this->_data->image.channels() != 3)
+    {
         return;
+    }
 
     if(percent <= percentLimitMin)
         return;
@@ -391,19 +404,27 @@ void ImageModel::editBrightness(int value)
     int valueLimitMax = 50;
 
     if(!this->isImageLoaded())
+    {
         return;
+    }
 
     if(this->_data->image.channels() != 3)
+    {
         return;
+    }
 
     if(value <= valueLimitMin)
+    {
         return;
+    }
 
     if(value > valueLimitMax)
+    {
         return;
+    }
 
     double alpha = 1;   // Contrast control
-    int beta = value;       // Brightness control
+    int beta = value;   // Brightness control
 
     for(int y = 0; y < this->_data->image.rows; y++)
     {
@@ -418,7 +439,6 @@ void ImageModel::editBrightness(int value)
             }
         }
     }
-
 
     emit imageUpdated();
 }
