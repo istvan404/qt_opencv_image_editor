@@ -67,7 +67,7 @@ void ImageView::setupAdjustments()
     _buttonAdjustmentsReset =   new QPushButton("Reset");
     _adjustmentWhiteBalance = new Adjustment("White Balance - My Algorithm", 0, 20, 0);
     _adjustmentWhiteBalanceGrayWorld = new Adjustment("White Balance - Gray World Algorithm", 0, 20, 0);
-    _adjustmentBrightness = new Adjustment("Brightness", 0, 20, 0);
+    _adjustmentBrightness = new Adjustment("Brightness", 0, 50, 0);
     _adjustmentShadowProtection = new Adjustment("Shadow Protection", 0, 100, 0);
 
     // Personalization
@@ -133,6 +133,9 @@ void ImageView::onAdjustmentBrightnessClicked()
     }
 
     qDebug() << "Brightness pressed!";
+    this->setCursor(Qt::CursorShape::BusyCursor);
+    _model->editBrightness(_adjustmentBrightness->value());
+    this->setCursor(Qt::CursorShape::ArrowCursor);
 }
 
 void ImageView::onAdjustmentShadowProtectionClicked()

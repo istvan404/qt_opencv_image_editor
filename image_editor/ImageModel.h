@@ -35,6 +35,7 @@ public:
     void editFlipVertical();
     void editRotate(int degree);
     void editAutoWhiteBalance(int value);
+    void editBrightness(int value);
 
 private:
     ImagePersistenceInterface* _persistence = nullptr;

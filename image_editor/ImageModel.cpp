@@ -384,3 +384,41 @@ void ImageModel::editAutoWhiteBalance(int value)
 
     emit imageUpdated();
 }
+
+void ImageModel::editBrightness(int value)
+{
+    int valueLimitMin = 0;
+    int valueLimitMax = 50;
+
+    if(!this->isImageLoaded())
+        return;
+
+    if(this->_data->image.channels() != 3)
+        return;
+
+    if(value <= valueLimitMin)
+        return;
+
+    if(value > valueLimitMax)
+        return;
+
+    double alpha = 1;   // Contrast control
+    int beta = value;       // Brightness control
+
+    for(int y = 0; y < this->_data->image.rows; y++)
+    {
+        for(int x = 0; x < this->_data->image.cols; x++)
+        {
+            for(int c = 0; c < this->_data->image.channels(); c++)
+            {
+                // This is an option for brightening the shadows and darks
+                /*if( this->_data->image.at<cv::Vec3b>(y,x)[c] > 100 )
+                    continue;*/
+                this->_data->image.at<cv::Vec3b>(y,x)[c] = cv::saturate_cast<uchar>( alpha * this->_data->image.at<cv::Vec3b>(y,x)[c] + beta );
+            }
+        }
+    }
+
+
+    emit imageUpdated();
+}
