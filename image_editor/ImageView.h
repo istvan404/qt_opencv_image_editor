@@ -71,7 +71,8 @@ private:
     Adjustment* _adjustmentWhiteBalance;
     Adjustment* _adjustmentWhiteBalanceGW;
     Adjustment* _adjustmentBrightness;
-    Adjustment* _adjustmentShadowProtection;
+    Adjustment* _adjustmentShadowBasic;
+    Adjustment* _adjustmentShadow;
 
     // Layout: Side: Histogram
     QVBoxLayout* _layoutHistogram;
@@ -112,6 +113,7 @@ private slots:
     void onAdjustmentWhiteBalanceClicked();
     void onAdjustmentWhiteBalanceGWClicked();
     void onAdjustmentBrightnessClicked();
-    void onAdjustmentShadowProtectionClicked();
+    void onAdjustmentShadowBasicClicked();
+    void onAdjustmentShadowClicked();
 };
 #endif // IMAGEVIEW_H

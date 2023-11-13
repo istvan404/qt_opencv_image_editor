@@ -514,3 +514,119 @@ void ImageModel::editWhiteBalanceGW()
 
     emit imageUpdated();
 }
+
+void ImageModel::editShadowsBasic(int value)
+{
+    const int valueLimitMin = 0;
+    const int valueLimitMax = 50;
+    const int valueDefault = 0;
+
+    if(!this->isImageLoaded())
+    {
+        return;
+    }
+
+    if(this->_data->Image.channels() != 3)
+    {
+        return;
+    }
+
+    if(value < valueLimitMin)
+    {
+        return;
+    }
+
+    if(value > valueLimitMax)
+    {
+        return;
+    }
+
+    if(value == valueDefault)
+    {
+        return;
+    }
+
+    const int cutoff = 100;    // Cut-off value for shadow/dark pixels
+
+    for(int y = 0; y < this->_data->Image.rows; y++)
+    {
+        for(int x = 0; x < this->_data->Image.cols; x++)
+        {
+            for(int c = 0; c < this->_data->Image.channels(); c++)
+            {
+                if( this->_data->Image.at<cv::Vec3b>(y,x)[c] < cutoff )
+                {
+                    this->_data->Image.at<cv::Vec3b>(y,x)[c] = cv::saturate_cast<uchar>(this->_data->Image.at<cv::Vec3b>(y,x)[c] + value );
+                }
+            }
+        }
+    }
+
+    emit imageUpdated();
+}
+
+void ImageModel::editShadows(int value)
+{
+    const int valueLimitMin = 0;
+    const int valueLimitMax = 50;
+    const int valueDefault = 0;
+
+    if(!this->isImageLoaded())
+    {
+        return;
+    }
+
+    if(this->_data->Image.channels() != 3)
+    {
+        return;
+    }
+
+    if(value < valueLimitMin)
+    {
+        return;
+    }
+
+    if(value > valueLimitMax)
+    {
+        return;
+    }
+
+    if(value == valueDefault)
+    {
+        return;
+    }
+
+    const int rows = this->_data->Image.rows;
+    const int cols = this->_data->Image.cols;
+    const int cutoff = 100;
+    const double percentage = value / 200.0;
+
+    cv::Mat mask = this->_data->Image.clone();
+    cv::cvtColor(mask, mask, cv::COLOR_BGR2GRAY, 1);
+    mask.setTo(255,mask > cutoff);
+
+    cv::imwrite("C:/Users/Admin/Desktop/mask2_bw.jpg", mask);
+
+    for(int y = 0; y < rows; y++)
+    {
+        for(int x = 0; x < cols; x++)
+        {
+            mask.at<uchar>(y,x) = (255 - mask.at<uchar>(y,x)) * percentage;
+        }
+    }
+
+    cv::imwrite("C:/Users/Admin/Desktop/mask_inverted_bw.jpg", mask);
+
+    for(int y = 0; y < rows; y++)
+    {
+        for(int x = 0; x < cols; x++)
+        {
+            for(int c = 0; c < this->_data->Image.channels(); c++)
+            {
+                this->_data->Image.at<cv::Vec3b>(y,x)[c] = cv::saturate_cast<uchar>(this->_data->Image.at<cv::Vec3b>(y,x)[c] + (mask.at<uchar>(y,x)));
+            }
+        }
+    }
+
+    emit imageUpdated();
+}

@@ -37,6 +37,8 @@ public:
     void editWhiteBalance(int value);
     void editWhiteBalanceGW();
     void editBrightness(int value);
+    void editShadowsBasic(int value);
+    void editShadows(int value);
 
 private:
     ImagePersistenceInterface* _persistence = nullptr;
