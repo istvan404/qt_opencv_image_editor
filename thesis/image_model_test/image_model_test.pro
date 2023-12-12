@@ -7,7 +7,7 @@ CONFIG -= app_bundle
 
 TEMPLATE = app
 
-SOURCES +=  tst_imagemodeltest.cpp \
+SOURCES +=  \
     ../image_editor/ImageModel.cpp \
     ../image_editor/ImagePersistence.cpp \
     ImageModelTests.cpp \
