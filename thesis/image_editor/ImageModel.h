@@ -3,9 +3,9 @@
 
 #include "ImagePersistence.h"
 #include <QObject>
+
 #include <QPixmap>
 #include <QImage>
-
 #include <QDebug>
 
 #include <opencv2/core/core.hpp>
