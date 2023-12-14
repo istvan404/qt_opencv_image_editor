@@ -314,4 +314,35 @@ void ImageModelTests::Test_Nothing_Happens_Without_Image()
     QVERIFY(updatedSignalSpy.length() == 0);
 }
 
+void ImageModelTests::Test_Reset()
+{
+    // SETUP
+    cv::Mat img = cv::imread(test_file_path.toStdString());
+    ImageData save(test_file_path, img);
+    ImagePersistenceMock mock(save);
+    ImageModel model(&mock);
+    model.loadImage("");
+
+    QSignalSpy signalSpy(&model, SIGNAL(imageUpdated()));
+
+    // TEST
+    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+
+    model.editFlipHorizontal();
+    model.editFlipVertical();
+    QVERIFY(model.getEditedImageQPixmap().toImage() != model.getOriginalImageQPixmap().toImage());
+
+    model.editReset();
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+
+    model.editRotate(90);
+    QVERIFY(model.getEditedImageQPixmap().toImage() != model.getOriginalImageQPixmap().toImage());
+
+    model.editReset();
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+
+    QVERIFY(signalSpy.length() == 5);
+}
+
 QTEST_MAIN(ImageModelTests)
