@@ -3,6 +3,7 @@
 
 #include "ImagePersistence.h"
 #include <QObject>
+#include <QString>
 
 #include <QPixmap>
 #include <QImage>

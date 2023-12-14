@@ -11,11 +11,26 @@ class ImageModelTests : public QObject
 public:
     explicit ImageModelTests(QObject *parent = nullptr);
 
+private:
+    const QString test_file_path = "../../thesis/image_model_test/images/test.jpg";
+
 private slots:
-    void Test_Initialization();
-    //void Test_Load();
-    //void Test_Flip();
-    //void Test_Rotate();
+    void Test_Initialization_Empty();
+    void Test_Initialization_TestFile();
+    void Test_Signals();
+    void Test_Flip_Vertical();
+    void Test_Flip_Horizontal();
+    void Test_Flip_Mixed();
+    void Test_Rotate_90_CW();
+    void Test_Rotate_90_CCW();
+    void Test_Rotate_180();
+    void Test_Rotate_Mixed();
+    void Test_Rotate_Invalid_Values();
+    void Test_Nothing_Happens_Without_Image();
+    //void Test_Brightness_Invalud_Values();
+    //void Test_WhiteBalance_Invalud_Values();
+    //void Test_ShadowBasic_Invalud_Values();
+    //void Test_Shadows_Invalud_Values();
 };
 
 #endif // IMAGEMODELTESTS_H

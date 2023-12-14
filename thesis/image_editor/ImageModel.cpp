@@ -6,6 +6,11 @@ ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
     _persistence = persistence;
 }
 
+bool ImageModel::isImageLoaded()
+{
+    return this->_data != nullptr;
+}
+
 void ImageModel::loadImage(QString path)
 {
     this->_data = _persistence->load(path);
@@ -25,14 +30,22 @@ void ImageModel::saveImage(QString path)
     _persistence->save(path, this->_data);
 }
 
-bool ImageModel::isImageLoaded()
-{
-    return this->_data != nullptr;
-}
-
 QPixmap ImageModel::getEditedImageQPixmap()
 {
     cv::Mat img = this->_data->Image;
+
+    QImage qimg(img.data,
+                img.cols,
+                img.rows,
+                static_cast<int>(img.step),
+                QImage::Format_RGB888);
+
+    return QPixmap::fromImage(qimg.rgbSwapped());
+}
+
+QPixmap ImageModel::getOriginalImageQPixmap()
+{
+    cv::Mat img = this->_data->ImageOriginal;
 
     QImage qimg(img.data,
                 img.cols,
@@ -67,6 +80,11 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 
     histogram = generateHistogramRGB(histogram, img);
 
+    if(histogram.rows <= 0 || histogram.cols <= 0)
+    {
+        return QPixmap();
+    }
+
     histogram = generateHistogramGridOverlay(histogram, 3, 2);
 
     QImage qimg(histogram.data,
@@ -80,6 +98,26 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 
 cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
 {
+    if(image.rows <= 0 || image.cols <= 0)
+    {
+        return cv::Mat();
+    }
+
+    if(image.channels() != 3)
+    {
+        return cv::Mat();
+    }
+
+    if(source.rows <= 0 || source.cols <= 0)
+    {
+        return cv::Mat();
+    }
+
+    if(source.channels() != 3)
+    {
+        return cv::Mat();
+    }
+
     cv::Mat histogram = source;
     cv::Mat img = image;
     std::vector<cv::Mat> bgr_channels;
@@ -337,12 +375,27 @@ void ImageModel::editRotate(int degree)
         return;
     }
 
+    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    {
+        return;
+    }
+
     if(degree == 90)
+    {
         cv::rotate(this->_data->Image, this->_data->Image, cv::ROTATE_90_CLOCKWISE);
+    }
     else if(degree == -90)
+    {
         cv::rotate(this->_data->Image, this->_data->Image, cv::ROTATE_90_COUNTERCLOCKWISE);
+    }
     else if(degree == 180)
+    {
         cv::rotate(this->_data->Image, this->_data->Image, cv::ROTATE_180);
+    }
+    else
+    {
+        return;
+    }
 
     emit imageUpdated();
 }
@@ -354,6 +407,11 @@ void ImageModel::editWhiteBalance(int value)
     const float percentLimitMax = 20;
 
     if(!this->isImageLoaded())
+    {
+        return;
+    }
+
+    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
     {
         return;
     }
@@ -398,6 +456,11 @@ void ImageModel::editBrightness(int value)
     int valueDefault = 0;
 
     if(!this->isImageLoaded())
+    {
+        return;
+    }
+
+    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
     {
         return;
     }
@@ -450,12 +513,12 @@ void ImageModel::editWhiteBalanceGW()
         return;
     }
 
-    if(this->_data->Image.channels() != 3)
+    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
     {
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    if(this->_data->Image.channels() != 3)
     {
         return;
     }
@@ -526,6 +589,11 @@ void ImageModel::editShadowsBasic(int value)
         return;
     }
 
+    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    {
+        return;
+    }
+
     if(this->_data->Image.channels() != 3)
     {
         return;
@@ -572,6 +640,11 @@ void ImageModel::editShadows(int value)
     const int valueDefault = 0;
 
     if(!this->isImageLoaded())
+    {
+        return;
+    }
+
+    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
     {
         return;
     }
