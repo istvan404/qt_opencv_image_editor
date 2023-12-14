@@ -28,10 +28,10 @@ private slots:
     void Test_Rotate_Invalid_Values();
     void Test_Nothing_Happens_Without_Image();
     void Test_Reset();
-    //void Test_Brightness_Invalud_Values();
-    //void Test_WhiteBalance_Invalud_Values();
-    //void Test_ShadowBasic_Invalud_Values();
-    //void Test_Shadows_Invalud_Values();
+    void Test_Brightness_Values();
+    //void Test_WhiteBalance_Values();
+    //void Test_ShadowBasic_Values();
+    //void Test_Shadows_Values();
 };
 
 #endif // IMAGEMODELTESTS_H

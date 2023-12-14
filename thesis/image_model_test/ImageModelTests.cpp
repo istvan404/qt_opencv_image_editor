@@ -345,4 +345,33 @@ void ImageModelTests::Test_Reset()
     QVERIFY(signalSpy.length() == 5);
 }
 
+void ImageModelTests::Test_Brightness_Values()
+{
+    // SETUP
+    cv::Mat img = cv::imread(test_file_path.toStdString());
+    ImageData save(test_file_path, img);
+    ImagePersistenceMock mock(save);
+    ImageModel model(&mock);
+    model.loadImage("");
+
+    QSignalSpy signalSpy(&model, SIGNAL(imageUpdated()));
+
+    // TEST
+    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+
+    model.editBrightness(1000000);
+    model.editBrightness(-1000000);
+    model.editBrightness(-51);
+    model.editBrightness(51);
+    QVERIFY(signalSpy.length() == 0);
+
+    model.editBrightness(-50);
+    model.editBrightness(50);
+    QVERIFY(signalSpy.length() == 2);
+
+    model.editBrightness(0);
+    QVERIFY(signalSpy.length() == 2);
+}
+
 QTEST_MAIN(ImageModelTests)
