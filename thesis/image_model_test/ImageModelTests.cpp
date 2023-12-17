@@ -360,17 +360,129 @@ void ImageModelTests::Test_Brightness_Values()
     QVERIFY(model.isImageLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
 
+    // TEST - INVALID
     model.editBrightness(1000000);
     model.editBrightness(-1000000);
     model.editBrightness(-51);
     model.editBrightness(51);
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
     QVERIFY(signalSpy.length() == 0);
 
+    // TEST - DEFAULT
+    model.editBrightness(0);
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+    QVERIFY(signalSpy.length() == 0);
+
+    // TEST - VALID
     model.editBrightness(-50);
     model.editBrightness(50);
-    QVERIFY(signalSpy.length() == 2);
+    model.editBrightness(10);
+    QVERIFY(model.getEditedImageQPixmap().toImage() != model.getOriginalImageQPixmap().toImage());
+    QVERIFY(signalSpy.length() == 3);
+}
 
-    model.editBrightness(0);
+void ImageModelTests::Test_WhiteBalance_Values()
+{
+    // SETUP
+    cv::Mat img = cv::imread(test_file_path.toStdString());
+    ImageData save(test_file_path, img);
+    ImagePersistenceMock mock(save);
+    ImageModel model(&mock);
+    model.loadImage("");
+
+    QSignalSpy signalSpy(&model, SIGNAL(imageUpdated()));
+
+    // TEST
+    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+
+    // TEST - INVALID
+    model.editWhiteBalance(-1);
+    model.editWhiteBalance(-9999);
+    model.editWhiteBalance(21);
+    model.editWhiteBalance(9999);
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+    QVERIFY(signalSpy.length() == 0);
+
+    // TEST - DEFAULT
+    model.editWhiteBalance(0);
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+    QVERIFY(signalSpy.length() == 0);
+
+    // TEST - VALID
+    model.editWhiteBalance(1);
+    model.editWhiteBalance(20);
+    QVERIFY(model.getEditedImageQPixmap().toImage() != model.getOriginalImageQPixmap().toImage());
+    QVERIFY(signalSpy.length() == 2);
+}
+
+void ImageModelTests::Test_ShadowBasic_Values()
+{
+    // SETUP
+    cv::Mat img = cv::imread(test_file_path.toStdString());
+    ImageData save(test_file_path, img);
+    ImagePersistenceMock mock(save);
+    ImageModel model(&mock);
+    model.loadImage("");
+
+    QSignalSpy signalSpy(&model, SIGNAL(imageUpdated()));
+
+    // TEST
+    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+
+    // TEST - INVALID
+    model.editShadowsBasic(-1);
+    model.editShadowsBasic(51);
+    model.editShadowsBasic(-9999);
+    model.editShadowsBasic(9999);
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+    QVERIFY(signalSpy.length() == 0);
+
+    // TEST - DEFAULT
+    model.editShadowsBasic(0);
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+    QVERIFY(signalSpy.length() == 0);
+
+    // TEST - VALID
+    model.editShadowsBasic(1);
+    model.editShadowsBasic(50);
+    QVERIFY(model.getEditedImageQPixmap().toImage() != model.getOriginalImageQPixmap().toImage());
+    QVERIFY(signalSpy.length() == 2);
+}
+
+void ImageModelTests::Test_Shadows_Values()
+{
+    // SETUP
+    cv::Mat img = cv::imread(test_file_path.toStdString());
+    ImageData save(test_file_path, img);
+    ImagePersistenceMock mock(save);
+    ImageModel model(&mock);
+    model.loadImage("");
+
+    QSignalSpy signalSpy(&model, SIGNAL(imageUpdated()));
+
+    // TEST
+    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+
+    // TEST - INVALID
+    model.editShadows(-1);
+    model.editShadows(51);
+    model.editShadows(-9999);
+    model.editShadows(9999);
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+    QVERIFY(signalSpy.length() == 0);
+
+    // TEST - DEFAULT
+    model.editShadows(0);
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+    QVERIFY(signalSpy.length() == 0);
+
+    // TEST - VALID
+    model.editShadows(1);
+    model.editShadows(50);
+    QVERIFY(model.getEditedImageQPixmap().toImage() != model.getOriginalImageQPixmap().toImage());
     QVERIFY(signalSpy.length() == 2);
 }
 

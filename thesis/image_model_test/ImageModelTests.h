@@ -29,9 +29,11 @@ private slots:
     void Test_Nothing_Happens_Without_Image();
     void Test_Reset();
     void Test_Brightness_Values();
-    //void Test_WhiteBalance_Values();
-    //void Test_ShadowBasic_Values();
-    //void Test_Shadows_Values();
+    void Test_WhiteBalance_Values();
+    void Test_ShadowBasic_Values();
+    void Test_Shadows_Values();
+    // void Test_Empty_Image_Matrix();
+    // void Test_Invalid_Image_With_One_Channel();
 };
 
 #endif // IMAGEMODELTESTS_H
