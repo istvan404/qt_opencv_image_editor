@@ -402,9 +402,10 @@ void ImageModel::editRotate(int degree)
 
 void ImageModel::editWhiteBalance(int value)
 {
-    float percent = value;
+    const float percent = value;
     const float percentLimitMin = 0;
     const float percentLimitMax = 20;
+    const float halfPercent = percent / 200.0f;
 
     if(!this->isImageLoaded())
     {
@@ -421,13 +422,10 @@ void ImageModel::editWhiteBalance(int value)
         return;
     }
 
-    if(percent <= percentLimitMin)
+    if(percent <= percentLimitMin || percent > percentLimitMax)
+    {
         return;
-
-    if(percent > percentLimitMax)
-        return;
-
-    float halfPercent = percent / 200.0f;
+    }
 
     std::vector<cv::Mat> bgrChannelSplit;
     cv::split(this->_data->Image,bgrChannelSplit);
