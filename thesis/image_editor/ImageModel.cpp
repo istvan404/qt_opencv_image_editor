@@ -6,7 +6,7 @@ ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
     _persistence = persistence;
 }
 
-bool ImageModel::isImageLoaded()
+bool ImageModel::isImageDataLoaded()
 {
     return this->_data != nullptr;
 }
@@ -49,7 +49,7 @@ void ImageModel::loadImage(QString path)
 
 void ImageModel::saveImage(QString path)
 {
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
@@ -86,7 +86,7 @@ QPixmap ImageModel::getOriginalImageQPixmap()
 QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 {
     // Edge cases
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return QPixmap();           // TODO: Revisit this solution to edge case, maybe EMIT some problem? THROW error?
     }
@@ -364,7 +364,7 @@ cv::Mat ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, i
 
 void ImageModel::editReset()
 {
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
@@ -380,7 +380,7 @@ void ImageModel::editReset()
 
 void ImageModel::editFlipHorizontal()
 {
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
@@ -396,7 +396,7 @@ void ImageModel::editFlipHorizontal()
 
 void ImageModel::editFlipVertical()
 {
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
@@ -412,7 +412,7 @@ void ImageModel::editFlipVertical()
 
 void ImageModel::editRotate(int degree)
 {
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
@@ -449,7 +449,7 @@ void ImageModel::editWhiteBalance(int value)
     const float percentLimitMax = 20;
     const float halfPercent = percent / 200.0f;
 
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
@@ -495,7 +495,7 @@ void ImageModel::editBrightness(int value)
     int valueLimitMax = 50;
     int valueDefault = 0;
 
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
@@ -548,7 +548,7 @@ void ImageModel::editBrightness(int value)
 void ImageModel::editWhiteBalanceGW()
 {
     // Gray World Algorithm
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
@@ -624,7 +624,7 @@ void ImageModel::editShadowsBasic(int value)
     const int valueLimitMax = 50;
     const int valueDefault = 0;
 
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
@@ -679,7 +679,7 @@ void ImageModel::editShadows(int value)
     const int valueLimitMax = 50;
     const int valueDefault = 0;
 
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }

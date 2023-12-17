@@ -100,7 +100,7 @@ void ImageView::setupAdjustments()
 
 void ImageView::onAdjustmentsResetButtonClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -113,7 +113,7 @@ void ImageView::onAdjustmentsResetButtonClicked()
 
 void ImageView::onAdjustmentWhiteBalanceClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -128,7 +128,7 @@ void ImageView::onAdjustmentWhiteBalanceClicked()
 
 void ImageView::onAdjustmentWhiteBalanceGWClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -143,7 +143,7 @@ void ImageView::onAdjustmentWhiteBalanceGWClicked()
 
 void ImageView::onAdjustmentBrightnessClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -159,7 +159,7 @@ void ImageView::onAdjustmentBrightnessClicked()
 
 void ImageView::onAdjustmentShadowBasicClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -175,7 +175,7 @@ void ImageView::onAdjustmentShadowBasicClicked()
 
 void ImageView::onAdjustmentShadowClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -302,7 +302,7 @@ void ImageView::loadImage()
 
 void ImageView::onActionZoomIn()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -315,7 +315,7 @@ void ImageView::onActionZoomIn()
 
 void ImageView::onActionZoomOut()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -329,7 +329,7 @@ void ImageView::onActionZoomOut()
 
 void ImageView::onActionZoomFit()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -342,7 +342,7 @@ void ImageView::onActionZoomFit()
 
 void ImageView::onActionFlipHorizontal()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -354,7 +354,7 @@ void ImageView::onActionFlipHorizontal()
 
 void ImageView::onActionFlipVertical()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -366,7 +366,7 @@ void ImageView::onActionFlipVertical()
 
 void ImageView::onActionRotate90CW()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -379,7 +379,7 @@ void ImageView::onActionRotate90CW()
 
 void ImageView::onActionRotate90CCW()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -392,7 +392,7 @@ void ImageView::onActionRotate90CCW()
 
 void ImageView::onActionRotate180()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -419,7 +419,7 @@ void ImageView::onImageModelUpdated()
 
 void ImageView::onActionLoad()
 {
-    if(_model->isImageLoaded())
+    if(_model->isImageDataLoaded())
     {
         int answer = QMessageBox::warning(this,
                                           "Image Editor - Warning",
@@ -439,7 +439,7 @@ void ImageView::onActionLoad()
 
 void ImageView::onActionSave()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -458,7 +458,7 @@ void ImageView::onActionSave()
 
 void ImageView::onActionExit()
 {
-    if(_model->isImageLoaded())
+    if(_model->isImageDataLoaded())
     {
         int answer = QMessageBox::warning(this,
                                           "Image Editor - Warning",

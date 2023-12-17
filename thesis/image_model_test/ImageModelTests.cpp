@@ -18,12 +18,13 @@ void ImageModelTests::Test_Initialization_Empty()
 
     // TEST
     QVERIFY(emptySave.Image.empty());
+    QVERIFY(emptySave.Image.rows == 0 && emptySave.Image.cols == 0);
     QVERIFY(emptySave.ImageOriginal.empty());
-    QVERIFY(!model.isImageLoaded());
+    QVERIFY(!model.isImageDataLoaded());
     QVERIFY(loadedSignalSpy.length() == 0);
 
     model.loadImage("");
-    QVERIFY(!model.isImageLoaded());
+    QVERIFY(!model.isImageDataLoaded());
     QVERIFY(loadedSignalSpy.length() == 0);
 }
 
@@ -36,9 +37,9 @@ void ImageModelTests::Test_Initialization_TestFile()
     ImageModel model(&mock);
 
     // TEST
-    QVERIFY(!model.isImageLoaded());
+    QVERIFY(!model.isImageDataLoaded());
     model.loadImage("");
-    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.isImageDataLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getEditedImageQPixmap().toImage());
     QVERIFY(model.getOriginalImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
@@ -56,7 +57,7 @@ void ImageModelTests::Test_Signals()
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
     // TEST
-    QVERIFY(!model.isImageLoaded());
+    QVERIFY(!model.isImageDataLoaded());
 
     QVERIFY(loadedSignalSpy.length() == 0);
     model.loadImage("");
@@ -82,7 +83,7 @@ void ImageModelTests::Test_Flip_Vertical()
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
     // TEST
-    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.isImageDataLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
 
     model.editFlipVertical();
@@ -110,7 +111,7 @@ void ImageModelTests::Test_Flip_Horizontal()
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
     // TEST
-    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.isImageDataLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
 
     model.editFlipHorizontal();
@@ -138,7 +139,7 @@ void ImageModelTests::Test_Flip_Mixed()
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
     // TEST
-    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.isImageDataLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
 
     model.editFlipHorizontal();
@@ -304,7 +305,7 @@ void ImageModelTests::Test_Nothing_Happens_Without_Image()
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
     // TEST
-    QVERIFY(!model.isImageLoaded());
+    QVERIFY(!model.isImageDataLoaded());
 
     model.editFlipHorizontal();
     model.editFlipVertical();
@@ -318,7 +319,7 @@ void ImageModelTests::Test_Nothing_Happens_Without_Image()
     model.editShadows(10);
     model.editShadowsBasic(10);
 
-    QVERIFY(!model.isImageLoaded());
+    QVERIFY(!model.isImageDataLoaded());
     QVERIFY(loadedSignalSpy.length() == 0);
     QVERIFY(updatedSignalSpy.length() == 0);
 }
@@ -335,7 +336,7 @@ void ImageModelTests::Test_Reset()
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
     // TEST
-    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.isImageDataLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
 
     model.editFlipHorizontal();
@@ -366,7 +367,7 @@ void ImageModelTests::Test_Brightness_Values()
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
     // TEST
-    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.isImageDataLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
 
     // TEST - INVALID
@@ -402,7 +403,7 @@ void ImageModelTests::Test_WhiteBalance_Values()
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
     // TEST
-    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.isImageDataLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
 
     // TEST - INVALID
@@ -437,7 +438,7 @@ void ImageModelTests::Test_ShadowBasic_Values()
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
     // TEST
-    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.isImageDataLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
 
     // TEST - INVALID
@@ -472,7 +473,7 @@ void ImageModelTests::Test_Shadows_Values()
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
     // TEST
-    QVERIFY(model.isImageLoaded());
+    QVERIFY(model.isImageDataLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
 
     // TEST - INVALID
