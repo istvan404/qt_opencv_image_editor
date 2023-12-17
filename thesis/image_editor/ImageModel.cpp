@@ -11,6 +11,16 @@ bool ImageModel::isImageLoaded()
     return this->_data != nullptr;
 }
 
+bool ImageModel::isImageEmpty()
+{
+    if( this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0 )
+    {
+        return true;
+    }
+
+    return this->_data->Image.empty();
+}
+
 void ImageModel::loadImage(QString path)
 {
     ImageData* data = _persistence->load(path);
@@ -359,6 +369,11 @@ void ImageModel::editReset()
         return;
     }
 
+    if(this->isImageEmpty())
+    {
+        return;
+    }
+
     this->_data->Image = this->_data->ImageOriginal.clone();
     emit imageUpdated();
 }
@@ -366,6 +381,11 @@ void ImageModel::editReset()
 void ImageModel::editFlipHorizontal()
 {
     if(!this->isImageLoaded())
+    {
+        return;
+    }
+
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -381,6 +401,11 @@ void ImageModel::editFlipVertical()
         return;
     }
 
+    if(this->isImageEmpty())
+    {
+        return;
+    }
+
     cv::flip(this->_data->Image, this->_data->Image, 1);
     emit imageUpdated();
 }
@@ -392,7 +417,7 @@ void ImageModel::editRotate(int degree)
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -429,7 +454,7 @@ void ImageModel::editWhiteBalance(int value)
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -475,7 +500,7 @@ void ImageModel::editBrightness(int value)
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -528,7 +553,7 @@ void ImageModel::editWhiteBalanceGW()
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -604,7 +629,7 @@ void ImageModel::editShadowsBasic(int value)
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -659,7 +684,7 @@ void ImageModel::editShadows(int value)
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    if(this->isImageEmpty())
     {
         return;
     }

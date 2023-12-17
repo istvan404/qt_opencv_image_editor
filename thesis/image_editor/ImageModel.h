@@ -31,6 +31,7 @@ public:
     QPixmap getHistogram(QSize histogramLabelSize);
 
     bool isImageLoaded();
+    bool isImageEmpty();
     void editReset();
     void editFlipHorizontal();
     void editFlipVertical();
