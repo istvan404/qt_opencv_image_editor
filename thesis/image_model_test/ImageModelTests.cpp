@@ -23,7 +23,7 @@ void ImageModelTests::Test_Initialization_Empty()
     QVERIFY(!model.isImageDataLoaded());
     QVERIFY(loadedSignalSpy.length() == 0);
 
-    model.loadImage("");
+    model.loadImage(test_file_path);
     QVERIFY(!model.isImageDataLoaded());
     QVERIFY(loadedSignalSpy.length() == 0);
 }
@@ -38,7 +38,7 @@ void ImageModelTests::Test_Initialization_TestFile()
 
     // TEST
     QVERIFY(!model.isImageDataLoaded());
-    model.loadImage("");
+    model.loadImage(test_file_path);
     QVERIFY(model.isImageDataLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getEditedImageQPixmap().toImage());
     QVERIFY(model.getOriginalImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
@@ -60,7 +60,7 @@ void ImageModelTests::Test_Signals()
     QVERIFY(!model.isImageDataLoaded());
 
     QVERIFY(loadedSignalSpy.length() == 0);
-    model.loadImage("");
+    model.loadImage(test_file_path);
     QVERIFY(loadedSignalSpy.length() == 1);
 
     QVERIFY(updatedSignalSpy.length() == 0);
@@ -78,7 +78,7 @@ void ImageModelTests::Test_Flip_Vertical()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -106,7 +106,7 @@ void ImageModelTests::Test_Flip_Horizontal()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -134,7 +134,7 @@ void ImageModelTests::Test_Flip_Mixed()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -168,7 +168,7 @@ void ImageModelTests::Test_Rotate_90_CW()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -194,7 +194,7 @@ void ImageModelTests::Test_Rotate_90_CCW()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -220,7 +220,7 @@ void ImageModelTests::Test_Rotate_180()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -246,7 +246,7 @@ void ImageModelTests::Test_Rotate_Mixed()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -276,7 +276,7 @@ void ImageModelTests::Test_Rotate_Invalid_Values()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -331,7 +331,7 @@ void ImageModelTests::Test_Reset()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -362,7 +362,7 @@ void ImageModelTests::Test_Brightness_Values()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -398,7 +398,7 @@ void ImageModelTests::Test_WhiteBalance_Values()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -433,7 +433,7 @@ void ImageModelTests::Test_ShadowBasic_Values()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -468,7 +468,7 @@ void ImageModelTests::Test_Shadows_Values()
     ImageData save(test_file_path, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage("");
+    model.loadImage(test_file_path);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
