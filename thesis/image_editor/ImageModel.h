@@ -4,6 +4,7 @@
 #include "ImagePersistence.h"
 #include <QObject>
 #include <QString>
+#include <QFileInfo>
 
 #include <QPixmap>
 #include <QImage>

@@ -23,11 +23,39 @@ bool ImageModel::isImageEmpty()
 
 void ImageModel::loadImage(QString path)
 {
+    QSet<QString> extensions = {"jpg", "bmp", "png"};
+    QFileInfo file(path);
+
+    if( !file.exists() || !file.isFile() )
+    {
+        qDebug() << "The file doesn't exists";
+        return;
+    }
+
+    QString extension = file.suffix();
+    qDebug() << "File extension is: " << extension;
+
+    if( !extensions.contains(extension) )
+    {
+        qDebug() << "File type is not accepted.";
+        return;
+    }
+
     ImageData* data = _persistence->load(path);
 
     if( data->Image.empty() )
     {
         // WE DIDNT LOAD ANY IMAGE -> SOMETHING WRONG WITH FILE READ
+        return;
+    }
+
+    if( data->Image.type() != CV_8UC3 ) // unsigned 8 bit with 3 channels
+    {
+        return;
+    }
+
+    if( data->Image.channels() != 3 )
+    {
         return;
     }
 
