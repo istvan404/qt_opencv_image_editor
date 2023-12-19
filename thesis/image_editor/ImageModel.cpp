@@ -119,13 +119,6 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
         return QPixmap();           // TODO: Revisit this solution to edge case, maybe EMIT some problem? THROW error?
     }
 
-    /*int width = histogramLabelSize.width();
-    if(width % 2 != 0)
-        width++;
-    int height = histogramLabelSize.height();
-    if(height % 2 != 0)
-        height++;*/
-
     double aspectRatio = histogramLabelSize.width() / histogramLabelSize.height();
     int width = 256;
     int height = 256 / aspectRatio;
@@ -221,18 +214,6 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
             accumulate);
 
     int hist_h = histogram.rows;
-/*
-    for( int i = 0; i < histSize; i++ )
-    {
-        qDebug() << "b_channel[" << i << "] = " << cvRound(b_channel.at<float>(i))
-                 << " | "
-                 << "g_channel[" << i << "] = " << cvRound(g_channel.at<float>(i))
-                 << " | "
-                 << "r_channel[" << i << "] = " << cvRound(r_channel.at<float>(i));
-    }
-
-    qDebug() << "hist_h = " << hist_h;*/
-
     float max = 0;
     for(int i = 0; i < histSize; i++)
     {
