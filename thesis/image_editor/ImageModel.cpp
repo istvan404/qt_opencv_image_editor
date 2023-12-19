@@ -239,7 +239,6 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
     float ceiling = -1;
     for(int i = 1; i < (3*histSize)*0.2; i++)
     {
-        //qDebug() << "all_values[" << i << "] =" << all_values[i];
         float a = all_values[i-1];
         float b = all_values[i];
         if( (a/b) > 1.5 )
@@ -250,7 +249,6 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
 
     if(ceiling != -1)
     {
-        //qDebug() << "ceiling := " << ceiling;
         b_channel.setTo(ceiling,b_channel > ceiling);
         g_channel.setTo(ceiling,g_channel > ceiling);
         r_channel.setTo(ceiling,r_channel > ceiling);
@@ -270,12 +268,6 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
 
     for( int i = 0; i < histSize; i++ )
     {
-        /*qDebug() << "b_channel[" << i << "] = " << cvRound(b_channel.at<float>(i))
-                 << " | "
-                 << "g_channel[" << i << "] = " << cvRound(g_channel.at<float>(i))
-                 << " | "
-                 << "r_channel[" << i << "] = " << cvRound(r_channel.at<float>(i));*/
-
         int b_start = hist_h - cvRound(b_channel.at<float>(i));
         int g_start = hist_h - cvRound(g_channel.at<float>(i));
         int r_start = hist_h - cvRound(r_channel.at<float>(i));
@@ -468,11 +460,6 @@ void ImageModel::editWhiteBalance(int value)
         return;
     }
 
-    if(this->_data->Image.channels() != 3)
-    {
-        return;
-    }
-
     if(percent <= percentLimitMin || percent > percentLimitMax)
     {
         return;
@@ -510,11 +497,6 @@ void ImageModel::editBrightness(int value)
     }
 
     if(this->isImageEmpty())
-    {
-        return;
-    }
-
-    if(this->_data->Image.channels() != 3)
     {
         return;
     }
@@ -563,11 +545,6 @@ void ImageModel::editWhiteBalanceGW()
     }
 
     if(this->isImageEmpty())
-    {
-        return;
-    }
-
-    if(this->_data->Image.channels() != 3)
     {
         return;
     }
@@ -643,11 +620,6 @@ void ImageModel::editShadowsBasic(int value)
         return;
     }
 
-    if(this->_data->Image.channels() != 3)
-    {
-        return;
-    }
-
     if(value < valueLimitMin)
     {
         return;
@@ -694,11 +666,6 @@ void ImageModel::editShadows(int value)
     }
 
     if(this->isImageEmpty())
-    {
-        return;
-    }
-
-    if(this->_data->Image.channels() != 3)
     {
         return;
     }
