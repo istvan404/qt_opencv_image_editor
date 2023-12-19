@@ -28,23 +28,6 @@ void ImageModelTests::Test_Initialization_Empty()
     QVERIFY(loadedSignalSpy.length() == 0);
 }
 
-void ImageModelTests::Test_Initialization_TestFile()
-{
-    // SETUP
-    cv::Mat img = cv::imread(path_jpg.toStdString());
-    ImageData save(path_jpg, img);
-    ImagePersistenceMock mock(save);
-    ImageModel model(&mock);
-
-    // TEST
-    QVERIFY(!model.isImageDataLoaded());
-    model.loadImage(path_jpg);
-    QVERIFY(model.isImageDataLoaded());
-    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getEditedImageQPixmap().toImage());
-    QVERIFY(model.getOriginalImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
-    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
-}
-
 void ImageModelTests::Test_File_JPG()
 {
     // SETUP

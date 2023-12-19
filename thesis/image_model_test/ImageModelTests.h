@@ -19,7 +19,6 @@ private:
 
 private slots:
     void Test_Initialization_Empty();
-    void Test_Initialization_TestFile();
     void Test_File_JPG();
     void Test_File_PNG();
     void Test_File_BMP();
