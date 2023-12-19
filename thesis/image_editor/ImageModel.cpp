@@ -28,17 +28,14 @@ void ImageModel::loadImage(QString path)
 
     if( !file.exists() || !file.isFile() )
     {
-        qDebug() << "The file doesn't exists";
         emit imageLoadError();
         return;
     }
 
     QString extension = file.suffix();
-    qDebug() << "File extension is: " << extension;
 
     if( !extensions.contains(extension) )
     {
-        qDebug() << "File type is not accepted.";
         emit imageLoadError();
         return;
     }
@@ -70,7 +67,6 @@ void ImageModel::loadImage(QString path)
     }
 
     this->_data = data;
-
     emit imageLoaded();
 }
 
@@ -750,8 +746,6 @@ void ImageModel::editShadows(int value)
     cv::cvtColor(mask, mask, cv::COLOR_BGR2GRAY, 1);
     mask.setTo(255,mask > cutoff);
 
-    cv::imwrite("C:/Users/Admin/Desktop/mask2_bw.jpg", mask);
-
     for(int y = 0; y < rows; y++)
     {
         for(int x = 0; x < cols; x++)
@@ -759,8 +753,6 @@ void ImageModel::editShadows(int value)
             mask.at<uchar>(y,x) = (255 - mask.at<uchar>(y,x)) * percentage;
         }
     }
-
-    cv::imwrite("C:/Users/Admin/Desktop/mask_inverted_bw.jpg", mask);
 
     for(int y = 0; y < rows; y++)
     {
