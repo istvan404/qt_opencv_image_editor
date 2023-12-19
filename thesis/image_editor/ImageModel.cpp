@@ -45,7 +45,11 @@ void ImageModel::loadImage(QString path)
 
     if( data->Image.empty() )
     {
-        // WE DIDNT LOAD ANY IMAGE -> SOMETHING WRONG WITH FILE READ
+        return;
+    }
+
+    if( data->Image.cols <= 0 || data->Image.rows <= 0)
+    {
         return;
     }
 
@@ -62,17 +66,6 @@ void ImageModel::loadImage(QString path)
     this->_data = data;
 
     emit imageLoaded();
-    qDebug() << "img.type() == CV_8UC4 ->" << (this->_data->Image.type() == CV_8UC4); // unsigned 8 bit with 4 channels
-    qDebug() << "img.type() == CV_8UC3 ->" << (this->_data->Image.type() == CV_8UC3); // unsigned 8 bit with 3 channels
-    qDebug() << "img.type() == CV_8UC1 ->" << (this->_data->Image.type() == CV_8UC1); // unsigned 8 bit with 1 channels
-
-    /*
-     * WHAT IF WE TRY TO LOAD A WRONG FILE?
-     *
-     *  cv::imread() wont emit any exceptions, instead it will return an empty matrix ( .empty() on mat object )
-     *
-     * we should check if the matrix is empty and emit an ERROR SIGNAL maybe?
-    */
 }
 
 void ImageModel::saveImage(QString path)
