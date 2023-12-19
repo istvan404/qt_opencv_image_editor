@@ -23,7 +23,7 @@ void ImageModelTests::Test_Initialization_Empty()
     QVERIFY(!model.isImageDataLoaded());
     QVERIFY(loadedSignalSpy.length() == 0);
 
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
     QVERIFY(!model.isImageDataLoaded());
     QVERIFY(loadedSignalSpy.length() == 0);
 }
@@ -31,14 +31,14 @@ void ImageModelTests::Test_Initialization_Empty()
 void ImageModelTests::Test_Initialization_TestFile()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
 
     // TEST
     QVERIFY(!model.isImageDataLoaded());
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
     QVERIFY(model.isImageDataLoaded());
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getEditedImageQPixmap().toImage());
     QVERIFY(model.getOriginalImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
@@ -48,8 +48,8 @@ void ImageModelTests::Test_Initialization_TestFile()
 void ImageModelTests::Test_Signals()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
 
@@ -60,7 +60,7 @@ void ImageModelTests::Test_Signals()
     QVERIFY(!model.isImageDataLoaded());
 
     QVERIFY(loadedSignalSpy.length() == 0);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
     QVERIFY(loadedSignalSpy.length() == 1);
 
     QVERIFY(updatedSignalSpy.length() == 0);
@@ -74,11 +74,11 @@ void ImageModelTests::Test_Signals()
 void ImageModelTests::Test_Flip_Vertical()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -102,11 +102,11 @@ void ImageModelTests::Test_Flip_Vertical()
 void ImageModelTests::Test_Flip_Horizontal()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -130,11 +130,11 @@ void ImageModelTests::Test_Flip_Horizontal()
 void ImageModelTests::Test_Flip_Mixed()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -164,11 +164,11 @@ void ImageModelTests::Test_Flip_Mixed()
 void ImageModelTests::Test_Rotate_90_CW()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -190,11 +190,11 @@ void ImageModelTests::Test_Rotate_90_CW()
 void ImageModelTests::Test_Rotate_90_CCW()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -216,11 +216,11 @@ void ImageModelTests::Test_Rotate_90_CCW()
 void ImageModelTests::Test_Rotate_180()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -242,11 +242,11 @@ void ImageModelTests::Test_Rotate_180()
 void ImageModelTests::Test_Rotate_Mixed()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -272,11 +272,11 @@ void ImageModelTests::Test_Rotate_Mixed()
 void ImageModelTests::Test_Rotate_Invalid_Values()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -327,11 +327,11 @@ void ImageModelTests::Test_Nothing_Happens_Without_Image()
 void ImageModelTests::Test_Reset()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -358,11 +358,11 @@ void ImageModelTests::Test_Reset()
 void ImageModelTests::Test_Brightness_Values()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -394,11 +394,11 @@ void ImageModelTests::Test_Brightness_Values()
 void ImageModelTests::Test_WhiteBalance_Values()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -429,11 +429,11 @@ void ImageModelTests::Test_WhiteBalance_Values()
 void ImageModelTests::Test_ShadowBasic_Values()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -464,11 +464,11 @@ void ImageModelTests::Test_ShadowBasic_Values()
 void ImageModelTests::Test_Shadows_Values()
 {
     // SETUP
-    cv::Mat img = cv::imread(test_file_path.toStdString());
-    ImageData save(test_file_path, img);
+    cv::Mat img = cv::imread(test_file_path_jpg.toStdString());
+    ImageData save(test_file_path_jpg, img);
     ImagePersistenceMock mock(save);
     ImageModel model(&mock);
-    model.loadImage(test_file_path);
+    model.loadImage(test_file_path_jpg);
 
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
 
@@ -494,6 +494,69 @@ void ImageModelTests::Test_Shadows_Values()
     model.editShadows(50);
     QVERIFY(model.getEditedImageQPixmap().toImage() != model.getOriginalImageQPixmap().toImage());
     QVERIFY(updatedSignalSpy.length() == 2);
+}
+
+void ImageModelTests::Test_Invalid_File_Path()
+{
+    // SETUP
+    ImageData emptySave;
+    ImagePersistenceMock mock(emptySave);
+    ImageModel model(&mock);
+
+    QSignalSpy loadedSignalSpy(&model, SIGNAL(imageLoaded()));
+
+    // TEST
+    QVERIFY(!model.isImageDataLoaded());
+
+    model.loadImage("");
+    QVERIFY(!model.isImageDataLoaded());
+    QVERIFY(loadedSignalSpy.length() == 0);
+
+    model.loadImage(test_file_path_invalid);
+    QVERIFY(!model.isImageDataLoaded());
+    QVERIFY(loadedSignalSpy.length() == 0);
+}
+
+void ImageModelTests::Test_Invalid_Image_One_Channel()
+{
+    // SETUP
+    cv::Mat oneChannel = cv::Mat::zeros(200,200, CV_8UC1);
+    ImageData save("", oneChannel);
+    ImagePersistenceMock mock(save);
+    ImageModel model(&mock);
+
+    QSignalSpy loadedSignalSpy(&model, SIGNAL(imageLoaded()));
+
+    // TEST
+    QVERIFY(!model.isImageDataLoaded());
+    QVERIFY(oneChannel.channels() == 1);
+    QVERIFY(oneChannel.type() == CV_8UC1);
+    QVERIFY(loadedSignalSpy.length() == 0);
+
+    model.loadImage(test_file_path_jpg);
+    QVERIFY(!model.isImageDataLoaded());
+    QVERIFY(loadedSignalSpy.length() == 0);
+}
+
+void ImageModelTests::Test_Invalid_Image_Four_Channel()
+{
+    // SETUP
+    cv::Mat fourChannel = cv::Mat::zeros(200,200, CV_8UC4);
+    ImageData save("", fourChannel);
+    ImagePersistenceMock mock(save);
+    ImageModel model(&mock);
+
+    QSignalSpy loadedSignalSpy(&model, SIGNAL(imageLoaded()));
+
+    // TEST
+    QVERIFY(!model.isImageDataLoaded());
+    QVERIFY(fourChannel.channels() == 4);
+    QVERIFY(fourChannel.type() == CV_8UC4);
+    QVERIFY(loadedSignalSpy.length() == 0);
+
+    model.loadImage(test_file_path_jpg);
+    QVERIFY(!model.isImageDataLoaded());
+    QVERIFY(loadedSignalSpy.length() == 0);
 }
 
 QTEST_MAIN(ImageModelTests)

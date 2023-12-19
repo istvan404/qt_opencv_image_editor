@@ -12,7 +12,9 @@ public:
     explicit ImageModelTests(QObject *parent = nullptr);
 
 private:
-    const QString test_file_path = "../../thesis/image_model_test/images/test.jpg";
+    const QString test_file_path_jpg = "../../thesis/image_model_test/images/test.jpg";
+    const QString test_file_path_bmp = "../../thesis/image_model_test/images/bitmap_test.bmp";
+    const QString test_file_path_invalid = "../../thesis/image_model_test/images/invalid_test.txt";
 
 private slots:
     void Test_Initialization_Empty();
@@ -32,8 +34,9 @@ private slots:
     void Test_WhiteBalance_Values();
     void Test_ShadowBasic_Values();
     void Test_Shadows_Values();
-    // void Test_Invalid_Image_With_One_Channel();
-    // What if test file doesn't have image extensions that we can read??
+    void Test_Invalid_File_Path();
+    void Test_Invalid_Image_One_Channel();
+    void Test_Invalid_Image_Four_Channel();
 };
 
 #endif // IMAGEMODELTESTS_H
