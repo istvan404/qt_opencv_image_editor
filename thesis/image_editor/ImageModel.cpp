@@ -29,6 +29,7 @@ void ImageModel::loadImage(QString path)
     if( !file.exists() || !file.isFile() )
     {
         qDebug() << "The file doesn't exists";
+        emit imageLoadError();
         return;
     }
 
@@ -38,6 +39,7 @@ void ImageModel::loadImage(QString path)
     if( !extensions.contains(extension) )
     {
         qDebug() << "File type is not accepted.";
+        emit imageLoadError();
         return;
     }
 
@@ -45,21 +47,25 @@ void ImageModel::loadImage(QString path)
 
     if( data->Image.empty() )
     {
+        emit imageLoadError();
         return;
     }
 
     if( data->Image.cols <= 0 || data->Image.rows <= 0)
     {
+        emit imageLoadError();
         return;
     }
 
     if( data->Image.type() != CV_8UC3 ) // unsigned 8 bit with 3 channels
     {
+        emit imageLoadError();
         return;
     }
 
     if( data->Image.channels() != 3 )
     {
+        emit imageLoadError();
         return;
     }
 
@@ -71,6 +77,11 @@ void ImageModel::loadImage(QString path)
 void ImageModel::saveImage(QString path)
 {
     if(!this->isImageDataLoaded())
+    {
+        return;
+    }
+
+    if(this->isImageEmpty())
     {
         return;
     }

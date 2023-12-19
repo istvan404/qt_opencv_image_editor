@@ -55,6 +55,7 @@ private:
 signals:
     void imageLoaded();
     void imageUpdated();
+    void imageLoadError();
 };
 
 #endif // IMAGEMODEL_H
