@@ -206,6 +206,67 @@ void ImageModelTests::Test_Signals()
     QVERIFY(updatedSignalSpy.length() == 4);
 }
 
+void ImageModelTests::Test_Nothing_Happens_Without_Image()
+{
+    // SETUP
+    ImageData emptySave;
+    ImagePersistenceMock mock(emptySave);
+    ImageModel model(&mock);
+
+    QSignalSpy loadedSignalSpy(&model, SIGNAL(imageLoaded()));
+    QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
+
+    // TEST
+    QVERIFY(!model.isImageDataLoaded());
+
+    model.editFlipHorizontal();
+    model.editFlipVertical();
+    model.editRotate(90);
+    model.editRotate(-90);
+    model.editRotate(180);
+    model.editReset();
+    model.editBrightness(10);
+    model.editWhiteBalanceGW();
+    model.editWhiteBalance(10);
+    model.editShadows(10);
+    model.editShadowsBasic(10);
+
+    QVERIFY(!model.isImageDataLoaded());
+    QVERIFY(loadedSignalSpy.length() == 0);
+    QVERIFY(updatedSignalSpy.length() == 0);
+}
+
+void ImageModelTests::Test_Reset()
+{
+    // SETUP
+    cv::Mat img = cv::imread(path_jpg.toStdString());
+    ImageData save(path_jpg, img);
+    ImagePersistenceMock mock(save);
+    ImageModel model(&mock);
+    model.loadImage(path_jpg);
+
+    QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
+
+    // TEST
+    QVERIFY(model.isImageDataLoaded());
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+
+    model.editFlipHorizontal();
+    model.editFlipVertical();
+    QVERIFY(model.getEditedImageQPixmap().toImage() != model.getOriginalImageQPixmap().toImage());
+
+    model.editReset();
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+
+    model.editRotate(90);
+    QVERIFY(model.getEditedImageQPixmap().toImage() != model.getOriginalImageQPixmap().toImage());
+
+    model.editReset();
+    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
+
+    QVERIFY(updatedSignalSpy.length() == 5);
+}
+
 void ImageModelTests::Test_Flip_Vertical()
 {
     // SETUP
@@ -427,67 +488,6 @@ void ImageModelTests::Test_Rotate_Invalid_Values()
     model.editRotate(9999999);
     QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
     QVERIFY(updatedSignalSpy.length() == 0);
-}
-
-void ImageModelTests::Test_Nothing_Happens_Without_Image()
-{
-    // SETUP
-    ImageData emptySave;
-    ImagePersistenceMock mock(emptySave);
-    ImageModel model(&mock);
-
-    QSignalSpy loadedSignalSpy(&model, SIGNAL(imageLoaded()));
-    QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
-
-    // TEST
-    QVERIFY(!model.isImageDataLoaded());
-
-    model.editFlipHorizontal();
-    model.editFlipVertical();
-    model.editRotate(90);
-    model.editRotate(-90);
-    model.editRotate(180);
-    model.editReset();
-    model.editBrightness(10);
-    model.editWhiteBalanceGW();
-    model.editWhiteBalance(10);
-    model.editShadows(10);
-    model.editShadowsBasic(10);
-
-    QVERIFY(!model.isImageDataLoaded());
-    QVERIFY(loadedSignalSpy.length() == 0);
-    QVERIFY(updatedSignalSpy.length() == 0);
-}
-
-void ImageModelTests::Test_Reset()
-{
-    // SETUP
-    cv::Mat img = cv::imread(path_jpg.toStdString());
-    ImageData save(path_jpg, img);
-    ImagePersistenceMock mock(save);
-    ImageModel model(&mock);
-    model.loadImage(path_jpg);
-
-    QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
-
-    // TEST
-    QVERIFY(model.isImageDataLoaded());
-    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
-
-    model.editFlipHorizontal();
-    model.editFlipVertical();
-    QVERIFY(model.getEditedImageQPixmap().toImage() != model.getOriginalImageQPixmap().toImage());
-
-    model.editReset();
-    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
-
-    model.editRotate(90);
-    QVERIFY(model.getEditedImageQPixmap().toImage() != model.getOriginalImageQPixmap().toImage());
-
-    model.editReset();
-    QVERIFY(model.getEditedImageQPixmap().toImage() == model.getOriginalImageQPixmap().toImage());
-
-    QVERIFY(updatedSignalSpy.length() == 5);
 }
 
 void ImageModelTests::Test_Brightness_Values()
