@@ -25,8 +25,7 @@ public:
     void saveImage(QString path);
 
     QPixmap getEditedImageQPixmap();
-    // TODO:
-    QPixmap getOriginalImageQPixmap(); // Save the edited
+    QPixmap getOriginalImageQPixmap();
 
     // Histogram:
     QPixmap getHistogram(QSize histogramLabelSize);
@@ -48,9 +47,8 @@ private:
     ImageData* _data = nullptr;
 
     // Histogram:
-    cv::Mat generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows);
-    cv::Mat generateHistogramRGB(cv::Mat source, cv::Mat img);
-
+    void generateHistogramRGB(cv::Mat source, cv::Mat img, cv::Mat output);
+    void generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows, cv::Mat output);
 
 signals:
     void imageLoaded();

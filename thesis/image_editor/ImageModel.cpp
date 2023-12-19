@@ -126,14 +126,14 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
     cv::Mat img = this->_data->Image;
     cv::Mat histogram(height, width, CV_8UC3, cv::Scalar(10,10,10));
 
-    histogram = generateHistogramRGB(histogram, img);
+    generateHistogramRGB(histogram, img, histogram);
 
     if(histogram.rows <= 0 || histogram.cols <= 0)
     {
         return QPixmap();
     }
 
-    histogram = generateHistogramGridOverlay(histogram, 3, 2);
+    generateHistogramGridOverlay(histogram, 3, 2, histogram);
 
     QImage qimg(histogram.data,
                 histogram.cols,
@@ -144,26 +144,26 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
     return QPixmap::fromImage(qimg.rgbSwapped());
 }
 
-cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
+void ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image, cv::Mat output)
 {
     if(image.rows <= 0 || image.cols <= 0)
     {
-        return cv::Mat();
+        return;
     }
 
     if(image.channels() != 3)
     {
-        return cv::Mat();
+        return;
     }
 
     if(source.rows <= 0 || source.cols <= 0)
     {
-        return cv::Mat();
+        return;
     }
 
     if(source.channels() != 3)
     {
-        return cv::Mat();
+        return;
     }
 
     cv::Mat histogram = source;
@@ -325,10 +325,10 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
         }
     }
 
-    return histogram;
+    output = histogram.clone();
 }
 
-cv::Mat ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows)
+void ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows, cv::Mat output)
 {
     cv::Mat img = source;
     int width = img.cols;
@@ -360,7 +360,7 @@ cv::Mat ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, i
                  thickness);
     }
 
-    return img;
+    output = img.clone();
 }
 
 void ImageModel::editReset()
