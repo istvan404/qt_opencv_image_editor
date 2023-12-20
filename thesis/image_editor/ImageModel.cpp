@@ -144,7 +144,7 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
     return QPixmap::fromImage(qimg.rgbSwapped());
 }
 
-void ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image, cv::Mat output)
+void ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image, cv::Mat output) const
 {
     if(image.rows <= 0 || image.cols <= 0)
     {
@@ -328,7 +328,7 @@ void ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image, cv::Mat out
     output = histogram.clone();
 }
 
-void ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows, cv::Mat output)
+void ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows, cv::Mat output) const
 {
     cv::Mat img = source;
     int width = img.cols;

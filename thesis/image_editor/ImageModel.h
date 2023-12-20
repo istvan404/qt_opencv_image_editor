@@ -46,8 +46,8 @@ private:
     ImageData* _data = nullptr;
 
     // Histogram:
-    void generateHistogramRGB(cv::Mat source, cv::Mat img, cv::Mat output);
-    void generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows, cv::Mat output);
+    void generateHistogramRGB(cv::Mat source, cv::Mat img, cv::Mat output) const;
+    void generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows, cv::Mat output) const;
 
 signals:
     void imageLoaded();
