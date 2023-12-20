@@ -50,6 +50,11 @@ int AdjustmentSlider::value() const
     return _slider->value();
 }
 
+void AdjustmentSlider::reset() const
+{
+    _slider->setValue(_default);
+}
+
 void AdjustmentSlider::onValueChanged()
 {
     _labelValue->setText( QString::number(_slider->value()) );

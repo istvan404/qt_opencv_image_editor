@@ -112,6 +112,10 @@ void ImageView::onAdjustmentsResetButtonClicked()
     }
 
     _model->editReset();
+    _adjustmentBrightness->reset();
+    _adjustmentShadow->reset();
+    _adjustmentShadowBasic->reset();
+    _adjustmentWhiteBalance->reset();
 }
 
 void ImageView::onAdjustmentWhiteBalanceClicked()

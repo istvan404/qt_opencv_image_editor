@@ -28,6 +28,7 @@ class AdjustmentSlider : public AdjustmentBase
 public:
     AdjustmentSlider(QString title, int min, int max, int value);
     int value() const;
+    void reset() const;
 private:
     int _min;
     int _max;
