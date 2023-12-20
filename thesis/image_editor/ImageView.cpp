@@ -68,11 +68,11 @@ void ImageView::setupAdjustments()
     _layoutAdjustments =            new QVBoxLayout();
     _labelAdjustmentsTitle =        new QLabel("Adjustments");
     _buttonAdjustmentsReset =       new QPushButton("Reset");
-    _adjustmentWhiteBalance =       new Adjustment("White Balance - Basic Algorithm", 0, 20, 0);
-    _adjustmentWhiteBalanceGW =     new Adjustment("White Balance - Gray World Algorithm");
-    _adjustmentBrightness =         new Adjustment("Brightness", -50, 50, 0);
-    _adjustmentShadowBasic =        new Adjustment("Shadow - Basic", 0, 50, 0);
-    _adjustmentShadow =             new Adjustment("Shadow - With Mask", 0, 50, 0);
+    _adjustmentWhiteBalance =       new AdjustmentSlider("White Balance - Two Point Algorithm", 0, 20, 0);
+    _adjustmentWhiteBalanceGW =     new AdjustmentButton("White Balance - Gray World Algorithm");
+    _adjustmentBrightness =         new AdjustmentSlider("Brightness", -50, 50, 0);
+    _adjustmentShadowBasic =        new AdjustmentSlider("Shadow - Basic", 0, 50, 0);
+    _adjustmentShadow =             new AdjustmentSlider("Shadow - With Mask", 0, 50, 0);
 
     // Personalization
     _layoutAdjustments->setAlignment(Qt::AlignTop);

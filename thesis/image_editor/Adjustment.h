@@ -7,29 +7,38 @@
 #include <QLabel>
 #include <QSlider>
 
-class Adjustment : public QGridLayout
+class AdjustmentBase : public QGridLayout
 {
 public:
-    Adjustment(QString title, int min, int max, int defaultValue);
-    Adjustment(QString title);
-
-    QPushButton* button();
-    int value();
-private:
+    QPushButton* button() const;
+protected:
     QString _title;
+    QLabel* _labelTitle;
+    QPushButton* _button;
+};
+
+class AdjustmentButton : public AdjustmentBase
+{
+public:
+    AdjustmentButton(QString title);
+};
+
+class AdjustmentSlider : public AdjustmentBase
+{
+public:
+    AdjustmentSlider(QString title, int min, int max, int value);
+    int value() const;
+private:
     int _min;
     int _max;
-    int _defaultValue;
-
-    QLabel* _labelTitle;
+    int _default;
     QLabel* _labelMin;
     QLabel* _labelMax;
     QLabel* _labelValue;
     QSlider* _slider;
-    QPushButton* _button;
 
 private slots:
-    void onSliderValueChanged();
+    void onValueChanged();
 };
 
 #endif // ADJUSTMENT_H
