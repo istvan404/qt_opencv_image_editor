@@ -6,21 +6,6 @@ ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
     _persistence = persistence;
 }
 
-bool ImageModel::isImageDataLoaded()
-{
-    return this->_data != nullptr;
-}
-
-bool ImageModel::isImageEmpty()
-{
-    if( this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0 )
-    {
-        return true;
-    }
-
-    return this->_data->Image.empty();
-}
-
 void ImageModel::loadImage(QString path)
 {
     QSet<QString> extensions = {"jpg", "bmp", "png"};
@@ -83,6 +68,21 @@ void ImageModel::saveImage(QString path)
     }
 
     _persistence->save(path, this->_data);
+}
+
+bool ImageModel::isImageDataLoaded()
+{
+    return this->_data != nullptr;
+}
+
+bool ImageModel::isImageEmpty()
+{
+    if( this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0 )
+    {
+        return true;
+    }
+
+    return this->_data->Image.empty();
 }
 
 QPixmap ImageModel::getEditedImageQPixmap()
