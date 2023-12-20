@@ -14,7 +14,6 @@
 #include <QSlider>
 #include <QMouseEvent>
 
-#include <QDebug>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
@@ -68,11 +67,11 @@ private:
     QLabel* _labelAdjustmentsTitle;
     QPushButton* _buttonAdjustmentsReset;
     // Layout: Side: Adjustments: White Balance
-    Adjustment* _adjustmentWhiteBalance;
-    Adjustment* _adjustmentWhiteBalanceGW;
-    Adjustment* _adjustmentBrightness;
-    Adjustment* _adjustmentShadowBasic;
-    Adjustment* _adjustmentShadow;
+    AdjustmentSlider* _adjustmentWhiteBalance;
+    AdjustmentButton* _adjustmentWhiteBalanceGW;
+    AdjustmentSlider* _adjustmentBrightness;
+    AdjustmentSlider* _adjustmentShadowBasic;
+    AdjustmentSlider* _adjustmentShadow;
 
     // Layout: Side: Histogram
     QVBoxLayout* _layoutHistogram;

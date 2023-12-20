@@ -4,10 +4,10 @@
 #include "ImagePersistence.h"
 #include <QObject>
 #include <QString>
+#include <QFileInfo>
 
 #include <QPixmap>
 #include <QImage>
-#include <QDebug>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -24,13 +24,13 @@ public:
     void saveImage(QString path);
 
     QPixmap getEditedImageQPixmap();
-    // TODO:
-    QPixmap getOriginalImageQPixmap(); // Save the edited
+    QPixmap getOriginalImageQPixmap();
 
     // Histogram:
     QPixmap getHistogram(QSize histogramLabelSize);
 
-    bool isImageLoaded();
+    bool isImageDataLoaded();
+    bool isImageEmpty();
     void editReset();
     void editFlipHorizontal();
     void editFlipVertical();
@@ -46,13 +46,13 @@ private:
     ImageData* _data = nullptr;
 
     // Histogram:
-    cv::Mat generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows);
-    cv::Mat generateHistogramRGB(cv::Mat source, cv::Mat img);
-
+    void generateHistogramRGB(cv::Mat source, cv::Mat img, cv::Mat output) const;
+    void generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows, cv::Mat output) const;
 
 signals:
     void imageLoaded();
     void imageUpdated();
+    void imageLoadError();
 };
 
 #endif // IMAGEMODEL_H

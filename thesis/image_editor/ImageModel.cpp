@@ -6,28 +6,83 @@ ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
     _persistence = persistence;
 }
 
-bool ImageModel::isImageLoaded()
-{
-    return this->_data != nullptr;
-}
-
 void ImageModel::loadImage(QString path)
 {
-    this->_data = _persistence->load(path);
-    qDebug() << "img.type() == CV_8UC4 ->" << (this->_data->Image.type() == CV_8UC4); // unsigned 8 bit with 4 channels
-    qDebug() << "img.type() == CV_8UC3 ->" << (this->_data->Image.type() == CV_8UC3); // unsigned 8 bit with 3 channels
-    qDebug() << "img.type() == CV_8UC1 ->" << (this->_data->Image.type() == CV_8UC1); // unsigned 8 bit with 1 channels
+    QSet<QString> extensions = {"jpg", "bmp", "png"};
+    QFileInfo file(path);
+
+    if( !file.exists() || !file.isFile() )
+    {
+        emit imageLoadError();
+        return;
+    }
+
+    QString extension = file.suffix();
+
+    if( !extensions.contains(extension) )
+    {
+        emit imageLoadError();
+        return;
+    }
+
+    ImageData* data = _persistence->load(path);
+
+    if( data->Image.empty() )
+    {
+        emit imageLoadError();
+        return;
+    }
+
+    if( data->Image.cols <= 0 || data->Image.rows <= 0)
+    {
+        emit imageLoadError();
+        return;
+    }
+
+    if( data->Image.type() != CV_8UC3 ) // unsigned 8 bit with 3 channels
+    {
+        emit imageLoadError();
+        return;
+    }
+
+    if( data->Image.channels() != 3 )
+    {
+        emit imageLoadError();
+        return;
+    }
+
+    this->_data = data;
     emit imageLoaded();
 }
 
 void ImageModel::saveImage(QString path)
 {
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
+    {
+        return;
+    }
+
+    if(this->isImageEmpty())
     {
         return;
     }
 
     _persistence->save(path, this->_data);
+}
+
+bool ImageModel::isImageDataLoaded()
+{
+    return this->_data != nullptr;
+}
+
+bool ImageModel::isImageEmpty()
+{
+    if( this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0 )
+    {
+        return true;
+    }
+
+    return this->_data->Image.empty();
 }
 
 QPixmap ImageModel::getEditedImageQPixmap()
@@ -59,17 +114,10 @@ QPixmap ImageModel::getOriginalImageQPixmap()
 QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 {
     // Edge cases
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return QPixmap();           // TODO: Revisit this solution to edge case, maybe EMIT some problem? THROW error?
     }
-
-    /*int width = histogramLabelSize.width();
-    if(width % 2 != 0)
-        width++;
-    int height = histogramLabelSize.height();
-    if(height % 2 != 0)
-        height++;*/
 
     double aspectRatio = histogramLabelSize.width() / histogramLabelSize.height();
     int width = 256;
@@ -78,14 +126,14 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
     cv::Mat img = this->_data->Image;
     cv::Mat histogram(height, width, CV_8UC3, cv::Scalar(10,10,10));
 
-    histogram = generateHistogramRGB(histogram, img);
+    generateHistogramRGB(histogram, img, histogram);
 
     if(histogram.rows <= 0 || histogram.cols <= 0)
     {
         return QPixmap();
     }
 
-    histogram = generateHistogramGridOverlay(histogram, 3, 2);
+    generateHistogramGridOverlay(histogram, 3, 2, histogram);
 
     QImage qimg(histogram.data,
                 histogram.cols,
@@ -96,26 +144,26 @@ QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
     return QPixmap::fromImage(qimg.rgbSwapped());
 }
 
-cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
+void ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image, cv::Mat output) const
 {
     if(image.rows <= 0 || image.cols <= 0)
     {
-        return cv::Mat();
+        return;
     }
 
     if(image.channels() != 3)
     {
-        return cv::Mat();
+        return;
     }
 
     if(source.rows <= 0 || source.cols <= 0)
     {
-        return cv::Mat();
+        return;
     }
 
     if(source.channels() != 3)
     {
-        return cv::Mat();
+        return;
     }
 
     cv::Mat histogram = source;
@@ -166,18 +214,6 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
             accumulate);
 
     int hist_h = histogram.rows;
-/*
-    for( int i = 0; i < histSize; i++ )
-    {
-        qDebug() << "b_channel[" << i << "] = " << cvRound(b_channel.at<float>(i))
-                 << " | "
-                 << "g_channel[" << i << "] = " << cvRound(g_channel.at<float>(i))
-                 << " | "
-                 << "r_channel[" << i << "] = " << cvRound(r_channel.at<float>(i));
-    }
-
-    qDebug() << "hist_h = " << hist_h;*/
-
     float max = 0;
     for(int i = 0; i < histSize; i++)
     {
@@ -203,7 +239,6 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
     float ceiling = -1;
     for(int i = 1; i < (3*histSize)*0.2; i++)
     {
-        //qDebug() << "all_values[" << i << "] =" << all_values[i];
         float a = all_values[i-1];
         float b = all_values[i];
         if( (a/b) > 1.5 )
@@ -214,7 +249,6 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
 
     if(ceiling != -1)
     {
-        //qDebug() << "ceiling := " << ceiling;
         b_channel.setTo(ceiling,b_channel > ceiling);
         g_channel.setTo(ceiling,g_channel > ceiling);
         r_channel.setTo(ceiling,r_channel > ceiling);
@@ -234,12 +268,6 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
 
     for( int i = 0; i < histSize; i++ )
     {
-        /*qDebug() << "b_channel[" << i << "] = " << cvRound(b_channel.at<float>(i))
-                 << " | "
-                 << "g_channel[" << i << "] = " << cvRound(g_channel.at<float>(i))
-                 << " | "
-                 << "r_channel[" << i << "] = " << cvRound(r_channel.at<float>(i));*/
-
         int b_start = hist_h - cvRound(b_channel.at<float>(i));
         int g_start = hist_h - cvRound(g_channel.at<float>(i));
         int r_start = hist_h - cvRound(r_channel.at<float>(i));
@@ -297,10 +325,10 @@ cv::Mat ImageModel::generateHistogramRGB(cv::Mat source, cv::Mat image)
         }
     }
 
-    return histogram;
+    output = histogram.clone();
 }
 
-cv::Mat ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows)
+void ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, int gridRows, cv::Mat output) const
 {
     cv::Mat img = source;
     int width = img.cols;
@@ -332,12 +360,17 @@ cv::Mat ImageModel::generateHistogramGridOverlay(cv::Mat source, int gridCols, i
                  thickness);
     }
 
-    return img;
+    output = img.clone();
 }
 
 void ImageModel::editReset()
 {
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
+    {
+        return;
+    }
+
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -348,7 +381,12 @@ void ImageModel::editReset()
 
 void ImageModel::editFlipHorizontal()
 {
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
+    {
+        return;
+    }
+
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -359,7 +397,12 @@ void ImageModel::editFlipHorizontal()
 
 void ImageModel::editFlipVertical()
 {
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
+    {
+        return;
+    }
+
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -370,12 +413,12 @@ void ImageModel::editFlipVertical()
 
 void ImageModel::editRotate(int degree)
 {
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -402,32 +445,25 @@ void ImageModel::editRotate(int degree)
 
 void ImageModel::editWhiteBalance(int value)
 {
-    float percent = value;
+    const float percent = value;
     const float percentLimitMin = 0;
     const float percentLimitMax = 20;
+    const float halfPercent = percent / 200.0f;
 
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
+    if(this->isImageEmpty())
     {
         return;
     }
 
-    if(this->_data->Image.channels() != 3)
+    if(percent <= percentLimitMin || percent > percentLimitMax)
     {
         return;
     }
-
-    if(percent <= percentLimitMin)
-        return;
-
-    if(percent > percentLimitMax)
-        return;
-
-    float halfPercent = percent / 200.0f;
 
     std::vector<cv::Mat> bgrChannelSplit;
     cv::split(this->_data->Image,bgrChannelSplit);
@@ -455,17 +491,12 @@ void ImageModel::editBrightness(int value)
     int valueLimitMax = 50;
     int valueDefault = 0;
 
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
-    {
-        return;
-    }
-
-    if(this->_data->Image.channels() != 3)
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -508,17 +539,12 @@ void ImageModel::editBrightness(int value)
 void ImageModel::editWhiteBalanceGW()
 {
     // Gray World Algorithm
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
-    {
-        return;
-    }
-
-    if(this->_data->Image.channels() != 3)
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -540,13 +566,9 @@ void ImageModel::editWhiteBalanceGW()
         }
     }
 
-    qDebug() << "BGR sum: " << Bsum << " " << Gsum << " " << Rsum;
-
     const int Bavg = Bsum / (rows*cols);
     const int Gavg = Gsum / (rows*cols);
     const int Ravg = Rsum / (rows*cols);
-
-    qDebug() << "BGR avg: " << Bavg << " " << Gavg << " " << Ravg;
 
     if(Bavg == Gavg && Gavg == Ravg)
     {
@@ -562,8 +584,6 @@ void ImageModel::editWhiteBalanceGW()
 
     const double beta  = (double)Gavg / (double)Bavg;
     const double alpha = (double)Gavg / (double)Ravg;
-
-    qDebug() << "beta: " << beta << " alpha: " << alpha;
 
     for(int y = 0; y < rows; y++)
     {
@@ -584,17 +604,12 @@ void ImageModel::editShadowsBasic(int value)
     const int valueLimitMax = 50;
     const int valueDefault = 0;
 
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
-    {
-        return;
-    }
-
-    if(this->_data->Image.channels() != 3)
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -639,17 +654,12 @@ void ImageModel::editShadows(int value)
     const int valueLimitMax = 50;
     const int valueDefault = 0;
 
-    if(!this->isImageLoaded())
+    if(!this->isImageDataLoaded())
     {
         return;
     }
 
-    if(this->_data->Image.rows <= 0 || this->_data->Image.cols <= 0)
-    {
-        return;
-    }
-
-    if(this->_data->Image.channels() != 3)
+    if(this->isImageEmpty())
     {
         return;
     }
@@ -678,8 +688,6 @@ void ImageModel::editShadows(int value)
     cv::cvtColor(mask, mask, cv::COLOR_BGR2GRAY, 1);
     mask.setTo(255,mask > cutoff);
 
-    cv::imwrite("C:/Users/Admin/Desktop/mask2_bw.jpg", mask);
-
     for(int y = 0; y < rows; y++)
     {
         for(int x = 0; x < cols; x++)
@@ -687,8 +695,6 @@ void ImageModel::editShadows(int value)
             mask.at<uchar>(y,x) = (255 - mask.at<uchar>(y,x)) * percentage;
         }
     }
-
-    cv::imwrite("C:/Users/Admin/Desktop/mask_inverted_bw.jpg", mask);
 
     for(int y = 0; y < rows; y++)
     {

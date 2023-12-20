@@ -3,9 +3,12 @@
 ImageView::ImageView(QWidget *parent)
     : QMainWindow(parent)
 {
-    setWindowTitle("Image Editor - OpenCV 4.8.1");
+    QString title = "Image Editor";
+    title += " - OpenCV:";
+    title += CV_VERSION;
+
+    setWindowTitle(title);
     setFixedSize(1280, 720);
-    qDebug() << "OpenCV current version: " << CV_VERSION;
 
     _model = new ImageModel(new ImagePersistence(), this);
 
@@ -65,11 +68,11 @@ void ImageView::setupAdjustments()
     _layoutAdjustments =            new QVBoxLayout();
     _labelAdjustmentsTitle =        new QLabel("Adjustments");
     _buttonAdjustmentsReset =       new QPushButton("Reset");
-    _adjustmentWhiteBalance =       new Adjustment("White Balance - Basic Algorithm", 0, 20, 0);
-    _adjustmentWhiteBalanceGW =     new Adjustment("White Balance - Gray World Algorithm");
-    _adjustmentBrightness =         new Adjustment("Brightness", -50, 50, 0);
-    _adjustmentShadowBasic =        new Adjustment("Shadow - Basic", 0, 50, 0);
-    _adjustmentShadow =             new Adjustment("Shadow - With Mask", 0, 50, 0);
+    _adjustmentWhiteBalance =       new AdjustmentSlider("White Balance - Two Point Algorithm", 0, 20, 0);
+    _adjustmentWhiteBalanceGW =     new AdjustmentButton("White Balance - Gray World Algorithm");
+    _adjustmentBrightness =         new AdjustmentSlider("Brightness", -50, 50, 0);
+    _adjustmentShadowBasic =        new AdjustmentSlider("Shadow - Basic", 0, 50, 0);
+    _adjustmentShadow =             new AdjustmentSlider("Shadow - With Mask", 0, 50, 0);
 
     // Personalization
     _layoutAdjustments->setAlignment(Qt::AlignTop);
@@ -100,7 +103,7 @@ void ImageView::setupAdjustments()
 
 void ImageView::onAdjustmentsResetButtonClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -109,11 +112,15 @@ void ImageView::onAdjustmentsResetButtonClicked()
     }
 
     _model->editReset();
+    _adjustmentBrightness->reset();
+    _adjustmentShadow->reset();
+    _adjustmentShadowBasic->reset();
+    _adjustmentWhiteBalance->reset();
 }
 
 void ImageView::onAdjustmentWhiteBalanceClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -128,7 +135,7 @@ void ImageView::onAdjustmentWhiteBalanceClicked()
 
 void ImageView::onAdjustmentWhiteBalanceGWClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -143,7 +150,7 @@ void ImageView::onAdjustmentWhiteBalanceGWClicked()
 
 void ImageView::onAdjustmentBrightnessClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -151,7 +158,6 @@ void ImageView::onAdjustmentBrightnessClicked()
         return;
     }
 
-    qDebug() << "Brightness pressed!";
     this->setCursor(Qt::CursorShape::BusyCursor);
     _model->editBrightness(_adjustmentBrightness->value());
     this->setCursor(Qt::CursorShape::ArrowCursor);
@@ -159,7 +165,7 @@ void ImageView::onAdjustmentBrightnessClicked()
 
 void ImageView::onAdjustmentShadowBasicClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -168,14 +174,13 @@ void ImageView::onAdjustmentShadowBasicClicked()
     }
 
     this->setCursor(Qt::CursorShape::BusyCursor);
-    qDebug() << "Shadow protection apply button clicked!";
     _model->editShadowsBasic(_adjustmentShadowBasic->value());
     this->setCursor(Qt::CursorShape::ArrowCursor);
 }
 
 void ImageView::onAdjustmentShadowClicked()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -184,7 +189,6 @@ void ImageView::onAdjustmentShadowClicked()
     }
 
     this->setCursor(Qt::CursorShape::BusyCursor);
-    qDebug() << "Shadow protection apply button clicked!";
     _model->editShadows(_adjustmentShadow->value());
     this->setCursor(Qt::CursorShape::ArrowCursor);
 }
@@ -302,7 +306,7 @@ void ImageView::loadImage()
 
 void ImageView::onActionZoomIn()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -315,7 +319,7 @@ void ImageView::onActionZoomIn()
 
 void ImageView::onActionZoomOut()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -329,7 +333,7 @@ void ImageView::onActionZoomOut()
 
 void ImageView::onActionZoomFit()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -342,7 +346,7 @@ void ImageView::onActionZoomFit()
 
 void ImageView::onActionFlipHorizontal()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -354,7 +358,7 @@ void ImageView::onActionFlipHorizontal()
 
 void ImageView::onActionFlipVertical()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -366,7 +370,7 @@ void ImageView::onActionFlipVertical()
 
 void ImageView::onActionRotate90CW()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -379,7 +383,7 @@ void ImageView::onActionRotate90CW()
 
 void ImageView::onActionRotate90CCW()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -392,7 +396,7 @@ void ImageView::onActionRotate90CCW()
 
 void ImageView::onActionRotate180()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -405,7 +409,6 @@ void ImageView::onActionRotate180()
 
 void ImageView::onImageModelLoaded()
 {
-    qDebug() << "View catched model's ImageLoaded signal" << QTime::currentTime();
     loadImage();
     _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
     _histogramGraphicsView->fitInView(_histogramGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
@@ -413,13 +416,12 @@ void ImageView::onImageModelLoaded()
 
 void ImageView::onImageModelUpdated()
 {
-    qDebug() << "View catched model's ImageUpdated signal" << QTime::currentTime();
     loadImage();
 }
 
 void ImageView::onActionLoad()
 {
-    if(_model->isImageLoaded())
+    if(_model->isImageDataLoaded())
     {
         int answer = QMessageBox::warning(this,
                                           "Image Editor - Warning",
@@ -439,7 +441,7 @@ void ImageView::onActionLoad()
 
 void ImageView::onActionSave()
 {
-    if(!_model->isImageLoaded())
+    if(!_model->isImageDataLoaded())
     {
         QMessageBox::warning(this,
                              "Image Editor - Warning",
@@ -458,7 +460,7 @@ void ImageView::onActionSave()
 
 void ImageView::onActionExit()
 {
-    if(_model->isImageLoaded())
+    if(_model->isImageDataLoaded())
     {
         int answer = QMessageBox::warning(this,
                                           "Image Editor - Warning",
