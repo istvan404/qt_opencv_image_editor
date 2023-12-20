@@ -566,13 +566,9 @@ void ImageModel::editWhiteBalanceGW()
         }
     }
 
-    qDebug() << "BGR sum: " << Bsum << " " << Gsum << " " << Rsum;
-
     const int Bavg = Bsum / (rows*cols);
     const int Gavg = Gsum / (rows*cols);
     const int Ravg = Rsum / (rows*cols);
-
-    qDebug() << "BGR avg: " << Bavg << " " << Gavg << " " << Ravg;
 
     if(Bavg == Gavg && Gavg == Ravg)
     {
@@ -588,8 +584,6 @@ void ImageModel::editWhiteBalanceGW()
 
     const double beta  = (double)Gavg / (double)Bavg;
     const double alpha = (double)Gavg / (double)Ravg;
-
-    qDebug() << "beta: " << beta << " alpha: " << alpha;
 
     for(int y = 0; y < rows; y++)
     {

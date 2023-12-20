@@ -14,7 +14,6 @@
 #include <QSlider>
 #include <QMouseEvent>
 
-#include <QDebug>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 

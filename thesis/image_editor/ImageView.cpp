@@ -3,9 +3,12 @@
 ImageView::ImageView(QWidget *parent)
     : QMainWindow(parent)
 {
-    setWindowTitle("Image Editor - OpenCV 4.8.1");
+    QString title = "Image Editor";
+    title += " - OpenCV:";
+    title += CV_VERSION;
+
+    setWindowTitle(title);
     setFixedSize(1280, 720);
-    qDebug() << "OpenCV current version: " << CV_VERSION;
 
     _model = new ImageModel(new ImagePersistence(), this);
 
@@ -151,7 +154,6 @@ void ImageView::onAdjustmentBrightnessClicked()
         return;
     }
 
-    qDebug() << "Brightness pressed!";
     this->setCursor(Qt::CursorShape::BusyCursor);
     _model->editBrightness(_adjustmentBrightness->value());
     this->setCursor(Qt::CursorShape::ArrowCursor);
@@ -168,7 +170,6 @@ void ImageView::onAdjustmentShadowBasicClicked()
     }
 
     this->setCursor(Qt::CursorShape::BusyCursor);
-    qDebug() << "Shadow protection apply button clicked!";
     _model->editShadowsBasic(_adjustmentShadowBasic->value());
     this->setCursor(Qt::CursorShape::ArrowCursor);
 }
@@ -184,7 +185,6 @@ void ImageView::onAdjustmentShadowClicked()
     }
 
     this->setCursor(Qt::CursorShape::BusyCursor);
-    qDebug() << "Shadow protection apply button clicked!";
     _model->editShadows(_adjustmentShadow->value());
     this->setCursor(Qt::CursorShape::ArrowCursor);
 }
@@ -405,7 +405,6 @@ void ImageView::onActionRotate180()
 
 void ImageView::onImageModelLoaded()
 {
-    qDebug() << "View catched model's ImageLoaded signal" << QTime::currentTime();
     loadImage();
     _imageGraphicsView->fitInView(_imageGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
     _histogramGraphicsView->fitInView(_histogramGraphicsScene->sceneRect(), Qt::KeepAspectRatio);
@@ -413,7 +412,6 @@ void ImageView::onImageModelLoaded()
 
 void ImageView::onImageModelUpdated()
 {
-    qDebug() << "View catched model's ImageUpdated signal" << QTime::currentTime();
     loadImage();
 }
 
