@@ -190,9 +190,14 @@ void ImageModelTests::Test_Signals()
 
     QSignalSpy loadedSignalSpy(&model, SIGNAL(imageLoaded()));
     QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
+    QSignalSpy loadErrorSignalSpy(&model, SIGNAL(imageLoadError()));
 
     // TEST
     QVERIFY(!model.isImageDataLoaded());
+
+    QVERIFY(loadErrorSignalSpy.length() == 0);
+    model.loadImage(path_invalid);
+    QVERIFY(loadErrorSignalSpy.length() == 1);
 
     QVERIFY(loadedSignalSpy.length() == 0);
     model.loadImage(path_jpg);
@@ -204,6 +209,8 @@ void ImageModelTests::Test_Signals()
     model.editRotate(90);
     model.editReset();
     QVERIFY(updatedSignalSpy.length() == 4);
+    QVERIFY(loadedSignalSpy.length() == 1);
+    QVERIFY(loadErrorSignalSpy.length() == 1);
 }
 
 void ImageModelTests::Test_Nothing_Happens_Without_Image()
