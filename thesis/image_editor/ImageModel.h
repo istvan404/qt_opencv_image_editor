@@ -53,6 +53,7 @@ signals:
     void imageLoaded();
     void imageUpdated();
     void imageLoadError();
+    void imageSaveError();
 };
 
 #endif // IMAGEMODEL_H

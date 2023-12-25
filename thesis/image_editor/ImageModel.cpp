@@ -8,7 +8,7 @@ ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
 
 void ImageModel::loadImage(QString path)
 {
-    QSet<QString> extensions = {"jpg", "bmp", "png"};
+    QSet<QString> extensions = {"jpg", "bmp", "png", "JPG", "PNG", "BMP", "jpeg", "JPEG"};
     QFileInfo file(path);
 
     if( !file.exists() || !file.isFile() )
@@ -59,11 +59,39 @@ void ImageModel::saveImage(QString path)
 {
     if(!this->isImageDataLoaded())
     {
+        // TODO: EMIT error
+        emit imageSaveError();
         return;
     }
 
     if(this->isImageEmpty())
     {
+        // TODO: EMIT error
+        emit imageSaveError();
+        return;
+    }
+
+    // TODO: Test path
+
+    if( path.isEmpty() )
+    {
+        // TODO: EMIT error
+        emit imageSaveError();
+        return;
+    }
+
+    QSet<QString> extensions = {"jpg", "bmp", "png", "JPG", "PNG", "BMP", "jpeg", "JPEG"};
+    QFileInfo file(path);
+    QString extension = file.suffix();
+
+    qDebug() << "Model: saving file. path: " << path;
+    qDebug() << "Model: saving file. extension: " << extension;
+
+    if( !extensions.contains(extension) )
+    {
+        // TODO: EMIT error
+        emit imageSaveError();
+        qDebug() << "Model: we don't support this extension!";
         return;
     }
 
@@ -472,10 +500,10 @@ void ImageModel::editWhiteBalance(int value)
         cv::Mat singleChannel;
         bgrChannelSplit[i].reshape(1,1).copyTo(singleChannel);
         cv::sort(singleChannel,singleChannel,cv::SORT_EVERY_ROW + cv::SORT_ASCENDING);
-        int floorValue = singleChannel.at<uchar>(cvFloor(((float)singleChannel.cols) * halfPercent));
+        //int floorValue = singleChannel.at<uchar>(cvFloor(((float)singleChannel.cols) * halfPercent));
         int ceilingValue = singleChannel.at<uchar>(cvCeil(((float)singleChannel.cols) * (1.0 - halfPercent)));
 
-        bgrChannelSplit[i].setTo(floorValue,bgrChannelSplit[i] < floorValue);
+        //bgrChannelSplit[i].setTo(floorValue,bgrChannelSplit[i] < floorValue);
         bgrChannelSplit[i].setTo(ceilingValue,bgrChannelSplit[i] > ceilingValue);
 
         cv::normalize(bgrChannelSplit[i],bgrChannelSplit[i],0,255,cv::NORM_MINMAX);

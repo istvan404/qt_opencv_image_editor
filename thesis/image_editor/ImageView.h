@@ -106,6 +106,8 @@ private slots:
     // SLOTs of model's signals
     void onImageModelLoaded();
     void onImageModelUpdated();
+    void onImageModelLoadError();
+    void onImageModelSaveError();
 
     // SLOTs of adjustments
     void onAdjustmentsResetButtonClicked();
