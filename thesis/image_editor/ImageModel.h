@@ -1,7 +1,8 @@
 #ifndef IMAGEMODEL_H
 #define IMAGEMODEL_H
 
-#include "ImagePersistence.h"
+//#include "ImagePersistence.h"
+#include "ImageData.h"
 #include <QObject>
 #include <QString>
 #include <QFileInfo>
@@ -18,7 +19,7 @@ class ImageModel : public QObject
 {
     Q_OBJECT
 public:
-    explicit ImageModel(ImagePersistenceInterface* persistence, QObject *parent = nullptr);
+    explicit ImageModel(/*ImagePersistenceInterface* persistence, */QObject *parent = nullptr);
 
     void loadImage(QString path);
     void saveImage(QString path);
@@ -31,6 +32,7 @@ public:
 
     bool isImageDataLoaded();
     bool isImageEmpty();
+    bool isImageEdited();
     void editReset();
     void editFlipHorizontal();
     void editFlipVertical();
@@ -42,7 +44,7 @@ public:
     void editShadows(int value);
 
 private:
-    ImagePersistenceInterface* _persistence = nullptr;
+    //ImagePersistenceInterface* _persistence = nullptr;
     ImageData* _data = nullptr;
 
     // Histogram:

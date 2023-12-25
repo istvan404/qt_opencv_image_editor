@@ -1,4 +1,4 @@
-#include "ImagePersistenceMock.h"
+/*#include "ImagePersistenceMock.h"
 
 ImagePersistenceMock::ImagePersistenceMock(ImageData save): _save(save)
 {
@@ -13,3 +13,4 @@ ImageData* ImagePersistenceMock::load(QString path)
     return &_save;
     // TODO: Change interface pointer to non pointer!!
 }
+*/

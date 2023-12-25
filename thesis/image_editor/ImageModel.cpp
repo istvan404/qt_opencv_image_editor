@@ -1,9 +1,9 @@
 #include "ImageModel.h"
 
-ImageModel::ImageModel(ImagePersistenceInterface* persistence, QObject *parent)
+ImageModel::ImageModel(/*ImagePersistenceInterface* persistence, */QObject *parent)
     : QObject{parent}
 {
-    _persistence = persistence;
+    //_persistence = persistence;
 }
 
 void ImageModel::loadImage(QString path)
@@ -25,7 +25,9 @@ void ImageModel::loadImage(QString path)
         return;
     }
 
-    ImageData* data = _persistence->load(path);
+    //ImageData* data = _persistence->load(path);
+    cv::Mat image = cv::imread(path.toStdString(), cv::IMREAD_COLOR);
+    ImageData* data = new ImageData(path, image);
 
     if( data->Image.empty() )
     {
@@ -59,23 +61,18 @@ void ImageModel::saveImage(QString path)
 {
     if(!this->isImageDataLoaded())
     {
-        // TODO: EMIT error
         emit imageSaveError();
         return;
     }
 
     if(this->isImageEmpty())
     {
-        // TODO: EMIT error
         emit imageSaveError();
         return;
     }
 
-    // TODO: Test path
-
     if( path.isEmpty() )
     {
-        // TODO: EMIT error
         emit imageSaveError();
         return;
     }
@@ -89,13 +86,13 @@ void ImageModel::saveImage(QString path)
 
     if( !extensions.contains(extension) )
     {
-        // TODO: EMIT error
         emit imageSaveError();
         qDebug() << "Model: we don't support this extension!";
         return;
     }
 
-    _persistence->save(path, this->_data);
+    //_persistence->save(path, this->_data);
+    cv::imwrite(path.toStdString(), _data->Image);
 }
 
 bool ImageModel::isImageDataLoaded()
@@ -113,8 +110,59 @@ bool ImageModel::isImageEmpty()
     return this->_data->Image.empty();
 }
 
+bool ImageModel::isImageEdited()
+{
+    if(!isImageDataLoaded())
+    {
+        return false;
+    }
+
+    if(isImageEmpty())
+    {
+        return false;
+    }
+
+    if(_data->Image.rows != _data->ImageOriginal.rows)
+    {
+        return true;
+    }
+
+    if(_data->Image.cols != _data->ImageOriginal.cols)
+    {
+        return true;
+    }
+
+    if(_data->Image.channels() != 3 || _data->ImageOriginal.channels() != 3)
+    {
+        return true;
+    }
+
+    for(int y = 0; y < this->_data->Image.rows; y++)
+    {
+        for(int x = 0; x < this->_data->Image.cols; x++)
+        {
+            if( _data->Image.at<cv::Vec3b>(y,x) != _data->ImageOriginal.at<cv::Vec3b>(y,x) )
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 QPixmap ImageModel::getEditedImageQPixmap()
 {
+    if(!isImageDataLoaded())
+    {
+        return QPixmap();
+    }
+
+    if(isImageEmpty())
+    {
+        return QPixmap();
+    }
+
     cv::Mat img = this->_data->Image;
 
     QImage qimg(img.data,
@@ -128,6 +176,16 @@ QPixmap ImageModel::getEditedImageQPixmap()
 
 QPixmap ImageModel::getOriginalImageQPixmap()
 {
+    if(!isImageDataLoaded())
+    {
+        return QPixmap();
+    }
+
+    if(isImageEmpty())
+    {
+        return QPixmap();
+    }
+
     cv::Mat img = this->_data->ImageOriginal;
 
     QImage qimg(img.data,
@@ -716,6 +774,8 @@ void ImageModel::editShadows(int value)
     cv::cvtColor(mask, mask, cv::COLOR_BGR2GRAY, 1);
     mask.setTo(255,mask > cutoff);
 
+    cv::imwrite("C:/Users/Admin/Desktop/mask.jpg", mask);
+
     for(int y = 0; y < rows; y++)
     {
         for(int x = 0; x < cols; x++)
@@ -723,6 +783,8 @@ void ImageModel::editShadows(int value)
             mask.at<uchar>(y,x) = (255 - mask.at<uchar>(y,x)) * percentage;
         }
     }
+
+    cv::imwrite("C:/Users/Admin/Desktop/mask_inverted.jpg", mask);
 
     for(int y = 0; y < rows; y++)
     {

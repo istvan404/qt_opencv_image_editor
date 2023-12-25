@@ -10,7 +10,7 @@ ImageView::ImageView(QWidget *parent)
     setWindowTitle(title);
     setFixedSize(1280, 720);
 
-    _model = new ImageModel(new ImagePersistence(), this);
+    _model = new ImageModel(/*new ImagePersistence(), */this);
 
     setupCentralWidget();
     setupMenuBar();

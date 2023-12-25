@@ -23,8 +23,6 @@ private slots:
     void Test_File_PNG();
     void Test_File_BMP();
     void Test_Invalid_File_Path();
-    void Test_Invalid_Image_One_Channel();
-    void Test_Invalid_Image_Four_Channel();
     void Test_Signals();
     void Test_Nothing_Happens_Without_Image();
     void Test_Reset();

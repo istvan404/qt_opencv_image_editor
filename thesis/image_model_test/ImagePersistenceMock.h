@@ -1,4 +1,4 @@
-#ifndef IMAGEPERSISTENCEMOCK_H
+/*#ifndef IMAGEPERSISTENCEMOCK_H
 #define IMAGEPERSISTENCEMOCK_H
 
 #include "../image_editor/ImagePersistence.h"
@@ -14,3 +14,4 @@ private:
 };
 
 #endif // IMAGEPERSISTENCEMOCK_H
+*/
