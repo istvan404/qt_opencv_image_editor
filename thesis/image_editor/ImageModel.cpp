@@ -1,9 +1,8 @@
 #include "ImageModel.h"
 
-ImageModel::ImageModel(/*ImagePersistenceInterface* persistence, */QObject *parent)
+ImageModel::ImageModel(QObject *parent)
     : QObject{parent}
 {
-    //_persistence = persistence;
 }
 
 void ImageModel::loadImage(QString path)
@@ -25,7 +24,6 @@ void ImageModel::loadImage(QString path)
         return;
     }
 
-    //ImageData* data = _persistence->load(path);
     cv::Mat image = cv::imread(path.toStdString(), cv::IMREAD_COLOR);
     ImageData* data = new ImageData(path, image);
 
@@ -91,7 +89,6 @@ void ImageModel::saveImage(QString path)
         return;
     }
 
-    //_persistence->save(path, this->_data);
     cv::imwrite(path.toStdString(), _data->Image);
 }
 

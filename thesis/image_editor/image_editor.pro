@@ -9,13 +9,11 @@ HEADERS = \
    $$PWD/Adjustment.h \
    $$PWD/ImageData.h \
    $$PWD/ImageModel.h \
-   $$PWD/ImagePersistence.h \
    $$PWD/ImageView.h
 
 SOURCES = \
    $$PWD/Adjustment.cpp \
    $$PWD/ImageModel.cpp \
-   $$PWD/ImagePersistence.cpp \
    $$PWD/ImageView.cpp \
    $$PWD/main.cpp
 
