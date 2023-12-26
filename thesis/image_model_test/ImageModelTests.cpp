@@ -450,6 +450,23 @@ void ImageModelTests::Test_WhiteBalance_Values()
     QVERIFY(updatedSignalSpy.length() == 2);
 }
 
+void ImageModelTests::Test_WhiteBalance_GW()
+{
+    // SETUP
+    ImageModel model;
+    model.loadImage(path_png);
+    QSignalSpy updatedSignalSpy(&model, SIGNAL(imageUpdated()));
+
+    // TEST
+    QVERIFY(model.isImageDataLoaded());
+    QVERIFY(!model.isImageEdited());
+
+    // TEST - Gray World
+    model.editWhiteBalanceGW();
+    QVERIFY(model.isImageEdited());
+    QVERIFY(updatedSignalSpy.length() == 1);
+}
+
 void ImageModelTests::Test_ShadowBasic_Values()
 {
     // SETUP

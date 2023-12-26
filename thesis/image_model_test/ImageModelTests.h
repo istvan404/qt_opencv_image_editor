@@ -36,6 +36,7 @@ private slots:
     void Test_Rotate_Invalid_Values();
     void Test_Brightness_Values();
     void Test_WhiteBalance_Values();
+    void Test_WhiteBalance_GW();
     void Test_ShadowBasic_Values();
     void Test_Shadows_Values();
 };
