@@ -79,13 +79,9 @@ void ImageModel::saveImage(QString path)
     QFileInfo file(path);
     QString extension = file.suffix();
 
-    qDebug() << "Model: saving file. path: " << path;
-    qDebug() << "Model: saving file. extension: " << extension;
-
     if( !extensions.contains(extension) )
     {
         emit imageSaveError();
-        qDebug() << "Model: we don't support this extension!";
         return;
     }
 
@@ -196,10 +192,9 @@ QPixmap ImageModel::getOriginalImageQPixmap()
 
 QPixmap ImageModel::getHistogram(QSize histogramLabelSize)
 {
-    // Edge cases
     if(!this->isImageDataLoaded())
     {
-        return QPixmap();           // TODO: Revisit this solution to edge case, maybe EMIT some problem? THROW error?
+        return QPixmap();
     }
 
     double aspectRatio = histogramLabelSize.width() / histogramLabelSize.height();
