@@ -17,9 +17,6 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
 class ImageView : public QMainWindow
 {
     Q_OBJECT

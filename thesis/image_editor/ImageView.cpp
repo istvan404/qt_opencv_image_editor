@@ -3,14 +3,11 @@
 ImageView::ImageView(QWidget *parent)
     : QMainWindow(parent)
 {
-    QString title = "Image Editor";
-    title += " - OpenCV:";
-    title += CV_VERSION;
-
+    QString title = "Image Editor - OpenCV 4.8.1";
     setWindowTitle(title);
     setFixedSize(1280, 720);
 
-    _model = new ImageModel(/*new ImagePersistence(), */this);
+    _model = new ImageModel(this);
 
     setupCentralWidget();
     setupMenuBar();
