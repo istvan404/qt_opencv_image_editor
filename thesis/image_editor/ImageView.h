@@ -17,9 +17,6 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
 class ImageView : public QMainWindow
 {
     Q_OBJECT
@@ -90,6 +87,12 @@ private:
     void loadImage();
 
 private slots:
+    // SLOTs of model's signals
+    void onImageModelLoaded();
+    void onImageModelUpdated();
+    void onImageModelLoadError();
+    void onImageModelSaveError();
+
     // Menu Actions
     void onActionLoad();
     void onActionSave();
@@ -102,10 +105,6 @@ private slots:
     void onActionRotate90CW();
     void onActionRotate90CCW();
     void onActionRotate180();
-
-    // SLOTs of model's signals
-    void onImageModelLoaded();
-    void onImageModelUpdated();
 
     // SLOTs of adjustments
     void onAdjustmentsResetButtonClicked();

@@ -9,16 +9,12 @@ TEMPLATE = app
 
 SOURCES +=  \
     ../image_editor/ImageModel.cpp \
-    ../image_editor/ImagePersistence.cpp \
-    ImageModelTests.cpp \
-    ImagePersistenceMock.cpp
+    ImageModelTests.cpp
 
 HEADERS += \
     ../image_editor/ImageData.h \
     ../image_editor/ImageModel.h \
-    ../image_editor/ImagePersistence.h \
-    ImageModelTests.h \
-    ImagePersistenceMock.h
+    ImageModelTests.h
 
 INCLUDEPATH += C:\dev_libs\opencv\build\include
 

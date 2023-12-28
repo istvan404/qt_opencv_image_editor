@@ -3,14 +3,11 @@
 ImageView::ImageView(QWidget *parent)
     : QMainWindow(parent)
 {
-    QString title = "Image Editor";
-    title += " - OpenCV:";
-    title += CV_VERSION;
-
+    QString title = "Image Editor - OpenCV 4.8.1";
     setWindowTitle(title);
     setFixedSize(1280, 720);
 
-    _model = new ImageModel(new ImagePersistence(), this);
+    _model = new ImageModel(this);
 
     setupCentralWidget();
     setupMenuBar();
@@ -28,6 +25,8 @@ void ImageView::connectModel()
     // Connect Model Signals To View's Slot
     connect(_model, &ImageModel::imageLoaded, this, &ImageView::onImageModelLoaded);
     connect(_model, &ImageModel::imageUpdated, this, &ImageView::onImageModelUpdated);
+    connect(_model, &ImageModel::imageLoadError, this, &ImageView::onImageModelLoadError);
+    connect(_model, &ImageModel::imageSaveError, this, &ImageView::onImageModelSaveError);
 }
 
 void ImageView::setupCentralWidget()
@@ -68,7 +67,7 @@ void ImageView::setupAdjustments()
     _layoutAdjustments =            new QVBoxLayout();
     _labelAdjustmentsTitle =        new QLabel("Adjustments");
     _buttonAdjustmentsReset =       new QPushButton("Reset");
-    _adjustmentWhiteBalance =       new AdjustmentSlider("White Balance - Two Point Algorithm", 0, 20, 0);
+    _adjustmentWhiteBalance =       new AdjustmentSlider("White Balance - White Patch Algorithm", 0, 20, 0);
     _adjustmentWhiteBalanceGW =     new AdjustmentButton("White Balance - Gray World Algorithm");
     _adjustmentBrightness =         new AdjustmentSlider("Brightness", -50, 50, 0);
     _adjustmentShadowBasic =        new AdjustmentSlider("Shadow - Basic", 0, 50, 0);
@@ -328,7 +327,6 @@ void ImageView::onActionZoomOut()
     }
 
     _imageGraphicsView->scale(0.9,0.9);
-
 }
 
 void ImageView::onActionZoomFit()
@@ -419,13 +417,46 @@ void ImageView::onImageModelUpdated()
     loadImage();
 }
 
+void ImageView::onImageModelLoadError()
+{
+    QString message = "An error occurred while loading a file.";
+    message += "\nThe application only supports jpg, jpeg, png, and bmp file formats.";
+    QMessageBox::warning(this,
+         "Image Editor - Error",
+         message,
+         QMessageBox::Ok);
+}
+
+void ImageView::onImageModelSaveError()
+{
+    QString title = "Image Editor - Error";
+    if( !_model->isImageDataLoaded() || _model->isImageEmpty() )
+    {
+        QMessageBox::warning(this,
+             title,
+             "An error occurred while saving. An image should be loaded before saving!",
+             QMessageBox::Ok);
+        return;
+    }
+
+    QString message = "An error occurred while saving.";
+    message += "\nCheck the path and file extension!";
+    message += "\nThe application only supports jpg, jpeg, png, and bmp file formats.";
+    QMessageBox::warning(this,
+         title,
+         message,
+         QMessageBox::Ok);
+}
+
 void ImageView::onActionLoad()
 {
     if(_model->isImageDataLoaded())
     {
+        QString message = "There is an image already loaded.";
+        message += "\nIf you continue, the current image won't be saved!";
         int answer = QMessageBox::warning(this,
                                           "Image Editor - Warning",
-                                          "There is an image already loaded. If you continue, the current image won't be saved!",
+                                          message,
                                           QMessageBox::Ok,
                                           QMessageBox::Cancel);
 
@@ -433,7 +464,11 @@ void ImageView::onActionLoad()
             return;
     }
 
-    QString path = QFileDialog::getOpenFileName(this, "Select an Image", "", "Images (*.jpg *.png *.bmp)");
+    QString path = QFileDialog::getOpenFileName(this,
+                                                "Select an Image",
+                                                "",
+                                                "Images (*.jpg *.png *.bmp *.jpeg)");
+
     if(path != "") {
         _model->loadImage(path);
     }
@@ -452,7 +487,7 @@ void ImageView::onActionSave()
     QString path = QFileDialog::getSaveFileName(this,
                                                 "Save image",
                                                 "",
-                                                "Images (*.jpg *.png *.bmp)");
+                                                "Images (*.jpg *.png *.bmp *.jpeg)");
 
     if(path != "")
         _model->saveImage(path);
